@@ -12,7 +12,12 @@ const services = (await getCollection("services")).sort(
 );
 ---
 
-<BaseLayout title="Services — TopNotch" description="End-to-end software solutions: web development, mobile apps, AI & automation, and consulting.">
+<BaseLayout
+  title="Services — TopNotch"
+  description="End-to-end software solutions: web development, mobile apps, AI & automation, and consulting."
+  url="/services"
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Services", url: "/services" }]}
+>
   <Navbar />
 
   <main>

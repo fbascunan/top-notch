@@ -15,6 +15,8 @@ const services = (await getCollection("services"))
 <BaseLayout
   title="Contact — TopNotch"
   description="Get in touch with TopNotch. Tell us about your project and we'll get back to you within one business day."
+  url="/contact"
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Contact", url: "/contact" }]}
 >
   <Navbar />
 

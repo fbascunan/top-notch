@@ -30,7 +30,12 @@ const { service, relatedProjects } = Astro.props;
 const { Content } = await render(service);
 ---
 
-<BaseLayout title={`${service.data.title} — TopNotch`} description={service.data.summary}>
+<BaseLayout
+  title={`${service.data.title} — TopNotch`}
+  description={service.data.summary}
+  url={`/services/${service.data.slug}`}
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Services", url: "/services" }, { name: service.data.title, url: `/services/${service.data.slug}` }]}
+>
   <Navbar />
 
   <main>

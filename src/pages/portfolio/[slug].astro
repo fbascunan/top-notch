@@ -24,7 +24,12 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
 });
 ---
 
-<BaseLayout title={`${project.data.title} — TopNotch`} description={project.data.summary}>
+<BaseLayout
+  title={`${project.data.title} — TopNotch`}
+  description={project.data.summary}
+  url={`/portfolio/${project.data.slug}`}
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Portfolio", url: "/portfolio" }, { name: project.data.title, url: `/portfolio/${project.data.slug}` }]}
+>
   <Navbar />
 
   <main>

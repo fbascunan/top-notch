@@ -7,11 +7,29 @@ import ServicesOverview from "@/components/ServicesOverview.astro";
 import WhyUs from "@/components/WhyUs.astro";
 import PortfolioTeaser from "@/components/PortfolioTeaser.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "TopNotch",
+  url: "https://topnotch.cl",
+  logo: "https://topnotch.cl/favicon.svg",
+  description: "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
+  sameAs: [],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    url: "https://topnotch.cl/contact",
+  },
+};
 ---
 
 <BaseLayout
   title="TopNotch — Software Development Agency"
   description="From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft."
+  url="/"
+  jsonLd={organizationLd}
+  breadcrumbs={[{ name: "Home", url: "/" }]}
 >
   <Navbar />
   <main class="flex-1">

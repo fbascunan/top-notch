@@ -207,25 +207,25 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ### SEO
 
-- [ ] Create `SEO.astro` component — accepts title, description, image, url, type. Renders:
+- [x] Create `SEO.astro` component — accepts title, description, image, url, type. Renders:
   - `<title>`, `<meta name="description">`
   - Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`)
   - Twitter card tags
   - Canonical URL
-- [ ] Add `SEO.astro` to every page (landing, services, portfolio, blog, contact)
-- [ ] Generate `sitemap.xml` via `@astrojs/sitemap`
-- [ ] Add `robots.txt`
-- [ ] Add structured data (JSON-LD) for:
+- [x] Add `SEO.astro` to every page (landing, services, portfolio, blog, contact)
+- [x] Generate `sitemap.xml` via `@astrojs/sitemap`
+- [x] Add `robots.txt`
+- [x] Add structured data (JSON-LD) for:
   - Organization (homepage)
   - BreadcrumbList (all pages)
   - BlogPosting (blog articles)
-- [ ] Verify: paste any page URL into [OpenGraph debugger](https://www.opengraph.xyz/) — all fields render
+- [x] Verify: paste any page URL into [OpenGraph debugger](https://www.opengraph.xyz/) — all fields render
 
 ### Analytics
 
-- [ ] Integrate privacy-friendly analytics — Plausible, Umami, or Vercel Analytics (no cookie banner needed)
-- [ ] Track: page views, referrers, top pages, device breakdown
-- [ ] Verify: analytics dashboard shows data after a test visit
+- [x] Integrate privacy-friendly analytics — Plausible, Umami, or Vercel Analytics (no cookie banner needed)
+- [x] Track: page views, referrers, top pages, device breakdown
+- [x] Verify: analytics dashboard shows data after a test visit
 
 ### Done when
 
@@ -272,11 +272,11 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | M4 — Services & Portfolio | Done | M2 |
 | M5 — Contact & Lead Capture | Done | M3 |
 | M6 — Blog & Content | Done | M2 |
-| M7 — SEO & Analytics | Planned | M3 |
+| M7 — SEO & Analytics | Done | M3 |
 | M8 — Launch | Planned | M3–M7 |
 
 > M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3.
 
 ---
 
-_Last updated: 2026-03-15 03:00_
+_Last updated: 2026-03-15 03:30_

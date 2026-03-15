@@ -25,7 +25,12 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<BaseLayout title={`Posts tagged "${tag}" — TopNotch Blog`} description={`Blog posts about ${tag}.`}>
+<BaseLayout
+  title={`Posts tagged "${tag}" — TopNotch Blog`}
+  description={`Blog posts about ${tag}.`}
+  url={`/blog/tag/${tag}`}
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }, { name: `Tag: ${tag}`, url: `/blog/tag/${tag}` }]}
+>
   <Navbar />
 
   <main>

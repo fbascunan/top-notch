@@ -1,0 +1,96 @@
+---
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: "website" | "article";
+  canonicalUrl?: string;
+  // JSON-LD
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  // Blog-specific
+  publishedDate?: string;
+  author?: string;
+  tags?: string[];
+  // Breadcrumbs
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://topnotch.cl";
+
+const {
+  title,
+  description,
+  image = "/og-default.svg",
+  url = Astro.url.pathname,
+  type = "website",
+  canonicalUrl,
+  jsonLd,
+  publishedDate,
+  author,
+  tags,
+  breadcrumbs,
+} = Astro.props;
+
+const fullUrl = canonicalUrl ?? `${site}${url}`;
+const fullImage = image.startsWith("http") ? image : `${site}${image}`;
+
+// Build JSON-LD array
+const jsonLdScripts: Record<string, unknown>[] = [];
+
+if (jsonLd) {
+  if (Array.isArray(jsonLd)) {
+    jsonLdScripts.push(...jsonLd);
+  } else {
+    jsonLdScripts.push(jsonLd);
+  }
+}
+
+// Add breadcrumbs JSON-LD if provided
+if (breadcrumbs && breadcrumbs.length > 0) {
+  jsonLdScripts.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url.startsWith("http") ? item.url : `${site}${item.url}`,
+    })),
+  });
+}
+---
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={fullUrl} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={fullUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={fullImage} />
+<meta property="og:site_name" content="TopNotch" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={fullUrl} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullImage} />
+
+{publishedDate && <meta property="article:published_time" content={publishedDate} />}
+{author && <meta name="author" content={author} />}
+{tags && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<!-- JSON-LD Structured Data -->
+{jsonLdScripts.map((ld) => (
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+))}

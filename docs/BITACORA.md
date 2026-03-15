@@ -86,3 +86,9 @@
 **Blocked:** nothing
 **Next:** M7 (SEO & analytics), M8 (launch)
 **Decision:** coverImage uses string path (public dir) rather than Astro image() — simpler for SVG placeholders; site URL set to `https://topnotch.cl` in astro.config.mjs for RSS
+
+### 2026-03-15 03:30 — agent — M7
+**Did:** built `SEO.astro` component (title, description, image, url, type, OG tags, Twitter cards, canonical URL, JSON-LD). Updated `BaseLayout.astro` to use SEO component. Added SEO props to all pages (landing, services, portfolio, blog, contact, tag pages). Added JSON-LD structured data: Organization (homepage), BreadcrumbList (all pages), BlogPosting (blog articles). Installed `@astrojs/sitemap` — generates `sitemap-index.xml` + `sitemap-0.xml` with 20 URLs. Added `robots.txt`. Created OG default image SVG. Integrated Umami analytics (privacy-friendly, no cookies). Build passes (0 errors, 20 pages).
+**Blocked:** Umami `data-website-id` placeholder needs to be replaced with a real ID from https://cloud.umami.is after creating an account.
+**Next:** M8 (launch — pre-launch checklist, production deploy)
+**Decision:** chose Umami Cloud over Plausible/Vercel Analytics — fully privacy-friendly, no cookies, tracks pageviews/referrers/devices/top-pages out of the box; SEO component integrated into BaseLayout so all pages get meta tags automatically

@@ -1,19 +1,45 @@
 ---
 import "../styles/global.css";
+import SEO from "@/components/SEO.astro";
+
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  url?: string;
+  type?: "website" | "article";
+  canonicalUrl?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  publishedDate?: string;
+  author?: string;
+  tags?: string[];
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-const { title = "TopNotch", description = "Software development agency" } = Astro.props;
+const {
+  title = "TopNotch",
+  description = "Software development agency",
+  image,
+  url,
+  type = "website",
+  canonicalUrl,
+  jsonLd,
+  publishedDate,
+  author,
+  tags,
+  breadcrumbs,
+} = Astro.props;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +56,21 @@ const { title = "TopNotch", description = "Software development agency" } = Astr
       />
     </noscript>
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      url={url}
+      type={type}
+      canonicalUrl={canonicalUrl}
+      jsonLd={jsonLd}
+      publishedDate={publishedDate}
+      author={author}
+      tags={tags}
+      breadcrumbs={breadcrumbs}
+    />
+    <!-- Umami Analytics (privacy-friendly, no cookies) -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="UMAMI_WEBSITE_ID"></script>
   </head>
   <body class="min-h-screen flex flex-col">
     <slot />

@@ -20,7 +20,12 @@ const start = (currentPage - 1) * POSTS_PER_PAGE;
 const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
 ---
 
-<BaseLayout title="Blog — TopNotch" description="Insights on web development, mobile apps, AI, and building great software.">
+<BaseLayout
+  title="Blog — TopNotch"
+  description="Insights on web development, mobile apps, AI, and building great software."
+  url="/blog"
+  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }]}
+>
   <Navbar />
 
   <main>
