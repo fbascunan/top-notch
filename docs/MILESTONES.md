@@ -103,7 +103,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ### Services (`/services`)
 
-- [ ] Create `src/content/config.ts` — define `services` collection schema:
+- [x] Create `src/content/config.ts` — define `services` collection schema:
   ```ts
   {
     title: string
@@ -113,13 +113,13 @@ Detailed content pages. Use Astro content collections so adding new entries is j
     body: markdown         // full description (rendered from .md)
   }
   ```
-- [ ] Create `src/content/services/` with 3–4 `.md` files (web-development, mobile-apps, ai-automation, consulting)
-- [ ] Build `/services` index page — grid of service cards
-- [ ] Build `/services/[slug]` dynamic page — full service description, related portfolio items, CTA
+- [x] Create `src/content/services/` with 3–4 `.md` files (web-development, mobile-apps, ai-automation, consulting)
+- [x] Build `/services` index page — grid of service cards
+- [x] Build `/services/[slug]` dynamic page — full service description, related portfolio items, CTA
 
 ### Portfolio (`/portfolio`)
 
-- [ ] Define `portfolio` collection schema:
+- [x] Define `portfolio` collection schema:
   ```ts
   {
     title: string
@@ -133,9 +133,9 @@ Detailed content pages. Use Astro content collections so adding new entries is j
     body: markdown          // case study content
   }
   ```
-- [ ] Create `src/content/portfolio/` with 2–3 placeholder case studies
-- [ ] Build `/portfolio` index — filterable grid (filter by tech stack), cards with thumbnail + title + tech badges
-- [ ] Build `/portfolio/[slug]` — case study page: problem, approach, result, screenshots, tech stack
+- [x] Create `src/content/portfolio/` with 2–3 placeholder case studies
+- [x] Build `/portfolio` index — filterable grid (filter by tech stack), cards with thumbnail + title + tech badges
+- [x] Build `/portfolio/[slug]` — case study page: problem, approach, result, screenshots, tech stack
 
 ### Done when
 
@@ -269,7 +269,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | M1 — Project Setup | Done | — |
 | M2 — Branding & Design System | Done | M1 |
 | M3 — Landing Page | Done | M2 |
-| M4 — Services & Portfolio | Planned | M2 |
+| M4 — Services & Portfolio | Done | M2 |
 | M5 — Contact & Lead Capture | Planned | M3 |
 | M6 — Blog & Content | Planned | M2 |
 | M7 — SEO & Analytics | Planned | M3 |
@@ -279,4 +279,4 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ---
 
-_Last updated: 2026-03-15 02:30_
+_Last updated: 2026-03-15 02:45_

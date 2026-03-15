@@ -68,3 +68,9 @@
 **Blocked:** nothing
 **Next:** M4 (services & portfolio content collections), M5 (contact), M6 (blog)
 **Decision:** deployed preview via `cloudflared tunnel` (no-auth quick tunnel) since no Vercel/CF Pages credentials were available; for production deploy, set up `vercel login` or `wrangler login`
+
+### 2026-03-15 02:45 — agent — M4
+**Did:** built services & portfolio content collections. Created `src/content.config.ts` with Zod schemas (services + portfolio), 4 service `.md` files (web-development, mobile-apps, ai-automation, consulting), 3 portfolio case studies (CloudSync Dashboard, FreshCart Mobile, DocuFlow AI). Built `/services` index (grid of cards), `/services/[slug]` (full description + related portfolio + CTA), `/portfolio` index (filterable grid by tech stack with client-side JS), `/portfolio/[slug]` (case study with problem/approach/result, tech stack, back link). Added `@tailwindcss/typography` for prose styling. Build passes with 0 errors, 11 pages generated.
+**Blocked:** nothing
+**Next:** M5 (contact & lead capture), M6 (blog), M7 (SEO & analytics)
+**Decision:** config file at `src/content.config.ts` (Astro 6 requirement, not legacy `src/content/config.ts`); portfolio thumbnails use gradient placeholders (real images to be added in M8)
