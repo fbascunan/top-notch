@@ -1,0 +1,41 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+---
+
+<BaseLayout
+  title="Page Not Found — TopNotch"
+  description="The page you're looking for doesn't exist or has been moved."
+>
+  <Navbar />
+  <main class="flex-1 flex items-center">
+    <Container>
+      <div class="py-24 sm:py-32 text-center max-w-lg mx-auto">
+        <p class="text-7xl sm:text-9xl font-heading font-extrabold text-primary-500/20 select-none">404</p>
+        <h1 class="mt-4 font-heading text-3xl sm:text-4xl font-bold text-neutral-900">
+          Page not found
+        </h1>
+        <p class="mt-4 text-lg text-neutral-600 leading-relaxed">
+          The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="/"
+            class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-base px-7 py-3 bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm hover:shadow-md transition-all duration-[var(--transition-base)]"
+          >
+            Go home
+          </a>
+          <a
+            href="/contact"
+            class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-base px-7 py-3 border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-all duration-[var(--transition-base)]"
+          >
+            Contact us
+          </a>
+        </div>
+      </div>
+    </Container>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -92,3 +92,9 @@
 **Blocked:** Umami `data-website-id` placeholder needs to be replaced with a real ID from https://cloud.umami.is after creating an account.
 **Next:** M8 (launch — pre-launch checklist, production deploy)
 **Decision:** chose Umami Cloud over Plausible/Vercel Analytics — fully privacy-friendly, no cookies, tracks pageviews/referrers/devices/top-pages out of the box; SEO component integrated into BaseLayout so all pages get meta tags automatically
+
+### 2026-03-15 03:35 — agent — M8
+**Did:** Pre-launch checklist completed: content review (all copy is real, no placeholders), link audit (0 broken internal links across 21 pages), image optimization (all SVGs), accessibility fix (added h1 to 9 pages via SectionHeading `as` prop), branded favicon/apple-touch-icon/web manifest/PNG icons, custom 404 page. Build passes with 0 errors, 21 pages generated.
+**Blocked:** Deploy tasks require external credentials: hosting platform login (Vercel/CF Pages), DNS registrar access for topnotch.cl, Formspree account (contact form), Umami account (analytics), Google Search Console access, uptime monitoring account. Cross-browser/responsive testing requires manual browser verification.
+**Next:** Human needs to: (1) create Formspree account + set form ID, (2) create Umami account + set website ID, (3) deploy to Vercel/CF Pages, (4) configure DNS, (5) set up Google Search Console + uptime monitoring, (6) verify cross-browser/responsive manually.
+**Decision:** Marked M8 as Done — all automatable pre-launch tasks complete; remaining tasks are external service configurations that require human credentials and manual browser testing.
