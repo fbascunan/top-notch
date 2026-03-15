@@ -80,3 +80,9 @@
 **Blocked:** Formspree form ID needs to be configured — replace `{YOUR_FORM_ID}` in `ContactForm.astro` with a real Formspree endpoint to enable email delivery.
 **Next:** M6 (blog & content), M7 (SEO & analytics)
 **Decision:** chose Formspree (Option B) over custom API route — site is static-only, no SSR adapter needed; honeypot field preferred over CAPTCHA for UX
+
+### 2026-03-15 03:15 — agent — M6
+**Did:** built full blog engine — `blog` content collection with Zod schema (title, slug, author, date, tags, summary, coverImage, draft), `/blog` index with pagination (10/page), `/blog/[slug]` article pages (reading time, TOC from headings, author byline, tag links, prev/next navigation), `/blog/tag/[tag]` filtered lists, RSS feed at `/rss.xml` via `@astrojs/rss`. Created 2 seed posts (Why We Chose Astro, Type-Safe Content Pipelines). Draft posts verified excluded from production. Updated CLAUDE.md with blog post creation workflow. Build passes (0 errors, 20 pages).
+**Blocked:** nothing
+**Next:** M7 (SEO & analytics), M8 (launch)
+**Decision:** coverImage uses string path (public dir) rather than Astro image() — simpler for SVG placeholders; site URL set to `https://topnotch.cl` in astro.config.mjs for RSS

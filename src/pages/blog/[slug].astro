@@ -1,0 +1,166 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import Badge from "@/components/Badge.astro";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blog"))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  return posts.map((post, index) => ({
+    params: { slug: post.data.slug },
+    props: {
+      post,
+      prevPost: index < posts.length - 1 ? posts[index + 1] : null,
+      nextPost: index > 0 ? posts[index - 1] : null,
+    },
+  }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
+
+const formattedDate = post.data.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const readingTime = Math.ceil(post.body!.split(/\s+/).length / 200);
+
+// Build table of contents from h2 and h3 headings
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<BaseLayout title={`${post.data.title} — TopNotch Blog`} description={post.data.summary}>
+  <Navbar />
+
+  <main>
+    {/* Hero / Header */}
+    <section class="pt-24 pb-8 sm:pt-32 sm:pb-12 bg-neutral-50">
+      <Container>
+        <div class="max-w-3xl mx-auto">
+          <a
+            href="/blog"
+            class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 mb-6"
+          >
+            <svg class="mr-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to blog
+          </a>
+
+          <div class="flex flex-wrap gap-2 mb-4">
+            {post.data.tags.map((tag) => (
+              <a href={`/blog/tag/${tag}`}>
+                <Badge variant="primary">{tag}</Badge>
+              </a>
+            ))}
+          </div>
+
+          <h1 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+            {post.data.title}
+          </h1>
+
+          <div class="flex items-center gap-4 text-sm text-neutral-500">
+            <span class="font-medium text-neutral-700">{post.data.author}</span>
+            <span>·</span>
+            <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+            <span>·</span>
+            <span>{readingTime} min read</span>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    {/* Cover image */}
+    <section class="pb-8 sm:pb-12">
+      <Container>
+        <div class="max-w-4xl mx-auto">
+          <div class="aspect-video rounded-xl overflow-hidden bg-neutral-100">
+            <img
+              src={post.data.coverImage}
+              alt={post.data.title}
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    {/* Content + TOC */}
+    <section class="pb-16 sm:pb-20">
+      <Container>
+        <div class="max-w-4xl mx-auto lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
+          {/* Article body */}
+          <div class="prose prose-neutral prose-lg prose-headings:font-heading prose-headings:text-neutral-900 prose-a:text-primary-600 hover:prose-a:text-primary-700 max-w-none">
+            <Content />
+          </div>
+
+          {/* Table of contents (sticky sidebar on desktop) */}
+          {toc.length > 0 && (
+            <aside class="hidden lg:block">
+              <nav class="sticky top-28">
+                <h3 class="font-heading text-sm font-bold text-neutral-900 uppercase tracking-wider mb-3">
+                  On this page
+                </h3>
+                <ul class="space-y-2 text-sm">
+                  {toc.map((heading) => (
+                    <li class={heading.depth === 3 ? "ml-3" : ""}>
+                      <a
+                        href={`#${heading.slug}`}
+                        class="text-neutral-500 hover:text-primary-600 transition-colors"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </aside>
+          )}
+        </div>
+      </Container>
+    </section>
+
+    {/* Previous / Next navigation */}
+    {(prevPost || nextPost) && (
+      <section class="py-12 sm:py-16 border-t border-neutral-200 bg-neutral-50">
+        <Container>
+          <div class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-6">
+            {prevPost ? (
+              <a
+                href={`/blog/${prevPost.data.slug}`}
+                class="group p-5 rounded-xl border border-neutral-200 bg-white hover:shadow-md transition-all"
+              >
+                <span class="text-xs font-medium text-neutral-500 uppercase tracking-wider">← Previous</span>
+                <p class="mt-1 font-heading font-bold text-neutral-900 group-hover:text-primary-600 transition-colors">
+                  {prevPost.data.title}
+                </p>
+              </a>
+            ) : (
+              <div />
+            )}
+            {nextPost && (
+              <a
+                href={`/blog/${nextPost.data.slug}`}
+                class="group p-5 rounded-xl border border-neutral-200 bg-white hover:shadow-md transition-all text-right"
+              >
+                <span class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Next →</span>
+                <p class="mt-1 font-heading font-bold text-neutral-900 group-hover:text-primary-600 transition-colors">
+                  {nextPost.data.title}
+                </p>
+              </a>
+            )}
+          </div>
+        </Container>
+      </section>
+    )}
+  </main>
+
+  <Footer />
+</BaseLayout>

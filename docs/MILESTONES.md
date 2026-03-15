@@ -168,7 +168,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ### Blog engine
 
-- [ ] Define `blog` content collection schema:
+- [x] Define `blog` content collection schema:
   ```ts
   {
     title: string
@@ -182,20 +182,20 @@ Detailed content pages. Use Astro content collections so adding new entries is j
     body: markdown
   }
   ```
-- [ ] Build `/blog` index — paginated list (10 per page), cards with cover image, title, date, summary, tags
-- [ ] Build `/blog/[slug]` — article page with:
+- [x] Build `/blog` index — paginated list (10 per page), cards with cover image, title, date, summary, tags
+- [x] Build `/blog/[slug]` — article page with:
   - Reading time estimate
   - Table of contents (auto-generated from headings)
   - Author byline
   - Tag links
   - Previous/next article navigation
-- [ ] Build `/blog/tag/[tag]` — filtered post list by tag
-- [ ] Add RSS feed (`@astrojs/rss`) at `/rss.xml`
+- [x] Build `/blog/tag/[tag]` — filtered post list by tag
+- [x] Add RSS feed (`@astrojs/rss`) at `/rss.xml`
 
 ### Content workflow
 
-- [ ] Document in project `CLAUDE.md`: how to create a new blog post (add `.md` to `src/content/blog/`, frontmatter template)
-- [ ] Write 1–2 seed posts (can be about TopNotch's tech stack, approach, or a tutorial)
+- [x] Document in project `CLAUDE.md`: how to create a new blog post (add `.md` to `src/content/blog/`, frontmatter template)
+- [x] Write 1–2 seed posts (can be about TopNotch's tech stack, approach, or a tutorial)
 
 ### Done when
 
@@ -271,7 +271,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | M3 — Landing Page | Done | M2 |
 | M4 — Services & Portfolio | Done | M2 |
 | M5 — Contact & Lead Capture | Done | M3 |
-| M6 — Blog & Content | Planned | M2 |
+| M6 — Blog & Content | Done | M2 |
 | M7 — SEO & Analytics | Planned | M3 |
 | M8 — Launch | Planned | M3–M7 |
 
