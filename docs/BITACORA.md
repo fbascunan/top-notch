@@ -30,3 +30,29 @@
 **Did:** rewrote MILESTONES.md with concrete stack (Astro, Tailwind v4, TS, pnpm), task checklists, acceptance criteria, content collection schemas, and dependency graph
 **Blocked:** nothing
 **Next:** start M1 — scaffold the Astro project, configure tooling, set up CI
+
+### 2026-03-15 01:00 — runner — M1
+**Did:** milestone runner detected failure
+**Blocked:** Could not extract milestone content
+**Next:** investigate and retry M1
+
+### 2026-03-15 01:07 — runner — M1
+**Did:** milestone runner detected failure
+**Blocked:** Claude exited but milestone status was not updated to Done
+**Next:** investigate and retry M1
+
+### 2026-03-15 01:12 — runner — M1
+**Did:** milestone runner detected failure
+**Blocked:** Claude exited but milestone status was not updated to Done
+**Next:** investigate and retry M1
+
+### 2026-03-15 01:16 — runner — M1
+**Did:** milestone runner detected failure
+**Blocked:** Claude exited but milestone status was not updated to Done
+**Next:** investigate and retry M1
+
+### 2026-03-15 01:19 — agent — M1
+**Did:** scaffolded Astro 6 project with TS strict, Tailwind CSS v4 (`@tailwindcss/vite`), path aliases, folder structure (components/layouts/pages/content/lib/assets), CI workflow, CLAUDE.md. Verified `pnpm dev`, `pnpm lint`, and `pnpm build` all pass.
+**Blocked:** nothing
+**Next:** start M2 — branding, design tokens, core components
+**Decision:** using `@tailwindcss/vite` plugin (Tailwind v4 native) instead of deprecated `@astrojs/tailwind` integration; hosting decision deferred to M3 deploy

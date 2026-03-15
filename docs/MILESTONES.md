@@ -19,11 +19,11 @@ Initialize the repo, lock the stack, and get a working dev server with CI.
 
 ### Tasks
 
-- [ ] `pnpm create astro@latest` with TypeScript strict template
-- [ ] Add Tailwind CSS v4 integration (`@astrojs/tailwind`)
-- [ ] Configure `tsconfig.json` — strict, path aliases (`@/components`, `@/layouts`, `@/lib`)
-- [ ] Create `.github/workflows/ci.yml` — install, lint, type-check, build
-- [ ] Create initial folder structure:
+- [x] `pnpm create astro@latest` with TypeScript strict template
+- [x] Add Tailwind CSS v4 integration (`@astrojs/tailwind`)
+- [x] Configure `tsconfig.json` — strict, path aliases (`@/components`, `@/layouts`, `@/lib`)
+- [x] Create `.github/workflows/ci.yml` — install, lint, type-check, build
+- [x] Create initial folder structure:
   ```
   src/
   ├── components/    # reusable UI
@@ -33,8 +33,8 @@ Initialize the repo, lock the stack, and get a working dev server with CI.
   ├── lib/           # utilities, constants, types
   └── assets/        # images, fonts
   ```
-- [ ] Add `CLAUDE.md` to project root with build/dev/lint commands
-- [ ] Verify: `pnpm dev` serves on localhost, `pnpm build` produces static output, CI passes
+- [x] Add `CLAUDE.md` to project root with build/dev/lint commands
+- [x] Verify: `pnpm dev` serves on localhost, `pnpm build` produces static output, CI passes
 
 ### Done when
 
@@ -266,7 +266,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 | Milestone | Status | Blocking |
 |-----------|--------|----------|
-| M1 — Project Setup | Planned | — |
+| M1 — Project Setup | Done | — |
 | M2 — Branding & Design System | Planned | M1 |
 | M3 — Landing Page | Planned | M2 |
 | M4 — Services & Portfolio | Planned | M2 |
