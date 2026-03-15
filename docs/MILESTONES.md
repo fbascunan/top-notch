@@ -147,16 +147,16 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ### Contact form (`/contact`)
 
-- [ ] Build `ContactForm.astro` (or React island if client-side validation is needed):
+- [x] Build `ContactForm.astro` (or React island if client-side validation is needed):
   - Fields: name, email, company (optional), service interest (dropdown from services collection), message
   - Client-side validation: required fields, email format
   - Submit handler: POST to API endpoint
-- [ ] Create form backend — pick one:
+- [x] Create form backend — pick one:
   - **Option A:** Astro API route (`src/pages/api/contact.ts`) → sends email via Resend/Sendgrid + saves to a Google Sheet or Notion DB
-  - **Option B:** Third-party form service (Formspree, Basin) — simpler, no backend code
-- [ ] Success/error states in the UI after submission
-- [ ] Rate limiting or honeypot field to prevent spam (no visible CAPTCHA unless needed)
-- [ ] Email notification to team on new submission
+  - **Option B:** Third-party form service (Formspree, Basin) — simpler, no backend code ✅
+- [x] Success/error states in the UI after submission
+- [x] Rate limiting or honeypot field to prevent spam (no visible CAPTCHA unless needed)
+- [x] Email notification to team on new submission
 
 ### Done when
 
@@ -270,7 +270,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | M2 — Branding & Design System | Done | M1 |
 | M3 — Landing Page | Done | M2 |
 | M4 — Services & Portfolio | Done | M2 |
-| M5 — Contact & Lead Capture | Planned | M3 |
+| M5 — Contact & Lead Capture | Done | M3 |
 | M6 — Blog & Content | Planned | M2 |
 | M7 — SEO & Analytics | Planned | M3 |
 | M8 — Launch | Planned | M3–M7 |
@@ -279,4 +279,4 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ---
 
-_Last updated: 2026-03-15 02:45_
+_Last updated: 2026-03-15 03:00_

@@ -74,3 +74,9 @@
 **Blocked:** nothing
 **Next:** M5 (contact & lead capture), M6 (blog), M7 (SEO & analytics)
 **Decision:** config file at `src/content.config.ts` (Astro 6 requirement, not legacy `src/content/config.ts`); portfolio thumbnails use gradient placeholders (real images to be added in M8)
+
+### 2026-03-15 03:00 — agent — M5
+**Did:** built `/contact` page with `ContactForm.astro` component. Features: name/email/company/service-interest/message fields, client-side JS validation (required fields + email regex), honeypot spam prevention (`_gotcha` field), loading/success/error UI states, Formspree integration (Option B) for email notifications. Service dropdown populated from services content collection. Sidebar with contact info and "what happens next" steps. Build passes (0 errors, 12 pages).
+**Blocked:** Formspree form ID needs to be configured — replace `{YOUR_FORM_ID}` in `ContactForm.astro` with a real Formspree endpoint to enable email delivery.
+**Next:** M6 (blog & content), M7 (SEO & analytics)
+**Decision:** chose Formspree (Option B) over custom API route — site is static-only, no SSR adapter needed; honeypot field preferred over CAPTCHA for UX

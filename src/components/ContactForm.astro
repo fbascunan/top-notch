@@ -1,0 +1,217 @@
+---
+interface Props {
+  services?: { slug: string; title: string }[];
+}
+
+const { services = [] } = Astro.props;
+
+const formspreeEndpoint = "https://formspree.io/f/{YOUR_FORM_ID}";
+---
+
+<form
+  id="contact-form"
+  method="POST"
+  action={formspreeEndpoint}
+  class="space-y-6"
+  novalidate
+>
+  <!-- Honeypot field — hidden from real users, bots fill it in -->
+  <div class="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">
+    <label for="_gotcha">Do not fill this out</label>
+    <input type="text" name="_gotcha" id="_gotcha" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <!-- Name -->
+  <div>
+    <label for="name" class="block text-sm font-medium text-neutral-700 mb-1.5">
+      Name <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      required
+      autocomplete="name"
+      placeholder="Your full name"
+      class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 transition-colors duration-[var(--transition-base)] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+    />
+    <p class="mt-1 text-sm text-red-600 hidden" data-error="name">Please enter your name.</p>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="email" class="block text-sm font-medium text-neutral-700 mb-1.5">
+      Email <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      required
+      autocomplete="email"
+      placeholder="you@company.com"
+      class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 transition-colors duration-[var(--transition-base)] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+    />
+    <p class="mt-1 text-sm text-red-600 hidden" data-error="email">Please enter a valid email address.</p>
+  </div>
+
+  <!-- Company (optional) -->
+  <div>
+    <label for="company" class="block text-sm font-medium text-neutral-700 mb-1.5">
+      Company <span class="text-neutral-400 font-normal">(optional)</span>
+    </label>
+    <input
+      type="text"
+      id="company"
+      name="company"
+      autocomplete="organization"
+      placeholder="Your company name"
+      class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 transition-colors duration-[var(--transition-base)] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+    />
+  </div>
+
+  <!-- Service Interest -->
+  <div>
+    <label for="service" class="block text-sm font-medium text-neutral-700 mb-1.5">
+      Service Interest <span class="text-red-500">*</span>
+    </label>
+    <select
+      id="service"
+      name="service"
+      required
+      class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 transition-colors duration-[var(--transition-base)] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10"
+    >
+      <option value="">Select a service…</option>
+      {services.map((s) => (
+        <option value={s.slug}>{s.title}</option>
+      ))}
+      <option value="other">Other / Not sure</option>
+    </select>
+    <p class="mt-1 text-sm text-red-600 hidden" data-error="service">Please select a service.</p>
+  </div>
+
+  <!-- Message -->
+  <div>
+    <label for="message" class="block text-sm font-medium text-neutral-700 mb-1.5">
+      Message <span class="text-red-500">*</span>
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      required
+      rows="5"
+      placeholder="Tell us about your project, timeline, and goals…"
+      class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 transition-colors duration-[var(--transition-base)] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none resize-y"
+    ></textarea>
+    <p class="mt-1 text-sm text-red-600 hidden" data-error="message">Please enter a message.</p>
+  </div>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-base px-7 py-3 bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm hover:shadow-md transition-all duration-[var(--transition-base)] focus:outline-2 focus:outline-offset-2 focus:outline-primary-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+  >
+    <span class="btn-text">Send message</span>
+    <svg class="btn-spinner hidden ml-2 w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+  </button>
+</form>
+
+<!-- Success message -->
+<div id="form-success" class="hidden rounded-xl border border-green-200 bg-green-50 p-6 text-center">
+  <svg class="mx-auto mb-3 w-12 h-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <h3 class="font-heading text-xl font-semibold text-green-800 mb-1">Message sent!</h3>
+  <p class="text-green-700">Thanks for reaching out. We'll get back to you within one business day.</p>
+</div>
+
+<!-- Error message -->
+<div id="form-error" class="hidden rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+  <svg class="mx-auto mb-3 w-12 h-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+  </svg>
+  <h3 class="font-heading text-xl font-semibold text-red-800 mb-1">Something went wrong</h3>
+  <p class="text-red-700">We couldn't send your message. Please try again or email us directly at <a href="mailto:hello@topnotch.cl" class="underline font-medium">hello@topnotch.cl</a>.</p>
+</div>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const successEl = document.getElementById("form-success")!;
+  const errorEl = document.getElementById("form-error")!;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function showError(field: string) {
+    const el = form.querySelector(`[data-error="${field}"]`) as HTMLElement;
+    if (el) el.classList.remove("hidden");
+    const input = form.querySelector(`[name="${field}"]`) as HTMLElement;
+    if (input) input.classList.add("border-red-500");
+  }
+
+  function clearErrors() {
+    form.querySelectorAll("[data-error]").forEach((el) => el.classList.add("hidden"));
+    form.querySelectorAll("input, select, textarea").forEach((el) =>
+      el.classList.remove("border-red-500")
+    );
+  }
+
+  function validate(): boolean {
+    clearErrors();
+    let valid = true;
+    const data = new FormData(form);
+
+    if (!data.get("name")?.toString().trim()) { showError("name"); valid = false; }
+    if (!emailRegex.test(data.get("email")?.toString().trim() ?? "")) { showError("email"); valid = false; }
+    if (!data.get("service")?.toString()) { showError("service"); valid = false; }
+    if (!data.get("message")?.toString().trim()) { showError("message"); valid = false; }
+
+    return valid;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    // Honeypot check — if filled, silently pretend success
+    const honeypot = (form.querySelector('[name="_gotcha"]') as HTMLInputElement).value;
+    if (honeypot) {
+      form.classList.add("hidden");
+      successEl.classList.remove("hidden");
+      return;
+    }
+
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const btnText = btn.querySelector(".btn-text") as HTMLElement;
+    const btnSpinner = btn.querySelector(".btn-spinner") as HTMLElement;
+
+    btn.disabled = true;
+    btnText.textContent = "Sending…";
+    btnSpinner.classList.remove("hidden");
+
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        form.classList.add("hidden");
+        successEl.classList.remove("hidden");
+      } else {
+        throw new Error("Form submission failed");
+      }
+    } catch {
+      form.classList.add("hidden");
+      errorEl.classList.remove("hidden");
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = "Send message";
+      btnSpinner.classList.add("hidden");
+    }
+  });
+</script>
