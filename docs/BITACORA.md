@@ -56,3 +56,9 @@
 **Blocked:** nothing
 **Next:** start M2 — branding, design tokens, core components
 **Decision:** using `@tailwindcss/vite` plugin (Tailwind v4 native) instead of deprecated `@astrojs/tailwind` integration; hosting decision deferred to M3 deploy
+
+### 2026-03-15 02:08 — agent — M2
+**Did:** built full design system — design tokens via Tailwind v4 `@theme` in `global.css` (colors: primary/secondary/accent/neutral/semantic, typography: Plus Jakarta Sans + Inter, spacing, radii, shadows, transitions). Created BaseLayout, Container, Button (4 variants × 3 sizes, href→a), Card (image slot, optional link), SectionHeading (eyebrow/heading/subheading), Badge (5 variants), Navbar (sticky + mobile hamburger via plain JS), Footer (logo/nav/social/copyright). `/design` page renders all components. Build passes with 0 errors.
+**Blocked:** nothing
+**Next:** M3 — Landing Page (hero, services, portfolio teaser, CTA)
+**Decision:** design tokens defined in CSS `@theme` (Tailwind v4 native) rather than `tailwind.config.ts` (v3 pattern); fonts loaded via Google Fonts CDN

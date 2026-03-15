@@ -48,21 +48,21 @@ Define the visual identity and build the component primitives everything else us
 
 ### Tasks
 
-- [ ] Define design tokens in `tailwind.config.ts`:
+- [x] Define design tokens in `tailwind.config.ts`:
   - **Colors:** primary (brand), secondary, accent, neutral scale, semantic (success/warning/error)
   - **Typography:** font families (1 heading, 1 body — Google Fonts or self-hosted), size scale, line heights
   - **Spacing:** consistent scale (4px base)
   - **Border radius, shadows, transitions**
-- [ ] Create `BaseLayout.astro` — `<html>`, `<head>` (meta charset, viewport, font loading), `<body>`, slot
-- [ ] Build core components (all in `src/components/`):
+- [x] Create `BaseLayout.astro` — `<html>`, `<head>` (meta charset, viewport, font loading), `<body>`, slot
+- [x] Build core components (all in `src/components/`):
   - `Button.astro` — variants: primary, secondary, ghost, outline. Sizes: sm, md, lg. Accepts `href` (renders `<a>`) or no href (renders `<button>`)
   - `Card.astro` — image slot, title, description, optional link
   - `SectionHeading.astro` — eyebrow text, heading, subheading
   - `Container.astro` — max-width wrapper with responsive padding
   - `Badge.astro` — tech tags, status labels
-- [ ] Create `Navbar.astro` — logo, nav links, mobile hamburger menu (no JS framework — use Astro island or plain JS)
-- [ ] Create `Footer.astro` — logo, nav links, social icons, copyright
-- [ ] Add a `/design` page that renders every component for visual QA
+- [x] Create `Navbar.astro` — logo, nav links, mobile hamburger menu (no JS framework — use Astro island or plain JS)
+- [x] Create `Footer.astro` — logo, nav links, social icons, copyright
+- [x] Add a `/design` page that renders every component for visual QA
 
 ### Done when
 
@@ -267,7 +267,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | Milestone | Status | Blocking |
 |-----------|--------|----------|
 | M1 — Project Setup | Done | — |
-| M2 — Branding & Design System | Planned | M1 |
+| M2 — Branding & Design System | Done | M1 |
 | M3 — Landing Page | Planned | M2 |
 | M4 — Services & Portfolio | Planned | M2 |
 | M5 — Contact & Lead Capture | Planned | M3 |
@@ -279,4 +279,4 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ---
 
-_Last updated: 2026-03-15_
+_Last updated: 2026-03-15 02:08_

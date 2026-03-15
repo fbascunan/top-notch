@@ -1,0 +1,268 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import Button from "@/components/Button.astro";
+import Card from "@/components/Card.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Badge from "@/components/Badge.astro";
+---
+
+<BaseLayout title="Design System — TopNotch">
+  <Navbar />
+
+  <main class="flex-1 py-12 sm:py-16">
+    <Container>
+      <!-- Page header -->
+      <div class="mb-16">
+        <h1 class="font-heading text-4xl sm:text-5xl font-bold text-neutral-900">Design System</h1>
+        <p class="mt-3 text-lg text-neutral-600">Visual QA page — every component at a glance.</p>
+      </div>
+
+      <!-- Colors -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Colors</h2>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Primary</h3>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <div class="w-16 h-16 rounded-lg bg-primary-50"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-100"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-200"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-300"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-400"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-500"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-600"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-700"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-800"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-900"></div>
+          <div class="w-16 h-16 rounded-lg bg-primary-950"></div>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Secondary</h3>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <div class="w-16 h-16 rounded-lg bg-secondary-50"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-100"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-200"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-300"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-400"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-500"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-600"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-700"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-800"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-900"></div>
+          <div class="w-16 h-16 rounded-lg bg-secondary-950"></div>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Accent</h3>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <div class="w-16 h-16 rounded-lg bg-accent-50"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-100"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-200"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-300"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-400"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-500"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-600"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-700"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-800"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-900"></div>
+          <div class="w-16 h-16 rounded-lg bg-accent-950"></div>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Neutral</h3>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <div class="w-16 h-16 rounded-lg bg-neutral-50 border border-neutral-200"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-100"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-200"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-300"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-400"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-500"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-600"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-700"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-800"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-900"></div>
+          <div class="w-16 h-16 rounded-lg bg-neutral-950"></div>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Semantic</h3>
+        <div class="flex flex-wrap gap-4 mb-6">
+          <div class="flex gap-2">
+            <div class="w-16 h-16 rounded-lg bg-success-50 border border-success-500/20"></div>
+            <div class="w-16 h-16 rounded-lg bg-success-500"></div>
+            <div class="w-16 h-16 rounded-lg bg-success-700"></div>
+          </div>
+          <div class="flex gap-2">
+            <div class="w-16 h-16 rounded-lg bg-warning-50 border border-warning-500/20"></div>
+            <div class="w-16 h-16 rounded-lg bg-warning-500"></div>
+            <div class="w-16 h-16 rounded-lg bg-warning-700"></div>
+          </div>
+          <div class="flex gap-2">
+            <div class="w-16 h-16 rounded-lg bg-error-50 border border-error-500/20"></div>
+            <div class="w-16 h-16 rounded-lg bg-error-500"></div>
+            <div class="w-16 h-16 rounded-lg bg-error-700"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typography -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Typography</h2>
+
+        <div class="space-y-4 mb-8">
+          <p class="font-heading text-6xl font-bold">Heading 6xl — Plus Jakarta Sans</p>
+          <p class="font-heading text-5xl font-bold">Heading 5xl</p>
+          <p class="font-heading text-4xl font-bold">Heading 4xl</p>
+          <p class="font-heading text-3xl font-bold">Heading 3xl</p>
+          <p class="font-heading text-2xl font-bold">Heading 2xl</p>
+          <p class="font-heading text-xl font-bold">Heading xl</p>
+          <p class="font-heading text-lg font-bold">Heading lg</p>
+        </div>
+
+        <div class="space-y-3">
+          <p class="font-body text-lg">Body large — Inter. The quick brown fox jumps over the lazy dog.</p>
+          <p class="font-body text-base">Body base — Inter. The quick brown fox jumps over the lazy dog.</p>
+          <p class="font-body text-sm">Body small — Inter. The quick brown fox jumps over the lazy dog.</p>
+          <p class="font-body text-xs">Body extra small — Inter. The quick brown fox jumps over the lazy dog.</p>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Buttons</h2>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Variants</h3>
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">Sizes</h3>
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+        </div>
+
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500 mb-3">As link</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button href="#" variant="primary">Link Primary</Button>
+          <Button href="#" variant="outline">Link Outline</Button>
+        </div>
+      </section>
+
+      <!-- Badges -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Badges</h2>
+        <div class="flex flex-wrap items-center gap-3">
+          <Badge>Default</Badge>
+          <Badge variant="primary">Primary</Badge>
+          <Badge variant="success">Success</Badge>
+          <Badge variant="warning">Warning</Badge>
+          <Badge variant="error">Error</Badge>
+          <Badge variant="primary">Astro</Badge>
+          <Badge variant="primary">Tailwind</Badge>
+          <Badge variant="primary">TypeScript</Badge>
+        </div>
+      </section>
+
+      <!-- Section Heading -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Section Heading</h2>
+
+        <div class="space-y-12">
+          <SectionHeading
+            eyebrow="What we do"
+            heading="Our Services"
+            subheading="We deliver high-quality software solutions tailored to your business needs."
+            align="center"
+          />
+
+          <SectionHeading
+            eyebrow="Case studies"
+            heading="Featured Work"
+            subheading="See how we've helped businesses grow with modern technology."
+            align="left"
+          />
+        </div>
+      </section>
+
+      <!-- Cards -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Cards</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card title="Web Development" description="Modern, fast, and responsive web applications built with cutting-edge technology.">
+            <div slot="image" class="h-48 bg-gradient-to-br from-primary-400 to-primary-600"></div>
+          </Card>
+
+          <Card
+            title="Mobile Apps"
+            description="Native and cross-platform mobile experiences that users love."
+            href="#"
+          >
+            <div slot="image" class="h-48 bg-gradient-to-br from-accent-400 to-accent-600"></div>
+          </Card>
+
+          <Card title="AI & Automation" description="Intelligent systems that streamline your business processes.">
+            <div slot="image" class="h-48 bg-gradient-to-br from-secondary-400 to-secondary-600"></div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <Badge variant="primary">Python</Badge>
+              <Badge variant="primary">LLMs</Badge>
+              <Badge variant="primary">RAG</Badge>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <!-- Container demo -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Container</h2>
+        <p class="text-neutral-600 mb-4">This entire page is wrapped in a Container (max-width 80rem with responsive padding).</p>
+        <div class="bg-primary-50 border border-primary-200 rounded-lg p-4 text-sm text-primary-700">
+          Container provides <code>max-w-7xl</code> with <code>px-4 sm:px-6 lg:px-8</code> responsive padding.
+        </div>
+      </section>
+
+      <!-- Shadows -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Shadows</h2>
+        <div class="flex flex-wrap gap-6">
+          <div class="w-32 h-32 rounded-lg bg-white shadow-sm flex items-center justify-center text-sm text-neutral-500">sm</div>
+          <div class="w-32 h-32 rounded-lg bg-white shadow-md flex items-center justify-center text-sm text-neutral-500">md</div>
+          <div class="w-32 h-32 rounded-lg bg-white shadow-lg flex items-center justify-center text-sm text-neutral-500">lg</div>
+          <div class="w-32 h-32 rounded-lg bg-white shadow-xl flex items-center justify-center text-sm text-neutral-500">xl</div>
+        </div>
+      </section>
+
+      <!-- Border Radius -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Border Radius</h2>
+        <div class="flex flex-wrap items-end gap-4">
+          <div class="w-20 h-20 bg-primary-200 rounded-sm flex items-center justify-center text-xs text-primary-700">sm</div>
+          <div class="w-20 h-20 bg-primary-200 rounded-md flex items-center justify-center text-xs text-primary-700">md</div>
+          <div class="w-20 h-20 bg-primary-200 rounded-lg flex items-center justify-center text-xs text-primary-700">lg</div>
+          <div class="w-20 h-20 bg-primary-200 rounded-xl flex items-center justify-center text-xs text-primary-700">xl</div>
+          <div class="w-20 h-20 bg-primary-200 rounded-2xl flex items-center justify-center text-xs text-primary-700">2xl</div>
+          <div class="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center text-xs text-primary-700">full</div>
+        </div>
+      </section>
+
+      <!-- Spacing -->
+      <section class="mb-16">
+        <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-6">Spacing Scale (4px base)</h2>
+        <div class="space-y-2">
+          {[1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24].map((n) => (
+            <div class="flex items-center gap-3">
+              <span class="w-10 text-xs text-neutral-500 text-right">{n * 4}px</span>
+              <div class="h-3 bg-primary-400 rounded-sm" style={`width: ${n * 4}px`}></div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>
