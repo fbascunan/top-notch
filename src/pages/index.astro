@@ -2,16 +2,24 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
-import Container from "@/components/Container.astro";
+import Hero from "@/components/Hero.astro";
+import ServicesOverview from "@/components/ServicesOverview.astro";
+import WhyUs from "@/components/WhyUs.astro";
+import PortfolioTeaser from "@/components/PortfolioTeaser.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="TopNotch — Software Development Agency"
+  description="From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft."
+>
   <Navbar />
-  <main class="flex-1 flex items-center justify-center">
-    <Container class="py-24 text-center">
-      <h1 class="font-heading text-5xl sm:text-6xl font-bold text-neutral-900">TopNotch</h1>
-      <p class="mt-4 text-lg text-neutral-600">Software development agency — coming soon.</p>
-    </Container>
+  <main class="flex-1">
+    <Hero />
+    <ServicesOverview />
+    <WhyUs />
+    <PortfolioTeaser />
+    <CtaBanner />
   </main>
   <Footer />
 </BaseLayout>

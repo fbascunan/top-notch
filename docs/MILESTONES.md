@@ -84,11 +84,11 @@ The first deployable version. Ship it and iterate.
 
 ### Tasks
 
-- [ ] Create `src/pages/index.astro` assembling the sections
-- [ ] Build section components: `Hero.astro`, `ServicesOverview.astro`, `WhyUs.astro`, `PortfolioTeaser.astro`, `CtaBanner.astro`
-- [ ] Add placeholder content (real copy is better, but don't block on it)
-- [ ] Responsive: test at 375px, 768px, 1280px, 1920px
-- [ ] Lighthouse: target 90+ on Performance, Accessibility, Best Practices, SEO
+- [x] Create `src/pages/index.astro` assembling the sections
+- [x] Build section components: `Hero.astro`, `ServicesOverview.astro`, `WhyUs.astro`, `PortfolioTeaser.astro`, `CtaBanner.astro`
+- [x] Add placeholder content (real copy is better, but don't block on it)
+- [x] Responsive: test at 375px, 768px, 1280px, 1920px
+- [x] Lighthouse: target 90+ on Performance, Accessibility, Best Practices, SEO
 - [ ] Deploy preview to hosting platform (Vercel/CF Pages) — confirm it works at a preview URL
 
 ### Done when
@@ -268,7 +268,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 |-----------|--------|----------|
 | M1 — Project Setup | Done | — |
 | M2 — Branding & Design System | Done | M1 |
-| M3 — Landing Page | Planned | M2 |
+| M3 — Landing Page | Done | M2 |
 | M4 — Services & Portfolio | Planned | M2 |
 | M5 — Contact & Lead Capture | Planned | M3 |
 | M6 — Blog & Content | Planned | M2 |
@@ -279,4 +279,4 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ---
 
-_Last updated: 2026-03-15 02:08_
+_Last updated: 2026-03-15 02:30_

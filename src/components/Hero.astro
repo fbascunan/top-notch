@@ -1,0 +1,30 @@
+---
+import Container from "./Container.astro";
+import Button from "./Button.astro";
+---
+
+<section class="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50">
+  <!-- Background decoration -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary-100/40 blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-accent-100/30 blur-3xl"></div>
+  </div>
+
+  <Container class="relative py-24 sm:py-32 lg:py-40">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-heading text-sm sm:text-base font-semibold uppercase tracking-widest text-primary-600 mb-4">
+        Software Development Agency
+      </p>
+      <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 leading-tight">
+        We build software that <span class="text-primary-600">moves your business forward</span>
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed">
+        From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.
+      </p>
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <Button href="/contact" variant="primary" size="lg">Talk to us</Button>
+        <Button href="/portfolio" variant="outline" size="lg">See our work</Button>
+      </div>
+    </div>
+  </Container>
+</section>
