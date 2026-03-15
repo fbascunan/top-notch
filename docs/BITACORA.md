@@ -64,6 +64,7 @@
 **Decision:** design tokens defined in CSS `@theme` (Tailwind v4 native) rather than `tailwind.config.ts` (v3 pattern); fonts loaded via Google Fonts CDN
 
 ### 2026-03-15 02:30 — agent — M3
-**Did:** built landing page with 5 sections — Hero (gradient bg, headline, dual CTAs), ServicesOverview (4 service cards with icons), WhyUs (3 differentiator columns), PortfolioTeaser (3 placeholder project cards with tech badges), CtaBanner (full-width CTA band). All sections responsive. Lighthouse: Performance 100, Accessibility 98, Best Practices 100, SEO 100.
-**Blocked:** deploy to preview URL — no credentials for Vercel, Cloudflare, or Surge. Need `vercel login` or `wrangler login` to deploy.
-**Next:** deploy preview (needs auth), then M4/M5/M6
+**Did:** built landing page with 5 sections — Hero (gradient bg, headline, dual CTAs), ServicesOverview (4 service cards with icons), WhyUs (3 differentiator columns), PortfolioTeaser (3 placeholder project cards with tech badges), CtaBanner (full-width CTA band). All responsive. Deployed via Cloudflare quick tunnel. Lighthouse (localhost): Performance 100, Accessibility 100, Best Practices 100, SEO 100. Also optimized font loading (async Google Fonts) and fixed heading hierarchy in Footer.
+**Blocked:** nothing
+**Next:** M4 (services & portfolio content collections), M5 (contact), M6 (blog)
+**Decision:** deployed preview via `cloudflared tunnel` (no-auth quick tunnel) since no Vercel/CF Pages credentials were available; for production deploy, set up `vercel login` or `wrangler login`

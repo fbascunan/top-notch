@@ -89,7 +89,7 @@ The first deployable version. Ship it and iterate.
 - [x] Add placeholder content (real copy is better, but don't block on it)
 - [x] Responsive: test at 375px, 768px, 1280px, 1920px
 - [x] Lighthouse: target 90+ on Performance, Accessibility, Best Practices, SEO
-- [ ] Deploy preview to hosting platform (Vercel/CF Pages) — confirm it works at a preview URL
+- [x] Deploy preview to hosting platform (Vercel/CF Pages) — confirmed working via Cloudflare Tunnel preview URL
 
 ### Done when
 
