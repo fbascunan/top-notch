@@ -340,17 +340,17 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 
 ### Tasks
 
-- [ ] Create `/projects` index page — grid of project cards fetched from Supabase `projects` table (name, domain, status, milestone progress bar)
-- [ ] Build `ProjectCard.astro` component — thumbnail/icon, project name, status badge, milestone completion percentage
-- [ ] Create dynamic `/projects/[slug]` pages — one landing page per project, generated from DB data:
+- [x] Create `/projects` index page — grid of project cards fetched from Supabase `projects` table (name, domain, status, milestone progress bar)
+- [x] Build `ProjectCard.astro` component — thumbnail/icon, project name, status badge, milestone completion percentage
+- [x] Create dynamic `/projects/[slug]` pages — one landing page per project, generated from DB data:
   - Project description, domain link, tech stack
   - Milestone timeline/roadmap showing status of each milestone (Done/In Progress/Planned)
   - Task completion stats per milestone
-- [ ] Build `MilestoneTimeline.astro` component — visual roadmap with status indicators (color-coded by status)
-- [ ] Add Supabase data fetching at build time (Astro static mode) with ISR or rebuild-on-webhook for updates
-- [ ] Add the "Projects" link to `Navbar.astro`
-- [ ] Responsive layout for project grid and landing pages (mobile-first)
-- [ ] Fallback to seed/static data when Supabase env vars are missing (per SUPABASE.md lineament)
+- [x] Build `MilestoneTimeline.astro` component — visual roadmap with status indicators (color-coded by status)
+- [x] Add Supabase data fetching at build time (Astro static mode) with ISR or rebuild-on-webhook for updates
+- [x] Add the "Projects" link to `Navbar.astro`
+- [x] Responsive layout for project grid and landing pages (mobile-first)
+- [x] Fallback to seed/static data when Supabase env vars are missing (per SUPABASE.md lineament)
 
 ### Acceptance Criteria
 
@@ -377,7 +377,7 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 | M9 — Internationalization (i18n) | Done | M8 |
 | M10 — Netlify Deployment | Done | M9 |
 | M11 — Supabase Setup & Project Database | Done | M10 |
-| M12 — Project Showcase & Dynamic Landing Pages | Planned | M11 |
+| M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 
 > M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3. M9 and M10 are sequential after QA. M11 and M12 are sequential after deployment.
 

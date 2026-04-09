@@ -1,0 +1,97 @@
+---
+import { t, type Locale } from "../i18n/index";
+import type { MilestoneDetail } from "../lib/projects-data";
+
+interface Props {
+  milestones: MilestoneDetail[];
+  lang?: Locale;
+}
+
+const { milestones, lang = "es" } = Astro.props;
+
+const statusConfig: Record<string, { color: string; bg: string; border: string; icon: string; label: string }> = {
+  Done: {
+    color: "text-success-700",
+    bg: "bg-success-50",
+    border: "border-success-300",
+    icon: "M5 13l4 4L19 7",
+    label: t(lang, "projects.milestoneDone"),
+  },
+  "In Progress": {
+    color: "text-primary-700",
+    bg: "bg-primary-50",
+    border: "border-primary-300",
+    icon: "M12 8v4l3 3",
+    label: t(lang, "projects.milestoneInProgress"),
+  },
+  Planned: {
+    color: "text-neutral-500",
+    bg: "bg-neutral-50",
+    border: "border-neutral-200",
+    icon: "M12 6v6m0 0v6m0-6h6m-6 0H6",
+    label: t(lang, "projects.milestonePlanned"),
+  },
+  Blocked: {
+    color: "text-error-700",
+    bg: "bg-error-50",
+    border: "border-error-300",
+    icon: "M6 18L18 6M6 6l12 12",
+    label: t(lang, "projects.milestoneBlocked"),
+  },
+};
+---
+
+<div class="relative">
+  {milestones.map((milestone, index) => {
+    const config = statusConfig[milestone.status] ?? statusConfig.Planned;
+    const isLast = index === milestones.length - 1;
+
+    return (
+      <div class="relative flex gap-4 sm:gap-6 pb-8 last:pb-0">
+        {/* Timeline line */}
+        {!isLast && (
+          <div class="absolute left-[15px] sm:left-[19px] top-10 bottom-0 w-0.5 bg-neutral-200" />
+        )}
+
+        {/* Status dot */}
+        <div class={`relative z-10 flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full ${config.bg} ${config.border} border-2 flex items-center justify-center`}>
+          <svg class={`w-4 h-4 sm:w-5 sm:h-5 ${config.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d={config.icon} />
+          </svg>
+        </div>
+
+        {/* Content */}
+        <div class="flex-1 min-w-0 pt-0.5">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="text-xs font-mono text-neutral-400">M{milestone.number}</span>
+            <h3 class="font-heading text-base sm:text-lg font-semibold text-neutral-900">
+              {milestone.title}
+            </h3>
+            <span class={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${config.bg} ${config.color}`}>
+              {config.label}
+            </span>
+          </div>
+
+          {milestone.description && (
+            <p class="text-sm text-neutral-500 mb-2">{milestone.description}</p>
+          )}
+
+          {/* Task progress (if available) */}
+          {milestone.totalTasks > 0 && (
+            <div class="flex items-center gap-2 text-xs text-neutral-400">
+              <div class="w-20 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                <div
+                  class="h-full rounded-full bg-primary-400"
+                  style={`width: ${milestone.totalTasks > 0 ? Math.round((milestone.doneTasks / milestone.totalTasks) * 100) : 0}%`}
+                />
+              </div>
+              <span>
+                {milestone.doneTasks}/{milestone.totalTasks} {t(lang, "projects.tasks")}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  })}
+</div>

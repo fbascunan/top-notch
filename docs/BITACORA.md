@@ -121,3 +121,9 @@
 **Blocked:** Human needs to create Supabase project at supabase.com/dashboard, then set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in `.env` and run `supabase link && supabase db push`.
 **Next:** M12 — Project Showcase & Dynamic Landing Pages (fetch from Supabase at build time)
 **Decision:** used untyped SupabaseClient to avoid supabase-js v2.102 generic type resolution issues; env vars use `SUPABASE_URL`/`SUPABASE_ANON_KEY` (server-side, Astro static build) with `VITE_*` fallback for compatibility
+
+### 2026-04-09 — agent — M12
+**Did:** built project showcase pages. Created `projects-data.ts` (Supabase fetch + seed fallback), `ProjectCard.astro` (gradient thumbnail, status badge, progress bar), `MilestoneTimeline.astro` (visual roadmap with color-coded status dots). Built `/projects` index (ES+EN) with responsive 1/2/3 column grid, and `/projects/[slug]` detail pages (ES+EN) with project header, domain link, overall progress bar, and full milestone timeline with task stats. Added "Projects" link to Navbar. Updated seed data M11/M12 status to Done. Build: 0 errors, 52 pages.
+**Blocked:** nothing
+**Next:** push to main for auto-deploy; future improvements could add tech stack tags to projects and webhook-triggered rebuilds
+**Decision:** data layer uses async functions with Supabase-first + seed fallback pattern consistent with M11; project slugs derived from folder names via `folderToSlug()`

@@ -1,0 +1,137 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Badge from "@/components/Badge.astro";
+import MilestoneTimeline from "@/components/MilestoneTimeline.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../../../i18n/index";
+import { getAllProjectSlugs, getProjectBySlug } from "../../../lib/projects-data";
+
+const lang = "en";
+
+export async function getStaticPaths() {
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const project = await getProjectBySlug(slug!);
+
+if (!project) {
+  return Astro.redirect("/en/404");
+}
+
+const statusVariant: Record<string, "success" | "primary" | "warning" | "default"> = {
+  Active: "success",
+  Planned: "primary",
+  "On Hold": "warning",
+  Done: "default",
+};
+
+const statusLabel: Record<string, string> = {
+  Active: t(lang, "projects.statusActive"),
+  Planned: t(lang, "projects.statusPlanned"),
+  "On Hold": t(lang, "projects.statusOnHold"),
+  Done: t(lang, "projects.statusDone"),
+};
+---
+
+<BaseLayout
+  title={`${project.name} — TopNotch`}
+  description={project.notes ?? `Project ${project.name} — milestone progress and roadmap.`}
+  url={`/en/projects/${slug}`}
+  breadcrumbs={[
+    { name: "Home", url: "/en" },
+    { name: t(lang, "projects.nav"), url: "/en/projects" },
+    { name: project.name, url: `/en/projects/${slug}` },
+  ]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    {/* Header section */}
+    <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-neutral-50">
+      <Container>
+        <a
+          href="/en/projects"
+          class="inline-flex items-center text-sm text-neutral-500 hover:text-primary-600 transition-colors mb-6"
+        >
+          <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          {t(lang, "projects.backToProjects")}
+        </a>
+
+        <div class="flex flex-wrap items-start gap-4 mb-6">
+          <h1 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900">
+            {project.name}
+          </h1>
+          <Badge variant={statusVariant[project.status] ?? "default"} class="mt-1 sm:mt-2">
+            {statusLabel[project.status] ?? project.status}
+          </Badge>
+        </div>
+
+        {project.notes && (
+          <p class="text-lg text-neutral-600 max-w-3xl mb-8">{project.notes}</p>
+        )}
+
+        {/* Meta info */}
+        <div class="flex flex-wrap gap-6 text-sm text-neutral-500">
+          {project.domain && (
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+              <a href={`https://${project.domain}`} target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700 hover:underline">
+                {project.domain}
+              </a>
+            </div>
+          )}
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span>{project.doneMilestones} {t(lang, "projects.completedOf")} {project.totalMilestones} {t(lang, "projects.milestones").toLowerCase()}</span>
+          </div>
+        </div>
+
+        {/* Overall progress bar */}
+        <div class="mt-6 max-w-md">
+          <div class="flex items-center justify-between text-sm text-neutral-500 mb-2">
+            <span>{t(lang, "projects.progress")}</span>
+            <span class="font-medium text-neutral-900">{project.progressPercent}%</span>
+          </div>
+          <div class="w-full h-3 bg-neutral-200 rounded-full overflow-hidden">
+            <div
+              class="h-full rounded-full bg-primary-500 transition-all duration-500"
+              style={`width: ${project.progressPercent}%`}
+            />
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    {/* Milestone roadmap */}
+    <section class="py-16 sm:py-20">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "projects.roadmap")}
+          heading={t(lang, "projects.milestones")}
+          subheading={`${project.doneMilestones} ${t(lang, "projects.completedOf")} ${project.totalMilestones} milestones ${t(lang, "projects.milestoneDone").toLowerCase()}`}
+        />
+
+        <div class="mt-10 max-w-3xl mx-auto">
+          <MilestoneTimeline milestones={project.milestones} lang={lang} />
+        </div>
+      </Container>
+    </section>
+
+    <CtaBanner lang={lang} />
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

@@ -1,0 +1,107 @@
+---
+import Badge from "./Badge.astro";
+import { t, type Locale } from "../i18n/index";
+
+interface Props {
+  name: string;
+  slug: string;
+  status: string;
+  domain: string | null;
+  notes: string | null;
+  progressPercent: number;
+  doneMilestones: number;
+  totalMilestones: number;
+  href: string;
+  lang?: Locale;
+}
+
+const {
+  name,
+  status,
+  notes,
+  progressPercent,
+  doneMilestones,
+  totalMilestones,
+  href,
+  lang = "es",
+} = Astro.props;
+
+const statusVariant: Record<string, "success" | "primary" | "warning" | "default"> = {
+  Active: "success",
+  Planned: "primary",
+  "On Hold": "warning",
+  Done: "default",
+};
+
+const statusLabel: Record<string, string> = {
+  Active: t(lang, "projects.statusActive"),
+  Planned: t(lang, "projects.statusPlanned"),
+  "On Hold": t(lang, "projects.statusOnHold"),
+  Done: t(lang, "projects.statusDone"),
+};
+
+// Generate a deterministic gradient from the project name
+const colors = [
+  ["from-primary-500", "to-accent-500"],
+  ["from-secondary-500", "to-primary-500"],
+  ["from-accent-500", "to-secondary-500"],
+  ["from-primary-600", "to-secondary-400"],
+  ["from-accent-600", "to-primary-400"],
+];
+const colorIndex = name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
+const [gradFrom, gradTo] = colors[colorIndex];
+---
+
+<a
+  href={href}
+  class="group block rounded-xl border border-neutral-200 bg-white shadow-sm transition-all duration-base hover:shadow-lg hover:-translate-y-1 hover:border-primary-200 overflow-hidden"
+>
+  {/* Thumbnail / gradient header */}
+  <div class={`h-32 sm:h-36 bg-gradient-to-br ${gradFrom} ${gradTo} flex items-center justify-center relative`}>
+    <span class="text-white/90 text-4xl font-heading font-bold select-none">
+      {name.charAt(0)}
+    </span>
+    <div class="absolute top-3 right-3">
+      <Badge variant={statusVariant[status] ?? "default"}>
+        {statusLabel[status] ?? status}
+      </Badge>
+    </div>
+  </div>
+
+  <div class="p-5 sm:p-6">
+    {/* Project name */}
+    <h3 class="font-heading text-lg font-semibold text-neutral-900 mb-1 group-hover:text-primary-600 transition-colors">
+      {name}
+    </h3>
+
+    {/* Notes / description */}
+    {notes && (
+      <p class="text-sm text-neutral-500 mb-4 line-clamp-2">{notes}</p>
+    )}
+
+    {/* Progress bar */}
+    <div class="mt-auto">
+      <div class="flex items-center justify-between text-xs text-neutral-500 mb-1.5">
+        <span>{t(lang, "projects.milestones")}</span>
+        <span>{doneMilestones} / {totalMilestones}</span>
+      </div>
+      <div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full bg-primary-500 transition-all duration-500"
+          style={`width: ${progressPercent}%`}
+        />
+      </div>
+      <div class="text-right text-xs text-neutral-400 mt-1">
+        {progressPercent}%
+      </div>
+    </div>
+
+    {/* View link */}
+    <span class="inline-flex items-center text-sm font-medium text-primary-600 group-hover:text-primary-700 mt-3">
+      {t(lang, "projects.viewProject")}
+      <svg class="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </span>
+  </div>
+</a>

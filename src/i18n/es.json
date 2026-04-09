@@ -145,12 +145,40 @@
     "goHome": "Ir al inicio",
     "contactUs": "Contáctanos"
   },
+  "projects": {
+    "eyebrow": "Nuestros Proyectos",
+    "heading": "Proyectos",
+    "subheading": "Subproyectos que estamos construyendo, con progreso de milestones en tiempo real.",
+    "nav": "Proyectos",
+    "viewProject": "Ver proyecto",
+    "milestones": "Milestones",
+    "milestone": "Milestone",
+    "progress": "Progreso",
+    "description": "Descripción",
+    "domain": "Dominio",
+    "techStack": "Stack tecnológico",
+    "roadmap": "Hoja de ruta",
+    "tasks": "tareas",
+    "statusActive": "Activo",
+    "statusPlanned": "Planificado",
+    "statusOnHold": "En pausa",
+    "statusDone": "Completado",
+    "milestoneDone": "Completado",
+    "milestoneInProgress": "En progreso",
+    "milestonePlanned": "Planificado",
+    "milestoneBlocked": "Bloqueado",
+    "backToProjects": "Volver a proyectos",
+    "noProjects": "No hay proyectos disponibles.",
+    "completedOf": "de"
+  },
   "meta": {
     "homeTitle": "TopNotch — Agencia de Desarrollo de Software",
     "homeDescription": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
     "servicesTitle": "Servicios — TopNotch",
     "servicesDescription": "Soluciones de software integrales: desarrollo web, apps móviles, IA y automatización, y consultoría.",
     "portfolioTitle": "Portafolio — TopNotch",
-    "portfolioDescription": "Casos de estudio y proyectos que muestran nuestro trabajo en web, móvil, IA y consultoría."
+    "portfolioDescription": "Casos de estudio y proyectos que muestran nuestro trabajo en web, móvil, IA y consultoría.",
+    "projectsTitle": "Proyectos — TopNotch",
+    "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real."
   }
 }

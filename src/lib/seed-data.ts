@@ -62,8 +62,8 @@ export const seedMilestones: SeedMilestone[] = [
   { id: 16, project_id: 2, number: 8,  title: "Pre-Launch QA",                          description: "Pre-launch checklist — 404 page, favicons, accessibility fixes.",                                status: "Done", blocking: "M3-M7" },
   { id: 17, project_id: 2, number: 9,  title: "Internationalization (i18n)",             description: "Multi-language support. Spanish default, English secondary.",                                     status: "Done", blocking: "M8" },
   { id: 18, project_id: 2, number: 10, title: "Netlify Deployment",                     description: "Deploy to Netlify — site live at topnotch-cl.netlify.app.",                                      status: "Done", blocking: "M9" },
-  { id: 19, project_id: 2, number: 11, title: "Supabase Setup & Project Database",      description: "Set up Supabase with Postgres schema for subprojects, milestones, and run history.",              status: "Planned", blocking: "M10" },
-  { id: 20, project_id: 2, number: 12, title: "Project Showcase & Dynamic Landing Pages", description: "Display subprojects and milestone progress on the TopNotch site from Supabase.",               status: "Planned", blocking: "M11" },
+  { id: 19, project_id: 2, number: 11, title: "Supabase Setup & Project Database",      description: "Set up Supabase with Postgres schema for subprojects, milestones, and run history.",              status: "Done", blocking: "M10" },
+  { id: 20, project_id: 2, number: 12, title: "Project Showcase & Dynamic Landing Pages", description: "Display subprojects and milestone progress on the TopNotch site from Supabase.",               status: "Done", blocking: "M11" },
 
   // NotPreocupeit
   { id: 21, project_id: 3, number: 1,  title: "Project Scaffolding & Base Setup",       description: "Set up Expo project with TypeScript, configure navigation, design system, Firebase.",            status: "Done", blocking: null },

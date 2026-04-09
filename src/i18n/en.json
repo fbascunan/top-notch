@@ -145,12 +145,40 @@
     "goHome": "Go home",
     "contactUs": "Contact us"
   },
+  "projects": {
+    "eyebrow": "Our Projects",
+    "heading": "Projects",
+    "subheading": "Subprojects we're building, with real-time milestone progress.",
+    "nav": "Projects",
+    "viewProject": "View project",
+    "milestones": "Milestones",
+    "milestone": "Milestone",
+    "progress": "Progress",
+    "description": "Description",
+    "domain": "Domain",
+    "techStack": "Tech stack",
+    "roadmap": "Roadmap",
+    "tasks": "tasks",
+    "statusActive": "Active",
+    "statusPlanned": "Planned",
+    "statusOnHold": "On Hold",
+    "statusDone": "Done",
+    "milestoneDone": "Done",
+    "milestoneInProgress": "In Progress",
+    "milestonePlanned": "Planned",
+    "milestoneBlocked": "Blocked",
+    "backToProjects": "Back to projects",
+    "noProjects": "No projects available.",
+    "completedOf": "of"
+  },
   "meta": {
     "homeTitle": "TopNotch — Software Development Agency",
     "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
     "servicesTitle": "Services — TopNotch",
     "servicesDescription": "End-to-end software solutions: web development, mobile apps, AI & automation, and consulting.",
     "portfolioTitle": "Portfolio — TopNotch",
-    "portfolioDescription": "Case studies and projects showcasing our work in web, mobile, AI, and consulting."
+    "portfolioDescription": "Case studies and projects showcasing our work in web, mobile, AI, and consulting.",
+    "projectsTitle": "Projects — TopNotch",
+    "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress."
   }
 }
