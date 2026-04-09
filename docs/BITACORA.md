@@ -115,3 +115,9 @@
 **Blocked:** Formspree form ID (`ContactForm.astro`) and Umami website ID (`BaseLayout.astro`) still have placeholders — require human to create accounts at formspree.io and cloud.umami.is respectively, then replace `{YOUR_FORM_ID}` and `UMAMI_WEBSITE_ID`.
 **Next:** Human needs to: (1) create Formspree form + set ID in `src/components/ContactForm.astro` line 11, (2) create Umami website + set ID in `src/layouts/BaseLayout.astro` line 82, (3) push to main to trigger auto-deploy. Then M11 — Supabase setup.
 **Decision:** force-pushed to `main` branch overwriting old placeholder landing page; Netlify account slug was `felipeandresbascunanmorales` (team name "TopNotch")
+
+### 2026-04-09 — agent — M11
+**Did:** set up Supabase project database. Installed `@supabase/supabase-js` (v2.102). Created client config (`src/lib/supabase.ts`) with env var fallback. Wrote 3 SQL migrations: core schema (4 tables with enums, indexes, updated_at trigger), RLS policies (anon read + authenticated all on every table), seed data (5 projects, 63 milestones, 15 tasks from MANIFEST.md + all subproject MILESTONES.md). Built sync utility (`src/lib/milestones-sync.ts`) with bidirectional MD↔DB sync, Markdown parser, and local seed-data fallback (`src/lib/seed-data.ts`). Verified locally: `supabase db push` applies cleanly, all data seeds correctly, "next Planned milestone by priority" query returns correct results, 8 RLS policies active. Build passes (40 pages, 0 errors).
+**Blocked:** Human needs to create Supabase project at supabase.com/dashboard, then set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in `.env` and run `supabase link && supabase db push`.
+**Next:** M12 — Project Showcase & Dynamic Landing Pages (fetch from Supabase at build time)
+**Decision:** used untyped SupabaseClient to avoid supabase-js v2.102 generic type resolution issues; env vars use `SUPABASE_URL`/`SUPABASE_ANON_KEY` (server-side, Astro static build) with `VITE_*` fallback for compatibility

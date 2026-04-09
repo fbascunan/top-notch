@@ -313,17 +313,17 @@ Set up Supabase project with a Postgres schema to store subprojects, milestones,
 
 ### Tasks
 
-- [ ] Install `@supabase/supabase-js` as project dependency
-- [ ] Create Supabase client config with env var fallback (per SUPABASE.md lineament)
-- [ ] Design and write SQL migration for core schema:
+- [x] Install `@supabase/supabase-js` as project dependency
+- [x] Create Supabase client config with env var fallback (per SUPABASE.md lineament)
+- [x] Design and write SQL migration for core schema:
   - `projects` table (name, folder, domain, status, priority, notes)
   - `milestones` table (project_id FK, number, title, description, status, blocking, created_at, completed_at)
   - `milestone_tasks` table (milestone_id FK, description, done)
   - `run_history` table (milestone_id FK, started_at, finished_at, status, exit_code, logs)
-- [ ] Add RLS policies (all tables read/write scoped to authenticated service role)
-- [ ] Write seed migration with current data from MANIFEST.md and all subproject MILESTONES.md files
-- [ ] Create a sync utility (`src/lib/milestones-sync.ts`) that can import MILESTONES.md → DB and export DB → MILESTONES.md (keeps flat files as fallback)
-- [ ] Verify: seed data loads, queries return correct projects/milestones, RLS policies work
+- [x] Add RLS policies (all tables read/write scoped to authenticated service role)
+- [x] Write seed migration with current data from MANIFEST.md and all subproject MILESTONES.md files
+- [x] Create a sync utility (`src/lib/milestones-sync.ts`) that can import MILESTONES.md → DB and export DB → MILESTONES.md (keeps flat files as fallback)
+- [x] Verify: seed data loads, queries return correct projects/milestones, RLS policies work
 
 ### Acceptance Criteria
 
@@ -376,7 +376,7 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 | M8 — Pre-Launch QA | Done | M3–M7 |
 | M9 — Internationalization (i18n) | Done | M8 |
 | M10 — Netlify Deployment | Done | M9 |
-| M11 — Supabase Setup & Project Database | Planned | M10 |
+| M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Planned | M11 |
 
 > M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3. M9 and M10 are sequential after QA. M11 and M12 are sequential after deployment.
