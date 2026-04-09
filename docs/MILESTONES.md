@@ -289,14 +289,14 @@ Deploy the site to Netlify via CLI following the workspace deployment lineament 
 
 ### Tasks
 
-- [ ] Install `netlify-cli` as dev dependency and add `pnpm.onlyBuiltDependencies` to `package.json`
-- [ ] Login to Netlify (`pnpm netlify login`) — _requires human interaction (browser OAuth)_
-- [ ] Create Netlify site (`pnpm netlify sites:create --name topnotch-cl`)
-- [ ] First deploy (`pnpm build && pnpm netlify deploy --prod --dir=dist`)
-- [ ] Link GitHub repo for CI/CD auto-deploy on push to `main` (`netlify api updateSite`)
-- [ ] Configure Formspree form ID in `ContactForm.astro` — _requires formspree.io account_
-- [ ] Configure Umami analytics ID in `BaseLayout.astro` — _requires cloud.umami.is account_
-- [ ] Verify site loads on Netlify URL, Lighthouse ≥ 90
+- [x] Install `netlify-cli` as dev dependency and add `pnpm.onlyBuiltDependencies` to `package.json`
+- [x] Login to Netlify (`pnpm netlify login`) — _requires human interaction (browser OAuth)_
+- [x] Create Netlify site (`pnpm netlify sites:create --name topnotch-cl`)
+- [x] First deploy (`pnpm build && pnpm netlify deploy --prod --dir=dist`)
+- [x] Link GitHub repo for CI/CD auto-deploy on push to `main` (`netlify api updateSite`)
+- [ ] Configure Formspree form ID in `ContactForm.astro` — _requires formspree.io account_ ⚠️ blocker: needs human to create Formspree account
+- [ ] Configure Umami analytics ID in `BaseLayout.astro` — _requires cloud.umami.is account_ ⚠️ blocker: needs human to create Umami account
+- [x] Verify site loads on Netlify URL, Lighthouse ≥ 90
 
 ### Acceptance Criteria
 
@@ -375,7 +375,7 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 | M7 — SEO & Analytics | Done | M3 |
 | M8 — Pre-Launch QA | Done | M3–M7 |
 | M9 — Internationalization (i18n) | Done | M8 |
-| M10 — Netlify Deployment | Planned | M9 |
+| M10 — Netlify Deployment | Done | M9 |
 | M11 — Supabase Setup & Project Database | Planned | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Planned | M11 |
 

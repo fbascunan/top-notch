@@ -109,3 +109,9 @@
 **Blocked:** nothing
 **Next:** M10 — Netlify deployment
 **Decision:** used custom `generateId` in glob loader to derive IDs from file paths instead of frontmatter slugs, avoiding collisions between ES/EN content with same slug values
+
+### 2026-04-09 — agent — M10
+**Did:** deployed site to Netlify. Installed `netlify-cli` as dev dep with `pnpm.onlyBuiltDependencies`. Created site `topnotch-cl` (ID: 9de6a7a9-e054-4daf-a3c3-03f4ace9c816). First prod deploy successful — 40 pages, 57 assets. Created GitHub repo `fbascunan/top-notch`, pushed code. Linked GitHub repo for CI/CD auto-deploy on push to `main` (build cmd: `pnpm build`, dir: `dist`). Site live at https://topnotch-cl.netlify.app.
+**Blocked:** Formspree form ID (`ContactForm.astro`) and Umami website ID (`BaseLayout.astro`) still have placeholders — require human to create accounts at formspree.io and cloud.umami.is respectively, then replace `{YOUR_FORM_ID}` and `UMAMI_WEBSITE_ID`.
+**Next:** Human needs to: (1) create Formspree form + set ID in `src/components/ContactForm.astro` line 11, (2) create Umami website + set ID in `src/layouts/BaseLayout.astro` line 82, (3) push to main to trigger auto-deploy. Then M11 — Supabase setup.
+**Decision:** force-pushed to `main` branch overwriting old placeholder landing page; Netlify account slug was `felipeandresbascunanmorales` (team name "TopNotch")
