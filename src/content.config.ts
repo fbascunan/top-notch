@@ -2,19 +2,25 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
+// Custom generateId uses the file path (not frontmatter slug) to avoid
+// duplicate IDs when ES and EN files share the same slug value.
+const generateId: (opts: { entry: string }) => string = ({ entry }) =>
+  entry.replace(/\.md$/, "");
+
 const services = defineCollection({
-  loader: glob({ base: "./src/content/services", pattern: "**/*.md" }),
+  loader: glob({ base: "./src/content/services", pattern: "**/*.md", generateId }),
   schema: z.object({
     title: z.string(),
     slug: z.string(),
     summary: z.string(),
     icon: z.string(),
     order: z.number().optional(),
+    locale: z.enum(["es", "en"]).optional(),
   }),
 });
 
 const portfolio = defineCollection({
-  loader: glob({ base: "./src/content/portfolio", pattern: "**/*.md" }),
+  loader: glob({ base: "./src/content/portfolio", pattern: "**/*.md", generateId }),
   schema: z.object({
     title: z.string(),
     slug: z.string(),
@@ -24,11 +30,12 @@ const portfolio = defineCollection({
     date: z.coerce.date(),
     featured: z.boolean().default(false),
     color: z.string().optional(),
+    locale: z.enum(["es", "en"]).optional(),
   }),
 });
 
 const blog = defineCollection({
-  loader: glob({ base: "./src/content/blog", pattern: "**/*.md" }),
+  loader: glob({ base: "./src/content/blog", pattern: "**/*.md", generateId }),
   schema: z.object({
     title: z.string(),
     slug: z.string(),
@@ -38,6 +45,7 @@ const blog = defineCollection({
     summary: z.string(),
     coverImage: z.string(),
     draft: z.boolean().default(false),
+    locale: z.enum(["es", "en"]).optional(),
   }),
 });
 

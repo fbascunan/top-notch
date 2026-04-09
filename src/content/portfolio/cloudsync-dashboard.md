@@ -2,41 +2,41 @@
 title: "CloudSync Dashboard"
 slug: "cloudsync-dashboard"
 client: "CloudSync Inc."
-summary: "Real-time analytics platform processing millions of events daily for a growing SaaS company."
+summary: "Plataforma de analíticas en tiempo real que procesa millones de eventos diarios para una empresa SaaS en crecimiento."
 techStack: ["React", "TypeScript", "Node.js", "PostgreSQL", "Redis", "AWS"]
 date: 2025-11-15
 featured: true
 color: "from-primary-100 to-primary-200"
 ---
 
-## The problem
+## El problema
 
-CloudSync had outgrown their internal dashboards. With millions of events flowing through their platform daily, their existing monitoring tools couldn't keep up. The team was flying blind — unable to spot trends, debug issues quickly, or give customers the usage insights they were asking for.
+CloudSync había superado sus dashboards internos. Con millones de eventos fluyendo a través de su plataforma diariamente, sus herramientas de monitoreo existentes no daban abasto. El equipo estaba a ciegas — incapaz de detectar tendencias, depurar problemas rápidamente u ofrecer a los clientes los insights de uso que estaban pidiendo.
 
-## Our approach
+## Nuestro enfoque
 
-We worked closely with CloudSync's engineering team to design and build a real-time analytics dashboard from the ground up.
+Trabajamos de cerca con el equipo de ingeniería de CloudSync para diseñar y construir un dashboard de analíticas en tiempo real desde cero.
 
-### Phase 1: Data pipeline
+### Fase 1: Pipeline de datos
 
-First, we rebuilt the event ingestion pipeline. We introduced Redis Streams for buffering and PostgreSQL with TimescaleDB for time-series storage. This gave us sub-second query performance on datasets spanning months of data.
+Primero, reconstruimos el pipeline de ingesta de eventos. Introdujimos Redis Streams para buffering y PostgreSQL con TimescaleDB para almacenamiento de series temporales. Esto nos dio rendimiento de consultas en sub-segundos sobre datasets que abarcaban meses de datos.
 
-### Phase 2: Dashboard UI
+### Fase 2: Interfaz del Dashboard
 
-The dashboard was built with React and TypeScript, featuring:
+El dashboard fue construido con React y TypeScript, con:
 
-- **Real-time charts** that update every second without full page refreshes
-- **Custom date range selectors** with preset options (last hour, day, week, month)
-- **Drill-down capabilities** from high-level metrics to individual events
-- **Export functionality** for PDF reports and CSV data dumps
+- **Gráficos en tiempo real** que se actualizan cada segundo sin recargas completas de página
+- **Selectores de rango de fechas personalizados** con opciones predefinidas (última hora, día, semana, mes)
+- **Capacidades de drill-down** desde métricas de alto nivel hasta eventos individuales
+- **Funcionalidad de exportación** para reportes PDF y volcados de datos CSV
 
-### Phase 3: Customer-facing analytics
+### Fase 3: Analíticas para clientes
 
-We extended the dashboard to create a self-serve analytics portal for CloudSync's customers, letting them monitor their own usage and set up custom alerts.
+Extendimos el dashboard para crear un portal de analíticas de autoservicio para los clientes de CloudSync, permitiéndoles monitorear su propio uso y configurar alertas personalizadas.
 
-## The result
+## El resultado
 
-- **10x faster** query performance compared to the previous system
-- **99.9% uptime** over the first 6 months in production
-- **Customer satisfaction** increased by 35% after launching self-serve analytics
-- **Engineering time** spent on ad-hoc data requests dropped by 80%
+- **10x más rápido** en rendimiento de consultas comparado con el sistema anterior
+- **99.9% de uptime** durante los primeros 6 meses en producción
+- **Satisfacción del cliente** aumentó un 35% tras lanzar las analíticas de autoservicio
+- **Tiempo de ingeniería** dedicado a solicitudes de datos ad-hoc se redujo un 80%

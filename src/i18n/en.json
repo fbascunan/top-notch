@@ -1,0 +1,156 @@
+{
+  "nav": {
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "hero": {
+    "eyebrow": "Software Development Agency",
+    "heading": "We build software that ",
+    "headingHighlight": "moves your business forward",
+    "description": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
+    "ctaPrimary": "Talk to us",
+    "ctaSecondary": "See our work"
+  },
+  "services": {
+    "eyebrow": "What we do",
+    "heading": "Services",
+    "subheading": "End-to-end software solutions tailored to your business needs.",
+    "pageHeading": "Our Services",
+    "pageSubheading": "End-to-end software solutions tailored to your business needs. From idea to production, we've got you covered.",
+    "learnMore": "Learn more",
+    "relatedProjects": "Related projects",
+    "items": [
+      {
+        "title": "Web Development",
+        "description": "Modern, performant websites and web applications built with the latest frameworks. From marketing sites to complex platforms."
+      },
+      {
+        "title": "Mobile Apps",
+        "description": "Native and cross-platform mobile applications that deliver seamless experiences on iOS and Android."
+      },
+      {
+        "title": "AI & Automation",
+        "description": "Integrate AI into your workflows. From intelligent chatbots to data pipelines, we help you work smarter."
+      },
+      {
+        "title": "Consulting",
+        "description": "Technical strategy, architecture reviews, and team augmentation. We help you make the right technology decisions."
+      }
+    ]
+  },
+  "whyUs": {
+    "eyebrow": "Why us",
+    "heading": "What sets TopNotch apart",
+    "subheading": "We combine speed, quality, and transparency to deliver projects that exceed expectations.",
+    "items": [
+      {
+        "title": "Ship fast",
+        "description": "We move quickly without cutting corners. Lean sprints, rapid prototyping, and continuous delivery mean your product gets to market sooner."
+      },
+      {
+        "title": "Craft quality",
+        "description": "Clean code, thorough testing, and thoughtful architecture. We build software that scales, performs, and stands the test of time."
+      },
+      {
+        "title": "Communicate clearly",
+        "description": "No jargon, no black boxes. You get full visibility into progress, decisions, and trade-offs at every step of the project."
+      }
+    ]
+  },
+  "portfolio": {
+    "eyebrow": "Our work",
+    "heading": "Portfolio",
+    "subheading": "A selection of projects that showcase our capabilities across web, mobile, AI, and consulting.",
+    "featuredHeading": "Featured projects",
+    "featuredSubheading": "A selection of recent work that showcases our capabilities.",
+    "viewAll": "View all projects",
+    "backToPortfolio": "Back to portfolio",
+    "techStack": "Tech stack",
+    "filterAll": "All",
+    "screenshot": "Screenshot"
+  },
+  "cta": {
+    "heading": "Ready to build something great?",
+    "description": "Let's talk about your project. We'll help you figure out the right approach, timeline, and stack.",
+    "button": "Get in touch"
+  },
+  "contact": {
+    "title": "Contact — TopNotch",
+    "description": "Get in touch with TopNotch. Tell us about your project and we'll get back to you within one business day.",
+    "eyebrow": "Get in touch",
+    "heading": "Let's build something great",
+    "subheading": "Tell us about your project. We'll get back to you within one business day.",
+    "otherWays": "Other ways to reach us",
+    "email": "Email",
+    "location": "Location",
+    "locationValue": "Santiago, Chile",
+    "whatNext": "What happens next?",
+    "step1": "We review your message and respond within one business day.",
+    "step2": "We schedule a discovery call to understand your project in detail.",
+    "step3": "You receive a proposal with scope, timeline, and pricing."
+  },
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "company": "Company",
+    "optional": "(optional)",
+    "serviceInterest": "Service Interest",
+    "selectService": "Select a service…",
+    "otherService": "Other / Not sure",
+    "message": "Message",
+    "namePlaceholder": "Your full name",
+    "emailPlaceholder": "you@company.com",
+    "companyPlaceholder": "Your company name",
+    "messagePlaceholder": "Tell us about your project, timeline, and goals…",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "errorName": "Please enter your name.",
+    "errorEmail": "Please enter a valid email address.",
+    "errorService": "Please select a service.",
+    "errorMessage": "Please enter a message.",
+    "successTitle": "Message sent!",
+    "successText": "Thanks for reaching out. We'll get back to you within one business day.",
+    "errorTitle": "Something went wrong",
+    "errorText": "We couldn't send your message. Please try again or email us directly at"
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "heading": "Insights & Tutorials",
+    "subheading": "Thoughts on web development, tech choices, and building great software.",
+    "title": "Blog — TopNotch",
+    "description": "Insights on web development, mobile apps, AI, and building great software.",
+    "backToBlog": "Back to blog",
+    "allPosts": "All posts",
+    "onThisPage": "On this page",
+    "minRead": "min read",
+    "previous": "← Previous",
+    "next": "Next →",
+    "postsAbout": "Posts about",
+    "articles": "article(s)",
+    "taggedWith": "tagged with"
+  },
+  "footer": {
+    "description": "We build software that makes a difference. From web apps to AI — we ship quality, fast.",
+    "navigation": "Navigation",
+    "connect": "Connect",
+    "rights": "All rights reserved."
+  },
+  "notFound": {
+    "title": "Page Not Found — TopNotch",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "heading": "Page not found",
+    "text": "The page you're looking for doesn't exist or has been moved. Let's get you back on track.",
+    "goHome": "Go home",
+    "contactUs": "Contact us"
+  },
+  "meta": {
+    "homeTitle": "TopNotch — Software Development Agency",
+    "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
+    "servicesTitle": "Services — TopNotch",
+    "servicesDescription": "End-to-end software solutions: web development, mobile apps, AI & automation, and consulting.",
+    "portfolioTitle": "Portfolio — TopNotch",
+    "portfolioDescription": "Case studies and projects showcasing our work in web, mobile, AI, and consulting."
+  }
+}

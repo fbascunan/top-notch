@@ -6,9 +6,12 @@ import Footer from "@/components/Footer.astro";
 import Container from "@/components/Container.astro";
 import Badge from "@/components/Badge.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+import { t, getDateLocale } from "../../i18n/index";
+
+const lang = "es";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("portfolio");
+  const projects = await getCollection("portfolio", ({ data }) => !data.locale || data.locale === "es");
   return projects.map((project) => ({
     params: { slug: project.data.slug },
     props: { project },
@@ -18,7 +21,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 
-const formattedDate = project.data.date.toLocaleDateString("en-US", {
+const formattedDate = project.data.date.toLocaleDateString(getDateLocale(lang), {
   year: "numeric",
   month: "long",
 });
@@ -28,9 +31,10 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
   title={`${project.data.title} — TopNotch`}
   description={project.data.summary}
   url={`/portfolio/${project.data.slug}`}
-  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Portfolio", url: "/portfolio" }, { name: project.data.title, url: `/portfolio/${project.data.slug}` }]}
+  breadcrumbs={[{ name: "Inicio", url: "/" }, { name: t(lang, "nav.portfolio"), url: "/portfolio" }, { name: project.data.title, url: `/portfolio/${project.data.slug}` }]}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
 
   <main>
     {/* Hero */}
@@ -44,7 +48,7 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
             <svg class="mr-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to portfolio
+            {t(lang, "portfolio.backToPortfolio")}
           </a>
           <p class="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-2">
             {project.data.client} · {formattedDate}
@@ -68,7 +72,7 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
     <section class="pb-12 sm:pb-16">
       <Container>
         <div class={`rounded-xl h-64 sm:h-80 bg-gradient-to-br ${project.data.color ?? "from-primary-100 to-primary-200"} flex items-center justify-center`}>
-          <span class="font-heading text-xl font-semibold text-neutral-700/50">Project Screenshot</span>
+          <span class="font-heading text-xl font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
         </div>
       </Container>
     </section>
@@ -86,7 +90,7 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
     <section class="py-12 sm:py-16 bg-neutral-50">
       <Container>
         <div class="max-w-3xl">
-          <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-4">Tech stack</h2>
+          <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-4">{t(lang, "portfolio.techStack")}</h2>
           <div class="flex flex-wrap gap-3">
             {project.data.techStack.map((tech) => (
               <span class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 shadow-sm">
@@ -98,8 +102,8 @@ const formattedDate = project.data.date.toLocaleDateString("en-US", {
       </Container>
     </section>
 
-    <CtaBanner />
+    <CtaBanner lang={lang} />
   </main>
 
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>

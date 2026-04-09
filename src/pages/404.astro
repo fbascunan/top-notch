@@ -3,39 +3,45 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
 import Container from "@/components/Container.astro";
+import { t, getLocaleFromPath, getLocalePrefix, type Locale } from "../i18n/index";
+
+// Detect language from the referrer or default to es
+const lang: Locale = getLocaleFromPath(Astro.url.pathname);
+const prefix = getLocalePrefix(lang);
 ---
 
 <BaseLayout
-  title="Page Not Found — TopNotch"
-  description="The page you're looking for doesn't exist or has been moved."
+  title={t(lang, "notFound.title")}
+  description={t(lang, "notFound.description")}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
   <main class="flex-1 flex items-center">
     <Container>
       <div class="py-24 sm:py-32 text-center max-w-lg mx-auto">
         <p class="text-7xl sm:text-9xl font-heading font-extrabold text-primary-500/20 select-none">404</p>
         <h1 class="mt-4 font-heading text-3xl sm:text-4xl font-bold text-neutral-900">
-          Page not found
+          {t(lang, "notFound.heading")}
         </h1>
         <p class="mt-4 text-lg text-neutral-600 leading-relaxed">
-          The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+          {t(lang, "notFound.text")}
         </p>
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
-            href="/"
+            href={`${prefix}/` || "/"}
             class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-base px-7 py-3 bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm hover:shadow-md transition-all duration-[var(--transition-base)]"
           >
-            Go home
+            {t(lang, "notFound.goHome")}
           </a>
           <a
-            href="/contact"
+            href={`${prefix}/contact`}
             class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-base px-7 py-3 border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-all duration-[var(--transition-base)]"
           >
-            Contact us
+            {t(lang, "notFound.contactUs")}
           </a>
         </div>
       </div>
     </Container>
   </main>
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>

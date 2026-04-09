@@ -98,3 +98,14 @@
 **Blocked:** Deploy tasks require external credentials: hosting platform login (Vercel/CF Pages), DNS registrar access for topnotch.cl, Formspree account (contact form), Umami account (analytics), Google Search Console access, uptime monitoring account. Cross-browser/responsive testing requires manual browser verification.
 **Next:** Human needs to: (1) create Formspree account + set form ID, (2) create Umami account + set website ID, (3) deploy to Vercel/CF Pages, (4) configure DNS, (5) set up Google Search Console + uptime monitoring, (6) verify cross-browser/responsive manually.
 **Decision:** Marked M8 as Done — all automatable pre-launch tasks complete; remaining tasks are external service configurations that require human credentials and manual browser testing.
+
+### 2026-04-08 00:51 — runner — M9
+**Did:** milestone runner detected failure
+**Blocked:** Claude exited with code 1
+**Next:** investigate and retry M9
+
+### 2026-04-09 — agent — M9
+**Did:** completed i18n milestone. Fixed critical duplicate content ID bug (glob loader used frontmatter `slug` as ID, causing EN content to overwrite ES). Added custom `generateId` to content.config.ts. Translated all 9 Spanish content files (4 services, 3 portfolio, 2 blog posts). Previous session had set up i18n infrastructure (astro.config, JSON translations, EN pages, Navbar switcher, SEO hreflang, sitemap i18n) but content was untranslated and had broken IDs. Build: 0 errors, 40 pages (ES + EN).
+**Blocked:** nothing
+**Next:** M10 — Netlify deployment
+**Decision:** used custom `generateId` in glob loader to derive IDs from file paths instead of frontmatter slugs, avoiding collisions between ES/EN content with same slug values

@@ -1,4 +1,6 @@
 ---
+import { getAlternateUrls, type Locale } from "../i18n/index";
+
 interface BreadcrumbItem {
   name: string;
   url: string;
@@ -19,6 +21,8 @@ interface Props {
   tags?: string[];
   // Breadcrumbs
   breadcrumbs?: BreadcrumbItem[];
+  // i18n
+  lang?: Locale;
 }
 
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://topnotch.cl";
@@ -35,6 +39,7 @@ const {
   author,
   tags,
   breadcrumbs,
+  lang = "es",
 } = Astro.props;
 
 const fullUrl = canonicalUrl ?? `${site}${url}`;
@@ -64,12 +69,21 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     })),
   });
 }
+
+// Generate hreflang alternate URLs
+const alternates = getAlternateUrls(Astro.url.pathname, site);
 ---
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={fullUrl} />
+
+<!-- hreflang alternate links -->
+{alternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.locale} href={alt.url} />
+))}
+<link rel="alternate" hreflang="x-default" href={alternates.find((a) => a.locale === "es")?.url ?? fullUrl} />
 
 <!-- Open Graph -->
 <meta property="og:type" content={type} />
@@ -78,6 +92,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 <meta property="og:description" content={description} />
 <meta property="og:image" content={fullImage} />
 <meta property="og:site_name" content="TopNotch" />
+<meta property="og:locale" content={lang === "es" ? "es_CL" : "en_US"} />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />

@@ -1,23 +1,23 @@
 ---
-title: "Building Type-Safe Content Pipelines with Astro Collections"
+title: "Pipelines de contenido type-safe con Astro Collections"
 slug: "building-type-safe-content"
 author: "TopNotch Team"
 date: 2026-03-14
 tags: ["astro", "typescript", "tutorial"]
-summary: "Learn how to use Astro's content collections with Zod schemas to build a type-safe content pipeline that catches errors at build time instead of production."
+summary: "Aprende a usar las content collections de Astro con schemas Zod para construir un pipeline de contenido type-safe que detecta errores en build en lugar de producción."
 coverImage: "/blog/type-safe-content.svg"
 draft: false
 ---
 
-## Why Type Safety Matters for Content
+## Por qué importa el type safety en el contenido
 
-We've all been there: a blog post goes live with a missing cover image, a malformed date, or a tag that doesn't match any existing filter. These bugs are subtle, hard to catch in review, and embarrassing in production.
+Todos hemos estado ahí: un post de blog sale a producción con una imagen de portada faltante, una fecha mal formateada o un tag que no coincide con ningún filtro existente. Estos bugs son sutiles, difíciles de detectar en revisión y vergonzosos en producción.
 
-Astro's content collections solve this by validating every piece of frontmatter against a Zod schema at build time. If something doesn't match, the build fails with a clear error message — not your users' experience.
+Las content collections de Astro resuelven esto validando cada campo del frontmatter contra un schema Zod en tiempo de build. Si algo no coincide, el build falla con un mensaje de error claro — no la experiencia de tus usuarios.
 
-## Setting Up a Content Collection
+## Configurando una Content Collection
 
-Here's how we define the blog collection for the TopNotch website:
+Así es como definimos la colección de blog para el sitio de TopNotch:
 
 ```typescript
 // src/content.config.ts
@@ -40,26 +40,26 @@ const blog = defineCollection({
 });
 ```
 
-Every field is explicitly typed. The `z.coerce.date()` handles both `2026-03-14` and `"2026-03-14T00:00:00Z"` formats. The `draft` field defaults to `false`, so you don't need to specify it for published posts.
+Cada campo está explícitamente tipado. `z.coerce.date()` maneja tanto el formato `2026-03-14` como `"2026-03-14T00:00:00Z"`. El campo `draft` tiene valor por defecto `false`, así que no necesitas especificarlo para posts publicados.
 
-## Querying Collections
+## Consultando colecciones
 
-Fetching posts is straightforward and fully typed:
+Obtener posts es directo y completamente tipado:
 
 ```typescript
 import { getCollection } from "astro:content";
 
-// Get all published posts, sorted by date
+// Obtener todos los posts publicados, ordenados por fecha
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ```
 
-TypeScript knows the exact shape of `post.data` — autocomplete works, refactors propagate, and typos are caught immediately.
+TypeScript conoce la forma exacta de `post.data` — el autocompletado funciona, los refactors se propagan y los errores tipográficos se detectan inmediatamente.
 
-## Building Dynamic Routes
+## Construyendo rutas dinámicas
 
-Astro's file-based routing combines with content collections for dynamic pages:
+El routing basado en archivos de Astro se combina con content collections para páginas dinámicas:
 
 ```typescript
 // src/pages/blog/[slug].astro
@@ -74,20 +74,20 @@ export async function getStaticPaths() {
 }
 ```
 
-Each blog post gets its own statically-generated page at build time. No server runtime needed.
+Cada post de blog obtiene su propia página generada estáticamente en tiempo de build. No se necesita runtime de servidor.
 
-## Validating at the Edge
+## Validando en el edge
 
-The real power shows when something goes wrong. Try adding a blog post without a required field:
+El verdadero poder se muestra cuando algo sale mal. Intenta agregar un post sin un campo requerido:
 
 ```markdown
 ---
-title: "My New Post"
-# oops, forgot slug, author, date, and tags
+title: "Mi Nuevo Post"
+# oops, olvidé slug, author, date y tags
 ---
 ```
 
-The build immediately fails with:
+El build falla inmediatamente con:
 
 ```
 [ERROR] blog → my-new-post.md frontmatter does not match collection schema.
@@ -97,13 +97,13 @@ The build immediately fails with:
   "tags" Required
 ```
 
-This is infinitely better than discovering the issue in production when a page renders with `undefined` scattered across the layout.
+Esto es infinitamente mejor que descubrir el problema en producción cuando una página se renderiza con `undefined` disperso por todo el layout.
 
-## Advanced Patterns
+## Patrones avanzados
 
-### Computed Fields
+### Campos calculados
 
-Need reading time? Calculate it from the body at query time:
+¿Necesitas tiempo de lectura? Calcúlalo desde el body al momento de la consulta:
 
 ```typescript
 const posts = await getCollection("blog");
@@ -113,17 +113,17 @@ const postsWithReadingTime = posts.map((post) => ({
 }));
 ```
 
-### Tag Aggregation
+### Agregación de tags
 
-Build a tag index by collecting all unique tags:
+Construye un índice de tags recopilando todos los tags únicos:
 
 ```typescript
 const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];
 ```
 
-### Related Posts
+### Posts relacionados
 
-Find posts that share tags with the current one:
+Encuentra posts que comparten tags con el actual:
 
 ```typescript
 const related = posts.filter(
@@ -133,10 +133,10 @@ const related = posts.filter(
 );
 ```
 
-## Conclusion
+## Conclusión
 
-Content collections turn your Markdown files into a type-safe data layer. Combined with Astro's static generation, you get a content pipeline that's fast to build, impossible to break silently, and a joy to work with.
+Las content collections convierten tus archivos Markdown en una capa de datos type-safe. Combinado con la generación estática de Astro, obtienes un pipeline de contenido que es rápido de construir, imposible de romper silenciosamente y un placer para trabajar.
 
-The TopNotch blog you're reading right now is built exactly this way. Every post is validated, every route is statically generated, and the entire site deploys in under 30 seconds.
+El blog de TopNotch que estás leyendo ahora mismo está construido exactamente así. Cada post es validado, cada ruta es generada estáticamente y el sitio entero se despliega en menos de 30 segundos.
 
-Want to learn more about building with Astro? Check out our post on [why we chose Astro](/blog/why-we-chose-astro) or [get in touch](/contact) to discuss your project.
+¿Quieres aprender más sobre construir con Astro? Lee nuestro post sobre [por qué elegimos Astro](/blog/why-we-chose-astro) o [contáctanos](/contact) para discutir tu proyecto.

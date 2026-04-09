@@ -2,45 +2,45 @@
 title: "DocuFlow AI"
 slug: "docuflow-ai"
 client: "LegalPro Solutions"
-summary: "Intelligent document processing pipeline that reduced manual review time by 80%."
+summary: "Pipeline inteligente de procesamiento de documentos que redujo el tiempo de revisión manual en un 80%."
 techStack: ["Python", "OpenAI", "FastAPI", "AWS Lambda", "PostgreSQL"]
 date: 2026-01-10
 featured: true
 color: "from-secondary-100 to-secondary-200"
 ---
 
-## The problem
+## El problema
 
-LegalPro Solutions processes thousands of legal documents every month — contracts, compliance forms, court filings, and correspondence. Their team of paralegals spent most of their time on repetitive document classification and data extraction tasks, creating a bottleneck that slowed down case progression.
+LegalPro Solutions procesa miles de documentos legales cada mes — contratos, formularios de cumplimiento, escritos judiciales y correspondencia. Su equipo de paralegales dedicaba la mayor parte de su tiempo a tareas repetitivas de clasificación de documentos y extracción de datos, creando un cuello de botella que retrasaba el avance de los casos.
 
-## Our approach
+## Nuestro enfoque
 
-We designed and built an AI-powered document processing pipeline that automates the tedious parts of document review while keeping humans in the loop for critical decisions.
+Diseñamos y construimos un pipeline de procesamiento de documentos potenciado por IA que automatiza las partes tediosas de la revisión documental, manteniendo a los humanos en el loop para decisiones críticas.
 
-### Document ingestion
+### Ingesta de documentos
 
-Documents arrive via email, upload portal, or API. Our system automatically:
+Los documentos llegan vía email, portal de carga o API. Nuestro sistema automáticamente:
 
-- **Classifies documents** into 20+ categories using a fine-tuned classification model
-- **Extracts key data** — dates, parties, amounts, clauses — using GPT-4 with structured output
-- **Flags anomalies** — missing signatures, unusual terms, or documents that don't match expected patterns
+- **Clasifica documentos** en más de 20 categorías usando un modelo de clasificación fine-tuneado
+- **Extrae datos clave** — fechas, partes, montos, cláusulas — usando GPT-4 con salida estructurada
+- **Marca anomalías** — firmas faltantes, términos inusuales o documentos que no coinciden con patrones esperados
 
-### Review workflow
+### Flujo de revisión
 
-We built a custom review interface where paralegals can:
+Construimos una interfaz de revisión personalizada donde los paralegales pueden:
 
-- See AI-extracted data alongside the original document
-- Approve, correct, or flag extractions with a single click
-- Handle edge cases that the AI isn't confident about
-- Provide feedback that improves the model over time
+- Ver datos extraídos por IA junto al documento original
+- Aprobar, corregir o marcar extracciones con un solo clic
+- Manejar casos límite sobre los que la IA no tiene confianza
+- Proveer feedback que mejora el modelo con el tiempo
 
-### Integration
+### Integración
 
-The pipeline integrates with LegalPro's existing case management system via REST API, automatically updating case records with extracted data and document metadata.
+El pipeline se integra con el sistema de gestión de casos existente de LegalPro vía REST API, actualizando automáticamente los registros de casos con datos extraídos y metadatos de documentos.
 
-## The result
+## El resultado
 
-- **80% reduction** in manual document review time
-- **95% accuracy** on document classification (up from 70% with rule-based system)
-- **3x throughput** — the team now processes 3x more documents with the same headcount
-- **ROI achieved** within 4 months of deployment
+- **80% de reducción** en tiempo de revisión manual de documentos
+- **95% de precisión** en clasificación de documentos (vs 70% con sistema basado en reglas)
+- **3x más throughput** — el equipo ahora procesa 3x más documentos con el mismo headcount
+- **ROI alcanzado** dentro de los 4 meses posteriores al despliegue

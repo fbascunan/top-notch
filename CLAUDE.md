@@ -1,5 +1,12 @@
 # TopNotch — CLAUDE.md
 
+## First Action
+
+Read the following files in `docs/` for full project context:
+- `docs/PROSPECT.md` — **read first** — defines the buyer and their needs; every decision must serve this
+- `docs/MILESTONES.md` — milestone tracker
+- `docs/BITACORA.md` — session log (read last entries, write new entry when done)
+
 ## Stack
 
 - **Framework:** Astro 6 (static-first, islands architecture)

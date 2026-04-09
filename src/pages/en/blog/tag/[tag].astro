@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Badge from "@/components/Badge.astro";
+import { t, getDateLocale } from "../../../../i18n/index";
+
+const lang = "en";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blog", ({ data }) => !data.draft && data.locale === "en"));
+  const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`${t(lang, "blog.postsAbout")} "${tag}" — TopNotch Blog`}
+  description={`${t(lang, "blog.postsAbout")} ${tag}.`}
+  url={`/en/blog/tag/${tag}`}
+  breadcrumbs={[{ name: "Home", url: "/en" }, { name: "Blog", url: "/en/blog" }, { name: `Tag: ${tag}`, url: `/en/blog/tag/${tag}` }]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-neutral-50">
+      <Container>
+        <a
+          href="/en/blog"
+          class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 mb-6"
+        >
+          <svg class="mr-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          {t(lang, "blog.allPosts")}
+        </a>
+        <SectionHeading
+          eyebrow={`Tag: ${tag}`}
+          heading={`${t(lang, "blog.postsAbout")} "${tag}"`}
+          subheading={`${posts.length} ${t(lang, "blog.articles")} ${t(lang, "blog.taggedWith")} "${tag}".`}
+          as="h1"
+        />
+      </Container>
+    </section>
+
+    <section class="py-12 sm:py-16">
+      <Container>
+        <div class="grid gap-8 md:gap-10">
+          {posts.map((post) => {
+            const formattedDate = post.data.date.toLocaleDateString(getDateLocale(lang), {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+            const readingTime = Math.ceil(post.body!.split(/\s+/).length / 200);
+            return (
+              <article class="group">
+                <a href={`/en/blog/${post.data.slug}`} class="grid md:grid-cols-[320px_1fr] gap-6 items-start">
+                  <div class="aspect-video rounded-xl overflow-hidden bg-neutral-100">
+                    <img
+                      src={post.data.coverImage}
+                      alt={post.data.title}
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="py-1">
+                    <div class="flex items-center gap-3 text-sm text-neutral-500 mb-2">
+                      <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+                      <span>·</span>
+                      <span>{readingTime} {t(lang, "blog.minRead")}</span>
+                    </div>
+                    <h2 class="font-heading text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors mb-2">
+                      {post.data.title}
+                    </h2>
+                    <p class="text-neutral-600 leading-relaxed mb-3">
+                      {post.data.summary}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                      {post.data.tags.map((tg) => (
+                        <Badge variant={tg === tag ? "primary" : "default"}>{tg}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

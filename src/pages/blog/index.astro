@@ -6,13 +6,13 @@ import Footer from "@/components/Footer.astro";
 import Container from "@/components/Container.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import Badge from "@/components/Badge.astro";
+import { t, getDateLocale } from "../../i18n/index";
 
+const lang = "es";
 const POSTS_PER_PAGE = 10;
-
 const currentPage = Number(Astro.url.searchParams.get("page") || "1");
 
-const allPosts = (await getCollection("blog"))
-  .filter((post) => !post.data.draft)
+const allPosts = (await getCollection("blog", ({ data }) => !data.draft && (!data.locale || data.locale === "es")))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
@@ -21,20 +21,21 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
 ---
 
 <BaseLayout
-  title="Blog — TopNotch"
-  description="Insights on web development, mobile apps, AI, and building great software."
+  title={t(lang, "blog.title")}
+  description={t(lang, "blog.description")}
   url="/blog"
-  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }]}
+  breadcrumbs={[{ name: "Inicio", url: "/" }, { name: "Blog", url: "/blog" }]}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
 
   <main>
     <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-neutral-50">
       <Container>
         <SectionHeading
-          eyebrow="Blog"
-          heading="Insights & Tutorials"
-          subheading="Thoughts on web development, tech choices, and building great software."
+          eyebrow={t(lang, "blog.eyebrow")}
+          heading={t(lang, "blog.heading")}
+          subheading={t(lang, "blog.subheading")}
           as="h1"
         />
       </Container>
@@ -44,7 +45,7 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
       <Container>
         <div class="grid gap-8 md:gap-10">
           {posts.map((post) => {
-            const formattedDate = post.data.date.toLocaleDateString("en-US", {
+            const formattedDate = post.data.date.toLocaleDateString(getDateLocale(lang), {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -65,7 +66,7 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
                     <div class="flex items-center gap-3 text-sm text-neutral-500 mb-2">
                       <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
                       <span>·</span>
-                      <span>{readingTime} min read</span>
+                      <span>{readingTime} {t(lang, "blog.minRead")}</span>
                     </div>
                     <h2 class="font-heading text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors mb-2">
                       {post.data.title}
@@ -93,7 +94,7 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
                 href={`/blog${currentPage === 2 ? "" : `?page=${currentPage - 1}`}`}
                 class="inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
               >
-                ← Previous
+                {t(lang, "blog.previous")}
               </a>
             )}
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -115,7 +116,7 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
                 href={`/blog?page=${currentPage + 1}`}
                 class="inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
               >
-                Next →
+                {t(lang, "blog.next")}
               </a>
             )}
           </nav>
@@ -124,5 +125,5 @@ const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
     </section>
   </main>
 
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>

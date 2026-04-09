@@ -7,6 +7,9 @@ import ServicesOverview from "@/components/ServicesOverview.astro";
 import WhyUs from "@/components/WhyUs.astro";
 import PortfolioTeaser from "@/components/PortfolioTeaser.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../i18n/index";
+
+const lang = "es";
 
 const organizationLd = {
   "@context": "https://schema.org",
@@ -14,7 +17,7 @@ const organizationLd = {
   name: "TopNotch",
   url: "https://topnotch.cl",
   logo: "https://topnotch.cl/favicon.svg",
-  description: "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
+  description: t(lang, "meta.homeDescription"),
   sameAs: [],
   contactPoint: {
     "@type": "ContactPoint",
@@ -25,19 +28,20 @@ const organizationLd = {
 ---
 
 <BaseLayout
-  title="TopNotch — Software Development Agency"
-  description="From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft."
+  title={t(lang, "meta.homeTitle")}
+  description={t(lang, "meta.homeDescription")}
   url="/"
   jsonLd={organizationLd}
-  breadcrumbs={[{ name: "Home", url: "/" }]}
+  breadcrumbs={[{ name: "Inicio", url: "/" }]}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
   <main class="flex-1">
-    <Hero />
-    <ServicesOverview />
-    <WhyUs />
-    <PortfolioTeaser />
-    <CtaBanner />
+    <Hero lang={lang} />
+    <ServicesOverview lang={lang} />
+    <WhyUs lang={lang} />
+    <PortfolioTeaser lang={lang} />
+    <CtaBanner lang={lang} />
   </main>
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>

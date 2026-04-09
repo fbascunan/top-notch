@@ -233,7 +233,7 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 
 ---
 
-## M8 — Launch
+## M8 — Pre-Launch QA
 
 ### Pre-launch checklist
 
@@ -247,20 +247,118 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 - [x] **Favicon & app icons:** branded favicon.svg/.ico, apple-touch-icon.png, icon-192/512.png, site.webmanifest
 - [x] **404 page:** custom styled 404 with brand design and navigation
 
-### Deploy
+### Done when
 
-- [ ] Configure production domain: `topnotch.cl` → hosting platform — _requires hosting credentials_
-- [ ] Set up SSL (automatic on Vercel/CF) — _automatic once hosting configured_
-- [ ] DNS: A/CNAME records pointing to hosting — _requires DNS registrar access_
-- [ ] Verify site loads at `https://topnotch.cl` — _after DNS propagation_
-- [ ] Submit sitemap to Google Search Console — _requires Google account + domain verification_
-- [ ] Set up uptime monitoring (UptimeRobot, Better Stack, or similar) — _requires account creation_
-- [ ] Configure Formspree form ID in `src/components/ContactForm.astro` — _requires formspree.io account_
-- [ ] Configure Umami analytics ID in `src/layouts/BaseLayout.astro` — _requires cloud.umami.is account_
+- All checklist items pass. Site is ready for translation and deployment.
+
+---
+
+## M9 — Internationalization (i18n)
+
+Add multi-language support. Spanish is the default language; English is the secondary option.
+
+### Tasks
+
+- [x] Install and configure Astro i18n routing (`i18n` config in `astro.config.mjs`):
+  - Default locale: `es` (Spanish)
+  - Secondary locale: `en` (English)
+  - URL strategy: `/` for Spanish (default), `/en/` prefix for English
+- [x] Create translation system — either:
+  - **Option A:** JSON translation files (`src/i18n/es.json`, `src/i18n/en.json`) with a `t()` helper ✅
+  - **Option B:** Astro's built-in content collections per locale
+- [x] Translate all UI strings: navbar, footer, buttons, form labels, section headings, CTAs, error/success messages, 404 page
+- [x] Duplicate content collections for English:
+  - `src/content/services/en/` — translated service pages
+  - `src/content/portfolio/en/` — translated case studies
+  - `src/content/blog/en/` — translated blog posts (or select posts only)
+- [x] Add language switcher to `Navbar.astro` — flag or `ES | EN` toggle, preserves current page path
+- [x] Update `SEO.astro` — add `hreflang` alternate links for each page
+- [x] Update `sitemap.xml` generation to include both language versions
+- [x] Update `robots.txt` if needed
+- [x] Verify: all pages render correctly in both languages, language switcher works, SEO tags are correct
 
 ### Done when
 
-- `https://topnotch.cl` is live, SSL is active, Lighthouse ≥ 90, analytics is recording, and uptime monitoring is active.
+- Site is fully navigable in Spanish (default at `/`) and English (at `/en/`). Language switcher works on all pages. SEO includes `hreflang` tags.
+
+---
+
+## M10 — Netlify Deployment
+
+Deploy the site to Netlify via CLI following the workspace deployment lineament (`docs/lineaments/DEPLOYMENT.md`).
+
+### Tasks
+
+- [ ] Install `netlify-cli` as dev dependency and add `pnpm.onlyBuiltDependencies` to `package.json`
+- [ ] Login to Netlify (`pnpm netlify login`) — _requires human interaction (browser OAuth)_
+- [ ] Create Netlify site (`pnpm netlify sites:create --name topnotch-cl`)
+- [ ] First deploy (`pnpm build && pnpm netlify deploy --prod --dir=dist`)
+- [ ] Link GitHub repo for CI/CD auto-deploy on push to `main` (`netlify api updateSite`)
+- [ ] Configure Formspree form ID in `ContactForm.astro` — _requires formspree.io account_
+- [ ] Configure Umami analytics ID in `BaseLayout.astro` — _requires cloud.umami.is account_
+- [ ] Verify site loads on Netlify URL, Lighthouse ≥ 90
+
+### Acceptance Criteria
+
+- Site live on Netlify
+- CI/CD: push to `main` auto-deploys
+- Contact form delivers emails (Formspree)
+- Analytics recording visits (Umami)
+
+---
+
+## M11 — Supabase Setup & Project Database
+
+Set up Supabase project with a Postgres schema to store subprojects, milestones, and run history — replacing the current MILESTONES.md flat-file approach with a queryable database.
+
+### Tasks
+
+- [ ] Install `@supabase/supabase-js` as project dependency
+- [ ] Create Supabase client config with env var fallback (per SUPABASE.md lineament)
+- [ ] Design and write SQL migration for core schema:
+  - `projects` table (name, folder, domain, status, priority, notes)
+  - `milestones` table (project_id FK, number, title, description, status, blocking, created_at, completed_at)
+  - `milestone_tasks` table (milestone_id FK, description, done)
+  - `run_history` table (milestone_id FK, started_at, finished_at, status, exit_code, logs)
+- [ ] Add RLS policies (all tables read/write scoped to authenticated service role)
+- [ ] Write seed migration with current data from MANIFEST.md and all subproject MILESTONES.md files
+- [ ] Create a sync utility (`src/lib/milestones-sync.ts`) that can import MILESTONES.md → DB and export DB → MILESTONES.md (keeps flat files as fallback)
+- [ ] Verify: seed data loads, queries return correct projects/milestones, RLS policies work
+
+### Acceptance Criteria
+
+- `supabase db push` applies migrations without errors
+- All current projects and milestones from the workspace are seeded in the database
+- Queries for "next Planned milestone by project priority" return correct results
+- Sync utility round-trips data without loss
+
+---
+
+## M12 — Project Showcase & Dynamic Landing Pages
+
+Display subprojects and their milestone progress on the TopNotch site, with auto-generated landing pages per project — pulling live data from the Supabase project database.
+
+### Tasks
+
+- [ ] Create `/projects` index page — grid of project cards fetched from Supabase `projects` table (name, domain, status, milestone progress bar)
+- [ ] Build `ProjectCard.astro` component — thumbnail/icon, project name, status badge, milestone completion percentage
+- [ ] Create dynamic `/projects/[slug]` pages — one landing page per project, generated from DB data:
+  - Project description, domain link, tech stack
+  - Milestone timeline/roadmap showing status of each milestone (Done/In Progress/Planned)
+  - Task completion stats per milestone
+- [ ] Build `MilestoneTimeline.astro` component — visual roadmap with status indicators (color-coded by status)
+- [ ] Add Supabase data fetching at build time (Astro static mode) with ISR or rebuild-on-webhook for updates
+- [ ] Add the "Projects" link to `Navbar.astro`
+- [ ] Responsive layout for project grid and landing pages (mobile-first)
+- [ ] Fallback to seed/static data when Supabase env vars are missing (per SUPABASE.md lineament)
+
+### Acceptance Criteria
+
+- `/projects` displays all subprojects with live status and progress from the database
+- Each project has its own landing page at `/projects/[slug]` with milestone roadmap
+- Adding a new project to the DB creates a new page on next build (no code changes)
+- Pages render correctly without Supabase credentials (fallback data)
+- Responsive at 375px, 768px, 1280px
 
 ---
 
@@ -275,10 +373,14 @@ Detailed content pages. Use Astro content collections so adding new entries is j
 | M5 — Contact & Lead Capture | Done | M3 |
 | M6 — Blog & Content | Done | M2 |
 | M7 — SEO & Analytics | Done | M3 |
-| M8 — Launch | Done | M3–M7 |
+| M8 — Pre-Launch QA | Done | M3–M7 |
+| M9 — Internationalization (i18n) | Done | M8 |
+| M10 — Netlify Deployment | Planned | M9 |
+| M11 — Supabase Setup & Project Database | Planned | M10 |
+| M12 — Project Showcase & Dynamic Landing Pages | Planned | M11 |
 
-> M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3.
+> M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3. M9 and M10 are sequential after QA. M11 and M12 are sequential after deployment.
 
 ---
 
-_Last updated: 2026-03-15 03:35_
+_Last updated: 2026-04-09_

@@ -1,60 +1,60 @@
 ---
-title: "Why We Chose Astro for Our Agency Website"
+title: "Por qué elegimos Astro para nuestro sitio web"
 slug: "why-we-chose-astro"
 author: "TopNotch Team"
 date: 2026-03-10
 tags: ["astro", "web-development", "performance"]
-summary: "A deep dive into why we picked Astro as the framework for our agency site — and how its static-first approach delivers blazing-fast performance without sacrificing developer experience."
+summary: "Un análisis profundo de por qué elegimos Astro como framework para nuestro sitio — y cómo su enfoque static-first entrega rendimiento ultra rápido sin sacrificar experiencia de desarrollo."
 coverImage: "/blog/why-we-chose-astro.svg"
 draft: false
 ---
 
-## The Problem with Traditional Frameworks
+## El problema con los frameworks tradicionales
 
-When we set out to rebuild the TopNotch website, we had clear requirements: lightning-fast page loads, excellent SEO, and a great developer experience. Most JavaScript frameworks ship too much client-side code for what is essentially a content-driven site.
+Cuando nos propusimos reconstruir el sitio de TopNotch, teníamos requisitos claros: carga de página ultrarrápida, excelente SEO y una gran experiencia de desarrollo. La mayoría de los frameworks JavaScript envían demasiado código del lado del cliente para lo que es esencialmente un sitio orientado a contenido.
 
-We evaluated Next.js, Nuxt, and SvelteKit — all excellent tools — but they come with a JavaScript runtime cost that felt unnecessary for a site that's 95% static content.
+Evaluamos Next.js, Nuxt y SvelteKit — todas herramientas excelentes — pero vienen con un costo de runtime JavaScript que se sentía innecesario para un sitio que es 95% contenido estático.
 
-## Enter Astro
+## Entra Astro
 
-Astro's philosophy resonated with us immediately: **ship zero JavaScript by default**. Every page is server-rendered to static HTML at build time, and you only add client-side interactivity where you actually need it (the "islands architecture").
+La filosofía de Astro resonó con nosotros inmediatamente: **no enviar JavaScript por defecto**. Cada página se renderiza como HTML estático en tiempo de build, y solo agregas interactividad del lado del cliente donde realmente la necesitas (la "arquitectura de islas").
 
-### What We Love
+### Lo que nos encanta
 
-- **Content Collections** — Type-safe Markdown/MDX with Zod schemas. Adding a new blog post or portfolio entry is just creating a `.md` file.
-- **Performance** — Our Lighthouse scores are consistently 95+ across all categories. No hydration cost on static pages.
-- **Flexibility** — Need a React component for a complex form? Drop it in. Need Vue for a data visualization? Go for it. Astro doesn't lock you into one UI framework.
-- **Tailwind v4 Integration** — The new CSS-first configuration in Tailwind v4 pairs beautifully with Astro's Vite-based build pipeline.
+- **Content Collections** — Markdown/MDX con type safety y schemas Zod. Agregar un nuevo post de blog o entrada de portafolio es simplemente crear un archivo `.md`.
+- **Rendimiento** — Nuestros puntajes de Lighthouse son consistentemente 95+ en todas las categorías. Sin costo de hidratación en páginas estáticas.
+- **Flexibilidad** — ¿Necesitas un componente React para un formulario complejo? Agrégalo. ¿Necesitas Vue para una visualización de datos? Adelante. Astro no te encierra en un solo framework de UI.
+- **Integración con Tailwind v4** — La nueva configuración CSS-first de Tailwind v4 se complementa perfectamente con el pipeline de build basado en Vite de Astro.
 
-### Real Numbers
+### Números reales
 
-After deploying our Astro site, here's what we measured:
+Después de desplegar nuestro sitio con Astro, esto es lo que medimos:
 
-| Metric | Before (Next.js) | After (Astro) |
-|--------|------------------|---------------|
+| Métrica | Antes (Next.js) | Después (Astro) |
+|---------|-----------------|-----------------|
 | First Contentful Paint | 1.8s | 0.6s |
 | Total Blocking Time | 320ms | 0ms |
-| JS Bundle Size | 187KB | 12KB |
+| Tamaño del bundle JS | 187KB | 12KB |
 | Lighthouse Performance | 78 | 100 |
 
-## When Astro Might Not Be Right
+## Cuándo Astro podría no ser la opción correcta
 
-To be fair, Astro isn't the best choice for every project. If you're building a highly interactive SPA — think dashboards, real-time collaboration tools, or complex state management — a full-stack framework like Next.js or SvelteKit will serve you better.
+Para ser justos, Astro no es la mejor opción para cada proyecto. Si estás construyendo una SPA altamente interactiva — piensa en dashboards, herramientas de colaboración en tiempo real o gestión de estado compleja — un framework full-stack como Next.js o SvelteKit te servirá mejor.
 
-But for content-driven sites, marketing pages, blogs, documentation, and portfolio sites? Astro is hard to beat.
+Pero para sitios orientados a contenido, páginas de marketing, blogs, documentación y portafolios, Astro es difícil de superar.
 
-## Our Stack
+## Nuestro stack
 
-Here's the full stack we settled on for TopNotch:
+Este es el stack completo que elegimos para TopNotch:
 
-- **Astro 6** — Static site generation with islands architecture
-- **Tailwind CSS v4** — Utility-first styling with the new CSS-native config
-- **TypeScript** — Strict mode for type safety
-- **Content Collections** — Markdown with Zod-validated frontmatter
-- **Cloudflare Pages** — Edge deployment with global CDN
+- **Astro 6** — Generación de sitios estáticos con arquitectura de islas
+- **Tailwind CSS v4** — Estilos utility-first con la nueva configuración CSS nativa
+- **TypeScript** — Modo estricto para type safety
+- **Content Collections** — Markdown con frontmatter validado con Zod
+- **Cloudflare Pages** — Despliegue en el edge con CDN global
 
-## Conclusion
+## Conclusión
 
-Choosing the right framework is about matching your tool to your problem. For an agency website that needs to be fast, SEO-friendly, and easy to maintain, Astro has been the perfect fit. We're shipping less JavaScript, loading faster, and spending more time on design and content instead of fighting framework complexity.
+Elegir el framework correcto se trata de emparejar tu herramienta con tu problema. Para un sitio web de agencia que necesita ser rápido, amigable con SEO y fácil de mantener, Astro ha sido la elección perfecta. Estamos enviando menos JavaScript, cargando más rápido y dedicando más tiempo al diseño y contenido en lugar de pelear con la complejidad del framework.
 
-If you're considering Astro for your next project, [reach out](/contact) — we'd love to help.
+Si estás considerando Astro para tu próximo proyecto, [contáctanos](/contact) — nos encantaría ayudarte.

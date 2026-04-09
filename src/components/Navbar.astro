@@ -1,27 +1,33 @@
 ---
 import Container from "./Container.astro";
+import { t, getLocalizedPath, getLocalePrefix, type Locale } from "../i18n/index";
 
 interface Props {
   class?: string;
+  lang?: Locale;
 }
 
-const { class: className = "" } = Astro.props;
+const { class: className = "", lang = "es" } = Astro.props;
+
+const prefix = getLocalePrefix(lang);
 
 const navLinks = [
-  { label: "Services", href: "/services" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: t(lang, "nav.services"), href: `${prefix}/services` },
+  { label: t(lang, "nav.portfolio"), href: `${prefix}/portfolio` },
+  { label: t(lang, "nav.blog"), href: `${prefix}/blog` },
+  { label: t(lang, "nav.contact"), href: `${prefix}/contact` },
 ];
 
 const currentPath = Astro.url.pathname;
+const alternateLang: Locale = lang === "es" ? "en" : "es";
+const switchPath = getLocalizedPath(currentPath, alternateLang);
 ---
 
 <header class:list={["sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-neutral-200", className]}>
   <Container>
     <nav class="flex items-center justify-between h-16 sm:h-18">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 font-heading text-xl font-bold text-primary-600">
+      <a href={`${prefix}/` || "/"} class="flex items-center gap-2 font-heading text-xl font-bold text-primary-600">
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <rect width="28" height="28" rx="6" fill="currentColor" />
           <path d="M8 18V10h2.5l3.5 5 3.5-5H20v8h-2.5v-4.5L14 17l-3.5-4.5V18H8z" fill="white" />
@@ -46,6 +52,16 @@ const currentPath = Astro.url.pathname;
             </a>
           </li>
         ))}
+        {/* Language switcher */}
+        <li class="ml-2">
+          <a
+            href={switchPath}
+            class="px-2.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider border border-neutral-200 text-neutral-600 hover:text-primary-600 hover:border-primary-300 transition-colors duration-[var(--transition-fast)]"
+            aria-label={lang === "es" ? "Switch to English" : "Cambiar a Español"}
+          >
+            {alternateLang.toUpperCase()}
+          </a>
+        </li>
       </ul>
 
       <!-- Mobile hamburger -->
@@ -85,6 +101,14 @@ const currentPath = Astro.url.pathname;
             </a>
           </li>
         ))}
+        <li class="pt-2 border-t border-neutral-100 mt-2">
+          <a
+            href={switchPath}
+            class="block px-3 py-2 rounded-md text-base font-medium text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 transition-colors"
+          >
+            {lang === "es" ? "🇬🇧 English" : "🇨🇱 Español"}
+          </a>
+        </li>
       </ul>
     </Container>
   </div>

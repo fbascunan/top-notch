@@ -1,6 +1,14 @@
 ---
 import Container from "./Container.astro";
 import Button from "./Button.astro";
+import { t, getLocalePrefix, type Locale } from "../i18n/index";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+const prefix = getLocalePrefix(lang);
 ---
 
 <section class="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50">
@@ -13,17 +21,17 @@ import Button from "./Button.astro";
   <Container class="relative py-24 sm:py-32 lg:py-40">
     <div class="max-w-3xl mx-auto text-center">
       <p class="font-heading text-sm sm:text-base font-semibold uppercase tracking-widest text-primary-600 mb-4">
-        Software Development Agency
+        {t(lang, "hero.eyebrow")}
       </p>
       <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 leading-tight">
-        We build software that <span class="text-primary-600">moves your business forward</span>
+        {t(lang, "hero.heading")}<span class="text-primary-600">{t(lang, "hero.headingHighlight")}</span>
       </h1>
       <p class="mt-6 text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-        From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.
+        {t(lang, "hero.description")}
       </p>
       <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <Button href="/contact" variant="primary" size="lg">Talk to us</Button>
-        <Button href="/portfolio" variant="outline" size="lg">See our work</Button>
+        <Button href={`${prefix}/contact`} variant="primary" size="lg">{t(lang, "hero.ctaPrimary")}</Button>
+        <Button href={`${prefix}/portfolio`} variant="outline" size="lg">{t(lang, "hero.ctaSecondary")}</Button>
       </div>
     </div>
   </Container>

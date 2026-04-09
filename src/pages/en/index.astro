@@ -1,0 +1,47 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Hero from "@/components/Hero.astro";
+import ServicesOverview from "@/components/ServicesOverview.astro";
+import WhyUs from "@/components/WhyUs.astro";
+import PortfolioTeaser from "@/components/PortfolioTeaser.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../../i18n/index";
+
+const lang = "en";
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "TopNotch",
+  url: "https://topnotch.cl",
+  logo: "https://topnotch.cl/favicon.svg",
+  description: t(lang, "meta.homeDescription"),
+  sameAs: [],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    url: "https://topnotch.cl/en/contact",
+  },
+};
+---
+
+<BaseLayout
+  title={t(lang, "meta.homeTitle")}
+  description={t(lang, "meta.homeDescription")}
+  url="/en"
+  jsonLd={organizationLd}
+  breadcrumbs={[{ name: "Home", url: "/en" }]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+  <main class="flex-1">
+    <Hero lang={lang} />
+    <ServicesOverview lang={lang} />
+    <WhyUs lang={lang} />
+    <PortfolioTeaser lang={lang} />
+    <CtaBanner lang={lang} />
+  </main>
+  <Footer lang={lang} />
+</BaseLayout>

@@ -1,20 +1,28 @@
 ---
 import Container from "./Container.astro";
+import { t, getLocalePrefix, type Locale } from "../i18n/index";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+const prefix = getLocalePrefix(lang);
 ---
 
 <section class="bg-primary-600 py-16 sm:py-20">
   <Container class="text-center">
     <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
-      Ready to build something great?
+      {t(lang, "cta.heading")}
     </h2>
     <p class="text-lg text-primary-100 max-w-2xl mx-auto mb-8">
-      Let's talk about your project. We'll help you figure out the right approach, timeline, and stack.
+      {t(lang, "cta.description")}
     </p>
     <a
-      href="/contact"
+      href={`${prefix}/contact`}
       class="inline-flex items-center justify-center font-heading font-semibold rounded-lg text-lg px-7 py-3.5 bg-white text-primary-700 hover:bg-primary-50 active:bg-primary-100 shadow-sm hover:shadow-md transition-all duration-[var(--transition-base)] focus:outline-2 focus:outline-offset-2 focus:outline-white cursor-pointer"
     >
-      Get in touch
+      {t(lang, "cta.button")}
     </a>
   </Container>
 </section>

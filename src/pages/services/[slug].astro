@@ -6,10 +6,13 @@ import Footer from "@/components/Footer.astro";
 import Container from "@/components/Container.astro";
 import Badge from "@/components/Badge.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../../i18n/index";
+
+const lang = "es";
 
 export async function getStaticPaths() {
-  const services = await getCollection("services");
-  const portfolio = await getCollection("portfolio");
+  const services = await getCollection("services", ({ data }) => !data.locale || data.locale === "es");
+  const portfolio = await getCollection("portfolio", ({ data }) => !data.locale || data.locale === "es");
 
   return services.map((service) => {
     const relatedProjects = portfolio.filter((p) =>
@@ -34,9 +37,10 @@ const { Content } = await render(service);
   title={`${service.data.title} — TopNotch`}
   description={service.data.summary}
   url={`/services/${service.data.slug}`}
-  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Services", url: "/services" }, { name: service.data.title, url: `/services/${service.data.slug}` }]}
+  breadcrumbs={[{ name: "Inicio", url: "/" }, { name: t(lang, "nav.services"), url: "/services" }, { name: service.data.title, url: `/services/${service.data.slug}` }]}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
 
   <main>
     {/* Hero */}
@@ -70,7 +74,7 @@ const { Content } = await render(service);
       <section class="py-16 sm:py-20 bg-neutral-50">
         <Container>
           <h2 class="font-heading text-2xl sm:text-3xl font-bold text-neutral-900 mb-8">
-            Related projects
+            {t(lang, "services.relatedProjects")}
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProjects.map((project) => (
@@ -79,7 +83,7 @@ const { Content } = await render(service);
                 class="group block rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm transition-all duration-base hover:shadow-lg hover:-translate-y-1"
               >
                 <div class={`h-40 bg-gradient-to-br ${project.data.color ?? "from-primary-100 to-primary-200"} flex items-center justify-center`}>
-                  <span class="font-heading text-lg font-semibold text-neutral-700/50">Screenshot</span>
+                  <span class="font-heading text-lg font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
                 </div>
                 <div class="p-5">
                   <h3 class="font-heading text-lg font-semibold text-neutral-900 mb-1">
@@ -99,8 +103,8 @@ const { Content } = await render(service);
       </section>
     )}
 
-    <CtaBanner />
+    <CtaBanner lang={lang} />
   </main>
 
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>

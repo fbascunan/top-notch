@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import SEO from "@/components/SEO.astro";
+import type { Locale } from "../i18n/index";
 
 interface BreadcrumbItem {
   name: string;
@@ -19,6 +20,7 @@ interface Props {
   author?: string;
   tags?: string[];
   breadcrumbs?: BreadcrumbItem[];
+  lang?: Locale;
 }
 
 const {
@@ -33,10 +35,11 @@ const {
   author,
   tags,
   breadcrumbs,
+  lang = "es",
 } = Astro.props;
 ---
 
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -73,6 +76,7 @@ const {
       author={author}
       tags={tags}
       breadcrumbs={breadcrumbs}
+      lang={lang}
     />
     <!-- Umami Analytics (privacy-friendly, no cookies) -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="UMAMI_WEBSITE_ID"></script>

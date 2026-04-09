@@ -3,23 +3,37 @@ import Container from "./Container.astro";
 import SectionHeading from "./SectionHeading.astro";
 import Badge from "./Badge.astro";
 import Button from "./Button.astro";
+import { t, getLocalePrefix, type Locale } from "../i18n/index";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+const prefix = getLocalePrefix(lang);
 
 const projects = [
   {
     title: "CloudSync Dashboard",
-    description: "Real-time analytics platform for a SaaS company, processing millions of events daily.",
+    description: lang === "es"
+      ? "Plataforma de analítica en tiempo real para una empresa SaaS, procesando millones de eventos diarios."
+      : "Real-time analytics platform for a SaaS company, processing millions of events daily.",
     techStack: ["React", "TypeScript", "Node.js", "PostgreSQL"],
     color: "from-primary-100 to-primary-200",
   },
   {
     title: "FreshCart Mobile",
-    description: "Cross-platform grocery delivery app with real-time order tracking and payment integration.",
+    description: lang === "es"
+      ? "App de delivery de supermercado multiplataforma con seguimiento de pedidos en tiempo real e integración de pagos."
+      : "Cross-platform grocery delivery app with real-time order tracking and payment integration.",
     techStack: ["React Native", "Stripe", "Firebase", "Maps API"],
     color: "from-accent-100 to-accent-200",
   },
   {
     title: "DocuFlow AI",
-    description: "Intelligent document processing pipeline that reduced manual review time by 80%.",
+    description: lang === "es"
+      ? "Pipeline inteligente de procesamiento de documentos que redujo el tiempo de revisión manual en un 80%."
+      : "Intelligent document processing pipeline that reduced manual review time by 80%.",
     techStack: ["Python", "OpenAI", "FastAPI", "AWS Lambda"],
     color: "from-secondary-100 to-secondary-200",
   },
@@ -29,18 +43,17 @@ const projects = [
 <section class="py-20 sm:py-28 bg-white">
   <Container>
     <SectionHeading
-      eyebrow="Our work"
-      heading="Featured projects"
-      subheading="A selection of recent work that showcases our capabilities."
+      eyebrow={t(lang, "portfolio.eyebrow")}
+      heading={t(lang, "portfolio.featuredHeading")}
+      subheading={t(lang, "portfolio.featuredSubheading")}
       align="center"
     />
 
     <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
       {projects.map((project) => (
         <div class="group rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm transition-all duration-base hover:shadow-lg hover:-translate-y-1">
-          {/* Placeholder image area */}
           <div class={`h-48 bg-gradient-to-br ${project.color} flex items-center justify-center`}>
-            <span class="font-heading text-lg font-semibold text-neutral-700/50">Screenshot</span>
+            <span class="font-heading text-lg font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
           </div>
           <div class="p-5 sm:p-6">
             <h3 class="font-heading text-lg font-semibold text-neutral-900 mb-2">{project.title}</h3>
@@ -56,7 +69,7 @@ const projects = [
     </div>
 
     <div class="mt-12 text-center">
-      <Button href="/portfolio" variant="outline" size="md">View all projects</Button>
+      <Button href={`${prefix}/portfolio`} variant="outline" size="md">{t(lang, "portfolio.viewAll")}</Button>
     </div>
   </Container>
 </section>

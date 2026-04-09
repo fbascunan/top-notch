@@ -1,0 +1,156 @@
+{
+  "nav": {
+    "services": "Servicios",
+    "portfolio": "Portafolio",
+    "blog": "Blog",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "eyebrow": "Agencia de Desarrollo de Software",
+    "heading": "Construimos software que ",
+    "headingHighlight": "impulsa tu negocio",
+    "description": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
+    "ctaPrimary": "Hablemos",
+    "ctaSecondary": "Ver nuestro trabajo"
+  },
+  "services": {
+    "eyebrow": "Qué hacemos",
+    "heading": "Servicios",
+    "subheading": "Soluciones de software integrales adaptadas a las necesidades de tu negocio.",
+    "pageHeading": "Nuestros Servicios",
+    "pageSubheading": "Soluciones de software integrales adaptadas a las necesidades de tu negocio. De la idea a producción, te tenemos cubierto.",
+    "learnMore": "Saber más",
+    "relatedProjects": "Proyectos relacionados",
+    "items": [
+      {
+        "title": "Desarrollo Web",
+        "description": "Sitios web y aplicaciones web modernas y de alto rendimiento, construidas con los frameworks más recientes. Desde sitios de marketing hasta plataformas complejas."
+      },
+      {
+        "title": "Apps Móviles",
+        "description": "Aplicaciones móviles nativas y multiplataforma que ofrecen experiencias fluidas en iOS y Android."
+      },
+      {
+        "title": "IA y Automatización",
+        "description": "Integra IA en tus flujos de trabajo. Desde chatbots inteligentes hasta pipelines de datos, te ayudamos a trabajar de forma más inteligente."
+      },
+      {
+        "title": "Consultoría",
+        "description": "Estrategia técnica, revisiones de arquitectura y aumento de equipo. Te ayudamos a tomar las decisiones tecnológicas correctas."
+      }
+    ]
+  },
+  "whyUs": {
+    "eyebrow": "Por qué nosotros",
+    "heading": "Lo que diferencia a TopNotch",
+    "subheading": "Combinamos velocidad, calidad y transparencia para entregar proyectos que superan expectativas.",
+    "items": [
+      {
+        "title": "Entrega rápida",
+        "description": "Nos movemos rápido sin cortar esquinas. Sprints ágiles, prototipado rápido y entrega continua significan que tu producto llega al mercado antes."
+      },
+      {
+        "title": "Calidad artesanal",
+        "description": "Código limpio, pruebas exhaustivas y arquitectura pensada. Construimos software que escala, rinde y resiste la prueba del tiempo."
+      },
+      {
+        "title": "Comunicación clara",
+        "description": "Sin jerga, sin cajas negras. Tienes visibilidad total del progreso, decisiones y compromisos en cada paso del proyecto."
+      }
+    ]
+  },
+  "portfolio": {
+    "eyebrow": "Nuestro trabajo",
+    "heading": "Portafolio",
+    "subheading": "Una selección de proyectos que muestran nuestras capacidades en web, móvil, IA y consultoría.",
+    "featuredHeading": "Proyectos destacados",
+    "featuredSubheading": "Una selección de trabajos recientes que muestran nuestras capacidades.",
+    "viewAll": "Ver todos los proyectos",
+    "backToPortfolio": "Volver al portafolio",
+    "techStack": "Stack tecnológico",
+    "filterAll": "Todos",
+    "screenshot": "Captura de pantalla"
+  },
+  "cta": {
+    "heading": "¿Listo para construir algo genial?",
+    "description": "Hablemos sobre tu proyecto. Te ayudamos a definir el enfoque, el cronograma y el stack adecuado.",
+    "button": "Contáctanos"
+  },
+  "contact": {
+    "title": "Contacto — TopNotch",
+    "description": "Ponte en contacto con TopNotch. Cuéntanos sobre tu proyecto y te responderemos en un día hábil.",
+    "eyebrow": "Contáctanos",
+    "heading": "Construyamos algo genial",
+    "subheading": "Cuéntanos sobre tu proyecto. Te responderemos en un día hábil.",
+    "otherWays": "Otras formas de contactarnos",
+    "email": "Correo electrónico",
+    "location": "Ubicación",
+    "locationValue": "Santiago, Chile",
+    "whatNext": "¿Qué sigue?",
+    "step1": "Revisamos tu mensaje y respondemos en un día hábil.",
+    "step2": "Agendamos una llamada de descubrimiento para entender tu proyecto en detalle.",
+    "step3": "Recibes una propuesta con alcance, cronograma y precio."
+  },
+  "form": {
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "company": "Empresa",
+    "optional": "(opcional)",
+    "serviceInterest": "Servicio de interés",
+    "selectService": "Selecciona un servicio…",
+    "otherService": "Otro / No estoy seguro",
+    "message": "Mensaje",
+    "namePlaceholder": "Tu nombre completo",
+    "emailPlaceholder": "tu@empresa.com",
+    "companyPlaceholder": "Nombre de tu empresa",
+    "messagePlaceholder": "Cuéntanos sobre tu proyecto, plazos y objetivos…",
+    "submit": "Enviar mensaje",
+    "sending": "Enviando…",
+    "errorName": "Por favor ingresa tu nombre.",
+    "errorEmail": "Por favor ingresa un correo válido.",
+    "errorService": "Por favor selecciona un servicio.",
+    "errorMessage": "Por favor ingresa un mensaje.",
+    "successTitle": "¡Mensaje enviado!",
+    "successText": "Gracias por contactarnos. Te responderemos en un día hábil.",
+    "errorTitle": "Algo salió mal",
+    "errorText": "No pudimos enviar tu mensaje. Por favor intenta de nuevo o escríbenos directamente a"
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "heading": "Ideas y Tutoriales",
+    "subheading": "Reflexiones sobre desarrollo web, decisiones tecnológicas y cómo construir buen software.",
+    "title": "Blog — TopNotch",
+    "description": "Ideas sobre desarrollo web, apps móviles, IA y cómo construir buen software.",
+    "backToBlog": "Volver al blog",
+    "allPosts": "Todos los artículos",
+    "onThisPage": "En esta página",
+    "minRead": "min de lectura",
+    "previous": "← Anterior",
+    "next": "Siguiente →",
+    "postsAbout": "Artículos sobre",
+    "articles": "artículo(s)",
+    "taggedWith": "con la etiqueta"
+  },
+  "footer": {
+    "description": "Construimos software que marca la diferencia. Desde aplicaciones web hasta IA — entregamos calidad, rápido.",
+    "navigation": "Navegación",
+    "connect": "Conectar",
+    "rights": "Todos los derechos reservados."
+  },
+  "notFound": {
+    "title": "Página no encontrada — TopNotch",
+    "description": "La página que buscas no existe o fue movida.",
+    "heading": "Página no encontrada",
+    "text": "La página que buscas no existe o fue movida. Volvamos al camino correcto.",
+    "goHome": "Ir al inicio",
+    "contactUs": "Contáctanos"
+  },
+  "meta": {
+    "homeTitle": "TopNotch — Agencia de Desarrollo de Software",
+    "homeDescription": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
+    "servicesTitle": "Servicios — TopNotch",
+    "servicesDescription": "Soluciones de software integrales: desarrollo web, apps móviles, IA y automatización, y consultoría.",
+    "portfolioTitle": "Portafolio — TopNotch",
+    "portfolioDescription": "Casos de estudio y proyectos que muestran nuestro trabajo en web, móvil, IA y consultoría."
+  }
+}

@@ -7,30 +7,33 @@ import Container from "@/components/Container.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import Badge from "@/components/Badge.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../../i18n/index";
 
-const projects = (await getCollection("portfolio")).sort(
+const lang = "es";
+
+const projects = (await getCollection("portfolio", ({ data }) => !data.locale || data.locale === "es")).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
 
-// Collect all unique tech stack items for filter buttons
 const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
 ---
 
 <BaseLayout
-  title="Portfolio — TopNotch"
-  description="Case studies and projects showcasing our work in web, mobile, AI, and consulting."
+  title={t(lang, "meta.portfolioTitle")}
+  description={t(lang, "meta.portfolioDescription")}
   url="/portfolio"
-  breadcrumbs={[{ name: "Home", url: "/" }, { name: "Portfolio", url: "/portfolio" }]}
+  breadcrumbs={[{ name: "Inicio", url: "/" }, { name: t(lang, "nav.portfolio"), url: "/portfolio" }]}
+  lang={lang}
 >
-  <Navbar />
+  <Navbar lang={lang} />
 
   <main>
     <section class="pt-24 pb-20 sm:pt-32 sm:pb-28">
       <Container>
         <SectionHeading
-          eyebrow="Our work"
-          heading="Portfolio"
-          subheading="A selection of projects that showcase our capabilities across web, mobile, AI, and consulting."
+          eyebrow={t(lang, "portfolio.eyebrow")}
+          heading={t(lang, "portfolio.heading")}
+          subheading={t(lang, "portfolio.subheading")}
           align="center"
           as="h1"
         />
@@ -41,7 +44,7 @@ const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
             data-filter="all"
             class="filter-btn active rounded-full px-4 py-1.5 text-sm font-medium transition-colors bg-primary-600 text-white"
           >
-            All
+            {t(lang, "portfolio.filterAll")}
           </button>
           {allTech.map((tech) => (
             <button
@@ -61,9 +64,8 @@ const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
               class="project-card group block rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm transition-all duration-base hover:shadow-lg hover:-translate-y-1"
               data-tech={JSON.stringify(project.data.techStack)}
             >
-              {/* Placeholder thumbnail */}
               <div class={`h-48 bg-gradient-to-br ${project.data.color ?? "from-primary-100 to-primary-200"} flex items-center justify-center`}>
-                <span class="font-heading text-lg font-semibold text-neutral-700/50">Screenshot</span>
+                <span class="font-heading text-lg font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
               </div>
               <div class="p-5 sm:p-6">
                 <p class="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">
@@ -87,10 +89,10 @@ const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
       </Container>
     </section>
 
-    <CtaBanner />
+    <CtaBanner lang={lang} />
   </main>
 
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>
 
 <script>
@@ -101,7 +103,6 @@ const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
     btn.addEventListener("click", () => {
       const filter = btn.dataset.filter!;
 
-      // Update active state
       buttons.forEach((b) => {
         b.classList.remove("bg-primary-600", "text-white", "active");
         b.classList.add("bg-neutral-100", "text-neutral-700");
@@ -109,7 +110,6 @@ const allTech = [...new Set(projects.flatMap((p) => p.data.techStack))].sort();
       btn.classList.remove("bg-neutral-100", "text-neutral-700");
       btn.classList.add("bg-primary-600", "text-white", "active");
 
-      // Filter cards
       cards.forEach((card) => {
         if (filter === "all") {
           card.style.display = "";

@@ -1,11 +1,19 @@
 ---
 import Container from "./Container.astro";
+import { t, getLocalePrefix, type Locale } from "../i18n/index";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+const prefix = getLocalePrefix(lang);
 
 const navLinks = [
-  { label: "Services", href: "/services" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: t(lang, "nav.services"), href: `${prefix}/services` },
+  { label: t(lang, "nav.portfolio"), href: `${prefix}/portfolio` },
+  { label: t(lang, "nav.blog"), href: `${prefix}/blog` },
+  { label: t(lang, "nav.contact"), href: `${prefix}/contact` },
 ];
 
 const socialLinks = [
@@ -35,7 +43,7 @@ const currentYear = new Date().getFullYear();
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Brand -->
         <div>
-          <a href="/" class="flex items-center gap-2 font-heading text-xl font-bold text-white">
+          <a href={`${prefix}/` || "/"} class="flex items-center gap-2 font-heading text-xl font-bold text-white">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <rect width="28" height="28" rx="6" class="fill-primary-500" />
               <path d="M8 18V10h2.5l3.5 5 3.5-5H20v8h-2.5v-4.5L14 17l-3.5-4.5V18H8z" fill="white" />
@@ -43,13 +51,13 @@ const currentYear = new Date().getFullYear();
             TopNotch
           </a>
           <p class="mt-3 text-sm leading-relaxed max-w-xs">
-            We build software that makes a difference. From web apps to AI — we ship quality, fast.
+            {t(lang, "footer.description")}
           </p>
         </div>
 
         <!-- Navigation -->
         <div>
-          <p class="font-heading text-sm font-semibold text-white uppercase tracking-wider mb-4">Navigation</p>
+          <p class="font-heading text-sm font-semibold text-white uppercase tracking-wider mb-4">{t(lang, "footer.navigation")}</p>
           <ul class="space-y-2">
             {navLinks.map((link) => (
               <li>
@@ -63,7 +71,7 @@ const currentYear = new Date().getFullYear();
 
         <!-- Social -->
         <div>
-          <p class="font-heading text-sm font-semibold text-white uppercase tracking-wider mb-4">Connect</p>
+          <p class="font-heading text-sm font-semibold text-white uppercase tracking-wider mb-4">{t(lang, "footer.connect")}</p>
           <div class="flex gap-3">
             {socialLinks.map((link) => (
               <a
@@ -84,7 +92,7 @@ const currentYear = new Date().getFullYear();
 
       <!-- Bottom bar -->
       <div class="mt-10 pt-6 border-t border-neutral-800 text-sm text-center">
-        &copy; {currentYear} TopNotch. All rights reserved.
+        &copy; {currentYear} TopNotch. {t(lang, "footer.rights")}
       </div>
     </div>
   </Container>

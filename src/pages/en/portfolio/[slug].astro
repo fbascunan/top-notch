@@ -1,0 +1,105 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import Badge from "@/components/Badge.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import { t, getDateLocale } from "../../../i18n/index";
+
+const lang = "en";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("portfolio", ({ data }) => data.locale === "en");
+  return projects.map((project) => ({
+    params: { slug: project.data.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const formattedDate = project.data.date.toLocaleDateString(getDateLocale(lang), {
+  year: "numeric",
+  month: "long",
+});
+---
+
+<BaseLayout
+  title={`${project.data.title} — TopNotch`}
+  description={project.data.summary}
+  url={`/en/portfolio/${project.data.slug}`}
+  breadcrumbs={[{ name: "Home", url: "/en" }, { name: t(lang, "nav.portfolio"), url: "/en/portfolio" }, { name: project.data.title, url: `/en/portfolio/${project.data.slug}` }]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-neutral-50">
+      <Container>
+        <div class="max-w-3xl">
+          <a
+            href="/en/portfolio"
+            class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 mb-6"
+          >
+            <svg class="mr-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            {t(lang, "portfolio.backToPortfolio")}
+          </a>
+          <p class="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-2">
+            {project.data.client} · {formattedDate}
+          </p>
+          <h1 class="font-heading text-4xl sm:text-5xl font-bold text-neutral-900 mb-4">
+            {project.data.title}
+          </h1>
+          <p class="text-xl text-neutral-600 leading-relaxed mb-6">
+            {project.data.summary}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            {project.data.techStack.map((tech) => (
+              <Badge variant="primary">{tech}</Badge>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <section class="pb-12 sm:pb-16">
+      <Container>
+        <div class={`rounded-xl h-64 sm:h-80 bg-gradient-to-br ${project.data.color ?? "from-primary-100 to-primary-200"} flex items-center justify-center`}>
+          <span class="font-heading text-xl font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
+        </div>
+      </Container>
+    </section>
+
+    <section class="pb-16 sm:pb-20">
+      <Container>
+        <div class="max-w-3xl prose prose-neutral prose-lg prose-headings:font-heading prose-headings:text-neutral-900 prose-a:text-primary-600 hover:prose-a:text-primary-700">
+          <Content />
+        </div>
+      </Container>
+    </section>
+
+    <section class="py-12 sm:py-16 bg-neutral-50">
+      <Container>
+        <div class="max-w-3xl">
+          <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-4">{t(lang, "portfolio.techStack")}</h2>
+          <div class="flex flex-wrap gap-3">
+            {project.data.techStack.map((tech) => (
+              <span class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 shadow-sm">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <CtaBanner lang={lang} />
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

@@ -1,0 +1,128 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Badge from "@/components/Badge.astro";
+import { t, getDateLocale } from "../../../i18n/index";
+
+const lang = "en";
+const POSTS_PER_PAGE = 10;
+const currentPage = Number(Astro.url.searchParams.get("page") || "1");
+
+const allPosts = (await getCollection("blog", ({ data }) => !data.draft && data.locale === "en"))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+const start = (currentPage - 1) * POSTS_PER_PAGE;
+const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
+---
+
+<BaseLayout
+  title={t(lang, "blog.title")}
+  description={t(lang, "blog.description")}
+  url="/en/blog"
+  breadcrumbs={[{ name: "Home", url: "/en" }, { name: "Blog", url: "/en/blog" }]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-neutral-50">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "blog.eyebrow")}
+          heading={t(lang, "blog.heading")}
+          subheading={t(lang, "blog.subheading")}
+          as="h1"
+        />
+      </Container>
+    </section>
+
+    <section class="py-12 sm:py-16">
+      <Container>
+        <div class="grid gap-8 md:gap-10">
+          {posts.map((post) => {
+            const formattedDate = post.data.date.toLocaleDateString(getDateLocale(lang), {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+            const readingTime = Math.ceil(post.body!.split(/\s+/).length / 200);
+            return (
+              <article class="group">
+                <a href={`/en/blog/${post.data.slug}`} class="grid md:grid-cols-[320px_1fr] gap-6 items-start">
+                  <div class="aspect-video rounded-xl overflow-hidden bg-neutral-100">
+                    <img
+                      src={post.data.coverImage}
+                      alt={post.data.title}
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="py-1">
+                    <div class="flex items-center gap-3 text-sm text-neutral-500 mb-2">
+                      <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+                      <span>·</span>
+                      <span>{readingTime} {t(lang, "blog.minRead")}</span>
+                    </div>
+                    <h2 class="font-heading text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors mb-2">
+                      {post.data.title}
+                    </h2>
+                    <p class="text-neutral-600 leading-relaxed mb-3">
+                      {post.data.summary}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => (
+                        <Badge variant="default">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+
+        {totalPages > 1 && (
+          <nav class="mt-12 flex justify-center gap-2" aria-label="Blog pagination">
+            {currentPage > 1 && (
+              <a
+                href={`/en/blog${currentPage === 2 ? "" : `?page=${currentPage - 1}`}`}
+                class="inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+              >
+                {t(lang, "blog.previous")}
+              </a>
+            )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <a
+                href={`/en/blog${page === 1 ? "" : `?page=${page}`}`}
+                class:list={[
+                  "inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                  page === currentPage
+                    ? "bg-primary-600 text-white"
+                    : "border border-neutral-200 text-neutral-700 hover:bg-neutral-50",
+                ]}
+                aria-current={page === currentPage ? "page" : undefined}
+              >
+                {page}
+              </a>
+            ))}
+            {currentPage < totalPages && (
+              <a
+                href={`/en/blog?page=${currentPage + 1}`}
+                class="inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+              >
+                {t(lang, "blog.next")}
+              </a>
+            )}
+          </nav>
+        )}
+      </Container>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
