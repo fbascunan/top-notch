@@ -171,6 +171,57 @@
     "noProjects": "No projects available.",
     "completedOf": "of"
   },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "docs": {
+    "nav": "Docs",
+    "eyebrow": "Knowledge Base",
+    "heading": "Documents",
+    "subheading": "Lineaments, specs, and shared documentation.",
+    "noDocuments": "No documents yet.",
+    "addDocument": "New document",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Delete this document?",
+    "title": "Title",
+    "slug": "Slug",
+    "type": "Type",
+    "scope": "Scope",
+    "global": "Global",
+    "project": "Project"
+  },
+  "editor": {
+    "preview": "Preview",
+    "write": "Write",
+    "bold": "Bold",
+    "italic": "Italic",
+    "heading": "Heading",
+    "link": "Link",
+    "code": "Code",
+    "list": "List"
+  },
+  "forms": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure?",
+    "name": "Name",
+    "domain": "Domain",
+    "status": "Status",
+    "priority": "Priority",
+    "notes": "Notes",
+    "addProject": "New project",
+    "addMilestone": "New milestone",
+    "addTask": "New task",
+    "milestoneTitle": "Title",
+    "milestoneDescription": "Description",
+    "milestoneStatus": "Status",
+    "milestoneBlocking": "Depends on"
+  },
   "meta": {
     "homeTitle": "TopNotch — Software Development Agency",
     "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",

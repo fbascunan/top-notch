@@ -1,5 +1,6 @@
 ---
 import Container from "./Container.astro";
+import AuthButton from "./AuthButton.astro";
 import { t, getLocalizedPath, getLocalePrefix, type Locale } from "../i18n/index";
 
 interface Props {
@@ -15,6 +16,7 @@ const navLinks = [
   { label: t(lang, "nav.services"), href: `${prefix}/services` },
   { label: t(lang, "nav.portfolio"), href: `${prefix}/portfolio` },
   { label: t(lang, "projects.nav"), href: `${prefix}/projects` },
+  { label: t(lang, "docs.nav"), href: `${prefix}/docs` },
   { label: t(lang, "nav.blog"), href: `${prefix}/blog` },
   { label: t(lang, "nav.contact"), href: `${prefix}/contact` },
 ];
@@ -63,6 +65,9 @@ const switchPath = getLocalizedPath(currentPath, alternateLang);
             {alternateLang.toUpperCase()}
           </a>
         </li>
+        <li class="ml-2">
+          <AuthButton lang={lang} />
+        </li>
       </ul>
 
       <!-- Mobile hamburger -->
@@ -109,6 +114,9 @@ const switchPath = getLocalizedPath(currentPath, alternateLang);
           >
             {lang === "es" ? "🇬🇧 English" : "🇨🇱 Español"}
           </a>
+        </li>
+        <li class="pt-2 border-t border-neutral-100 mt-2">
+          <AuthButton lang={lang} />
         </li>
       </ul>
     </Container>
