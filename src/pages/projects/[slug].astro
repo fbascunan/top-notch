@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
@@ -6,16 +8,13 @@ import Container from "@/components/Container.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import Badge from "@/components/Badge.astro";
 import MilestoneTimeline from "@/components/MilestoneTimeline.astro";
+import MilestoneForm from "@/components/MilestoneForm.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
 import { t } from "../../i18n/index";
-import { getAllProjectSlugs, getProjectBySlug } from "../../lib/projects-data";
+import { getProjectBySlug } from "../../lib/projects-data";
 
 const lang = "es";
-
-export async function getStaticPaths() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map((slug) => ({ params: { slug } }));
-}
+const isMember = Astro.locals.isMember;
 
 const { slug } = Astro.params;
 const project = await getProjectBySlug(slug!);
@@ -126,6 +125,36 @@ const statusLabel: Record<string, string> = {
 
         <div class="mt-10 max-w-3xl mx-auto">
           <MilestoneTimeline milestones={project.milestones} lang={lang} />
+
+          {/* Milestone action icons (edit/delete per milestone) */}
+          {isMember && (
+            <div data-milestone-actions class="mt-4 space-y-2">
+              {project.milestones.map((m) => (
+                <div class="hidden" data-milestone-action-row={m.id} data-milestone-number={m.number} />
+              ))}
+            </div>
+          )}
+
+          {/* Add Milestone button */}
+          {isMember && (
+            <button
+              type="button"
+              data-add-milestone-trigger
+              class="mt-8 inline-flex items-center gap-2 rounded-md border-2 border-dashed border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-500 hover:border-primary-400 hover:text-primary-600 transition-colors cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              {t(lang, "forms.addMilestone")}
+            </button>
+          )}
+
+          {/* Hidden milestone form */}
+          {isMember && (
+            <div data-milestone-form-container class="hidden mt-6">
+              <MilestoneForm lang={lang} projectId={project.id} />
+            </div>
+          )}
         </div>
       </Container>
     </section>
@@ -135,3 +164,96 @@ const statusLabel: Record<string, string> = {
 
   <Footer lang={lang} />
 </BaseLayout>
+
+{isMember && (
+  <script define:vars={{ projectId: project.id }}>
+    // Add milestone
+    const addTrigger = document.querySelector("[data-add-milestone-trigger]");
+    const formContainer = document.querySelector("[data-milestone-form-container]");
+    const cancelBtn = formContainer?.querySelector("[data-cancel]");
+    const form = formContainer?.querySelector("form");
+
+    addTrigger?.addEventListener("click", () => {
+      formContainer?.classList.remove("hidden");
+      addTrigger.classList.add("hidden");
+      const firstInput = form?.querySelector("input[name='title']");
+      firstInput?.focus();
+    });
+
+    cancelBtn?.addEventListener("click", () => {
+      formContainer?.classList.add("hidden");
+      addTrigger?.classList.remove("hidden");
+      form?.reset();
+    });
+
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+
+      try {
+        const res = await fetch(`/api/projects/${projectId}/milestones`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Error creating milestone");
+        }
+      } catch {
+        alert("Network error");
+      }
+    });
+
+    // Delete milestone (delegated from timeline edit/delete icons)
+    document.addEventListener("click", async (e) => {
+      const deleteBtn = e.target?.closest("[data-delete-milestone]");
+      if (!deleteBtn) return;
+
+      const milestoneId = deleteBtn.dataset.deleteMilestone;
+      if (!confirm("Are you sure?")) return;
+
+      try {
+        const res = await fetch(`/api/milestones/${milestoneId}`, { method: "DELETE" });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Error deleting milestone");
+        }
+      } catch {
+        alert("Network error");
+      }
+    });
+
+    // Edit milestone placeholder (will be fully wired in Task 13)
+    document.addEventListener("click", (e) => {
+      const editBtn = e.target?.closest("[data-edit-milestone]");
+      if (!editBtn) return;
+      // TODO: wire edit form in Task 13
+    });
+
+    // Toggle task checkbox
+    document.addEventListener("change", async (e) => {
+      const checkbox = e.target?.closest("[data-task-checkbox]");
+      if (!checkbox) return;
+
+      const taskId = checkbox.dataset.taskCheckbox;
+      const done = checkbox.checked;
+
+      try {
+        await fetch(`/api/tasks/${taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ done }),
+        });
+      } catch {
+        // Revert on failure
+        checkbox.checked = !done;
+      }
+    });
+  </script>
+)}
