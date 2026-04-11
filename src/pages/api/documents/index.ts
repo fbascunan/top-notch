@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createUserClient } from "../../../lib/supabase-server";
+import { COOKIE_ACCESS } from "../../../lib/auth";
 
 export const prerender = false;
 
@@ -10,7 +11,7 @@ export const GET: APIRoute = async ({ locals, cookies, url }) => {
   if (!locals.isMember || !locals.org) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const supabase = createUserClient(accessToken);
@@ -39,7 +40,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
   if (!locals.isMember || !locals.org) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const body = await request.json();
@@ -57,6 +58,14 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
   }
   if (!doc_type || typeof doc_type !== "string") {
     return new Response(JSON.stringify({ error: "doc_type is required" }), { status: 400 });
+  }
+  const validTypes = ["prospect", "lineament", "bitacora", "spec", "custom"];
+  if (!validTypes.includes(doc_type)) {
+    return new Response(JSON.stringify({ error: "Invalid doc_type" }), { status: 400 });
+  }
+  const validScopes = ["global", "project"];
+  if (!validScopes.includes(scope)) {
+    return new Response(JSON.stringify({ error: "Invalid scope" }), { status: 400 });
   }
 
   // Enforce content size limit

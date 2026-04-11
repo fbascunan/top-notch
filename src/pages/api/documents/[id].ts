@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createUserClient } from "../../../lib/supabase-server";
+import { COOKIE_ACCESS } from "../../../lib/auth";
 
 export const prerender = false;
 
@@ -8,7 +9,7 @@ const MAX_CONTENT_SIZE = 1_000_000; // 1 MB
 // GET — get single document by id (full content)
 export const GET: APIRoute = async ({ params, locals, cookies }) => {
   if (!locals.isMember) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const supabase = createUserClient(accessToken);
@@ -25,7 +26,7 @@ export const GET: APIRoute = async ({ params, locals, cookies }) => {
 // PATCH — update document
 export const PATCH: APIRoute = async ({ params, request, locals, cookies }) => {
   if (!locals.isMember) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const body = await request.json();
@@ -55,7 +56,7 @@ export const PATCH: APIRoute = async ({ params, request, locals, cookies }) => {
 // DELETE — delete document by id
 export const DELETE: APIRoute = async ({ params, locals, cookies }) => {
   if (!locals.isMember) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const supabase = createUserClient(accessToken);

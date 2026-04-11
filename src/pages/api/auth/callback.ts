@@ -13,6 +13,8 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
     console.error("Auth callback failed:", error);
     return redirect("/?error=auth_failed", 302);
   }
-  const next = url.searchParams.get("next") ?? "/";
+  const rawNext = url.searchParams.get("next") ?? "/";
+  // Prevent open redirect: only allow relative paths
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
   return redirect(next, 302);
 };

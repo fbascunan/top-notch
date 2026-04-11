@@ -1,12 +1,13 @@
 import type { APIRoute } from "astro";
 import { createUserClient } from "../../../../lib/supabase-server";
+import { COOKIE_ACCESS } from "../../../../lib/auth";
 
 export const prerender = false;
 
 // GET — list milestones for a project
 export const GET: APIRoute = async ({ params, locals, cookies }) => {
   if (!locals.isMember) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const supabase = createUserClient(accessToken);
@@ -21,7 +22,7 @@ export const GET: APIRoute = async ({ params, locals, cookies }) => {
 // POST — create milestone
 export const POST: APIRoute = async ({ params, request, locals, cookies }) => {
   if (!locals.isMember) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  const accessToken = cookies.get("sb-access-token")?.value;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
   if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const body = await request.json();

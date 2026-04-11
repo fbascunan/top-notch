@@ -4,8 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.SUPABASE_URL ?? "";
 const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY ?? "";
 
-const ACCESS_TOKEN_COOKIE = "sb-access-token";
-const REFRESH_TOKEN_COOKIE = "sb-refresh-token";
+export const COOKIE_ACCESS = "sb-access-token";
+export const COOKIE_REFRESH = "sb-refresh-token";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 const cookieOptions = {
@@ -31,8 +31,8 @@ export async function handleAuthCallback(
     return { success: false, error: error?.message ?? "No session returned" };
   }
 
-  cookies.set(ACCESS_TOKEN_COOKIE, data.session.access_token, cookieOptions);
-  cookies.set(REFRESH_TOKEN_COOKIE, data.session.refresh_token, cookieOptions);
+  cookies.set(COOKIE_ACCESS, data.session.access_token, cookieOptions);
+  cookies.set(COOKIE_REFRESH, data.session.refresh_token, cookieOptions);
 
   return { success: true };
 }
@@ -45,8 +45,8 @@ export async function handleAuthCallback(
 export async function getSessionFromCookies(
   cookies: AstroCookies,
 ): Promise<{ user: App.Locals["user"]; accessToken: string | null }> {
-  const accessToken = cookies.get(ACCESS_TOKEN_COOKIE)?.value ?? null;
-  const refreshToken = cookies.get(REFRESH_TOKEN_COOKIE)?.value ?? null;
+  const accessToken = cookies.get(COOKIE_ACCESS)?.value ?? null;
+  const refreshToken = cookies.get(COOKIE_REFRESH)?.value ?? null;
 
   if (!accessToken) {
     return { user: null, accessToken: null };
@@ -74,12 +74,12 @@ export async function getSessionFromCookies(
 
     if (!refreshError && refreshData.session) {
       cookies.set(
-        ACCESS_TOKEN_COOKIE,
+        COOKIE_ACCESS,
         refreshData.session.access_token,
         cookieOptions,
       );
       cookies.set(
-        REFRESH_TOKEN_COOKIE,
+        COOKIE_REFRESH,
         refreshData.session.refresh_token,
         cookieOptions,
       );
@@ -100,8 +100,8 @@ export async function getSessionFromCookies(
  * Deletes auth cookies, effectively logging the user out.
  */
 export function clearSession(cookies: AstroCookies): void {
-  cookies.delete(ACCESS_TOKEN_COOKIE, { path: "/" });
-  cookies.delete(REFRESH_TOKEN_COOKIE, { path: "/" });
+  cookies.delete(COOKIE_ACCESS, { path: "/" });
+  cookies.delete(COOKIE_REFRESH, { path: "/" });
 }
 
 // ---------------------------------------------------------------------------

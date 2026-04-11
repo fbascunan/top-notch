@@ -24,6 +24,7 @@ CREATE TABLE org_members (
   org_id   UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   user_id  UUID NOT NULL,
   role     TEXT NOT NULL CHECK (role IN ('owner', 'member')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (org_id, user_id)
 );
 
@@ -34,7 +35,7 @@ CREATE TABLE documents (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug        TEXT NOT NULL,
   title       TEXT NOT NULL,
-  content     TEXT,
+  content     TEXT NOT NULL DEFAULT '',
   scope       TEXT NOT NULL CHECK (scope IN ('global', 'project')),
   project_id  BIGINT REFERENCES projects(id) ON DELETE CASCADE,
   org_id      UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

@@ -9,6 +9,7 @@ import InlineEditor from "@/components/InlineEditor.astro";
 import { t } from "../../../i18n/index";
 import { getDocumentBySlug } from "../../../lib/documents-data";
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 const lang = "en";
 const isMember = Astro.locals.isMember;
@@ -21,7 +22,8 @@ if (!doc) {
 }
 
 const editing = Astro.url.searchParams.get("edit") === "true" && isMember;
-const htmlContent = !editing ? (marked.parse(doc.content || "") as string) : "";
+const rawHtml = !editing ? (marked.parse(doc.content || "") as string) : "";
+const htmlContent = rawHtml ? sanitizeHtml(rawHtml) : "";
 ---
 
 <BaseLayout

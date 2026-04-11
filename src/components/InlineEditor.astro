@@ -140,6 +140,8 @@ const { documentId, content = "", lang = "es" } = Astro.props;
         const previewTab = editor.querySelector<HTMLButtonElement>('[data-tab="preview"]');
 
         if (mode === "preview") {
+          // Note: preview renders the editing user's own content only (lower XSS risk).
+          // Server-side rendering uses sanitize-html for full sanitization.
           preview.innerHTML = marked.parse(textarea.value) as string;
           preview.classList.remove("hidden");
           textarea.classList.add("hidden");
