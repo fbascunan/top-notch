@@ -53,6 +53,7 @@ const projects = await getAllProjects();
                 totalMilestones={project.totalMilestones}
                 href={`/projects/${project.slug}`}
                 lang={lang}
+                editable={isMember}
               />
             ))}
 
