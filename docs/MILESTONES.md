@@ -362,6 +362,45 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 
 ---
 
+## M13 — Web Management Platform
+
+Turn the static showcase into an interactive platform where authenticated org members can manage projects, milestones, and markdown documentation inline — same UI for everyone, CRUD controls visible only to members.
+
+### Tasks
+- [x] Database migration: `organizations`, `org_members`, `documents` tables + `org_id` on projects
+- [x] Org-scoped RLS policies replacing flat authenticated access
+- [x] Astro hybrid mode with `@astrojs/netlify` adapter
+- [x] Server-side Supabase client (user JWT + service role patterns)
+- [x] Cookie-based auth (Google OAuth via Supabase Auth, session refresh)
+- [x] Auth middleware resolving user + org membership into `Astro.locals`
+- [x] OAuth callback + logout API routes
+- [x] AuthButton component + Docs nav link in Navbar
+- [x] Project CRUD API routes (`/api/projects`)
+- [x] Milestone CRUD API routes (`/api/milestones`, `/api/projects/[id]/milestones`)
+- [x] Task CRUD API routes (`/api/tasks`, `/api/milestones/[id]/tasks`)
+- [x] Document CRUD API routes (`/api/documents`)
+- [x] Document data layer (`documents-data.ts`) with Supabase + empty fallback
+- [x] Project pages converted to SSR with inline CRUD controls (ES + EN)
+- [x] ProjectForm and MilestoneForm inline form components
+- [x] Markdown split-pane editor component (`InlineEditor.astro`) with `marked` preview
+- [x] Global documents pages (`/docs`, `/docs/[slug]`) with editor integration (ES + EN)
+- [x] DocumentCard component for doc listings
+- [x] Documents section added to project detail pages
+- [x] Edit icon on ProjectCard for authenticated members
+- [x] i18n keys for auth, docs, editor, and forms (ES + EN)
+- [x] Code review fixes: table name (`milestone_tasks`), XSS sanitization (`sanitize-html`), open redirect prevention, data integrity (`NOT NULL`, `created_at`), doc_type validation, cookie constant export
+
+### Acceptance Criteria
+- Anonymous users see the same read-only showcase as before
+- Authenticated org members see inline add/edit/delete controls on projects, milestones, tasks
+- Markdown documents can be created, viewed, and edited with a split-pane editor
+- Global documents listed at `/docs`, project-scoped documents on project detail pages
+- Auth flow works end-to-end (Google OAuth → cookie → middleware → CRUD)
+- No XSS via markdown rendering (server-side sanitization)
+- Build passes with 0 errors
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -378,9 +417,10 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 | M10 — Netlify Deployment | Done | M9 |
 | M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
+| M13 — Web Management Platform | Done | M12 |
 
-> M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3. M9 and M10 are sequential after QA. M11 and M12 are sequential after deployment.
+> M13 depends on M12 (Supabase + project showcase). Deployment requires: `supabase db push` for migration 00004, adding user to `org_members`, configuring OAuth redirect URLs, and setting Netlify env vars.
 
 ---
 
-_Last updated: 2026-04-09_
+_Last updated: 2026-04-11_
