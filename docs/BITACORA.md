@@ -133,3 +133,8 @@
 **Blocked:** Human needs to: (1) `supabase db push` for migration 00004, (2) add themselves to `org_members` table, (3) configure OAuth redirect URLs in Supabase dashboard for localhost + production, (4) set Netlify env vars (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, optional `SUPABASE_SERVICE_ROLE_KEY`), (5) test login flow end-to-end, (6) merge branch to main.
 **Next:** Future milestones: automation trigger from web (run milestones remotely), multi-tenant org management UI, invite flow, replace `prompt()` with inline forms for document creation.
 **Decision:** Astro 6 dropped `output: 'hybrid'` — adapter + per-page `prerender = false` is the new pattern; chose `sanitize-html` over DOMPurify for server-side XSS prevention; org_id added as UUID (not BIGINT) since organizations are new tables while existing PKs stay BIGINT
+
+### 2026-04-11 — agent — M14
+**Did:** created M14 (Platform Deployment & Service Configuration) consolidating all 14 pending human-action tasks from M8, M10, M11, and M13 — Supabase migration + auth setup, Netlify env vars + merge, external services (Formspree, Umami, Google Search Console, DNS), and manual QA (cross-browser, responsive).
+**Blocked:** all M14 tasks require human credentials and manual verification
+**Next:** human works through M14 checklist; after that, future milestones: automation trigger from web, multi-tenant org management, invite flow

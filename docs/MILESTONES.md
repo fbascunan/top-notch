@@ -401,6 +401,50 @@ Turn the static showcase into an interactive platform where authenticated org me
 
 ---
 
+## M14 — Platform Deployment & Service Configuration
+
+Consolidates all pending human-action tasks from M8, M10, M11, and M13 — external service accounts, credentials, deploy pipeline, and manual QA that couldn't be automated.
+
+### Supabase & Auth
+
+- [ ] Run `supabase db push` to apply migration `00004_organizations_and_documents.sql`
+- [ ] Add yourself to `organizations` and `org_members` tables via SQL INSERT
+- [ ] Configure OAuth redirect URLs in Supabase dashboard → Auth → URL Configuration:
+  - `http://localhost:4321/api/auth/callback` (dev)
+  - `https://topnotch-cl.netlify.app/api/auth/callback` (prod)
+- [ ] Test E2E login flow: Sign In → Google OAuth → cookie set → CRUD controls visible
+
+### Netlify & Environment
+
+- [ ] Set Netlify env vars in dashboard → Site settings → Environment variables:
+  - `SUPABASE_URL`
+  - `SUPABASE_ANON_KEY`
+  - (optional) `SUPABASE_SERVICE_ROLE_KEY`
+- [ ] Merge `feat/web-management-platform` branch to `main`
+- [ ] Verify auto-deploy triggers on Netlify and site loads correctly
+
+### External Services
+
+- [ ] Create Formspree account → set form ID in `src/components/ContactForm.astro` (replace `{YOUR_FORM_ID}`)
+- [ ] Create Umami Cloud account → set website ID in `src/layouts/BaseLayout.astro` (replace `UMAMI_WEBSITE_ID`)
+- [ ] Set up Google Search Console for `topnotch.cl`
+- [ ] Configure DNS for `topnotch.cl` domain (point to Netlify)
+
+### Manual QA
+
+- [ ] Cross-browser test: Chrome, Firefox, Safari (macOS/iOS)
+- [ ] Responsive spot-check at 375px, 768px, 1280px, 1920px
+
+### Acceptance Criteria
+
+- Site live at `topnotch.cl` with SSL
+- Auth flow works end-to-end (OAuth → session → CRUD)
+- Contact form delivers emails via Formspree
+- Analytics recording visits via Umami
+- All pages render correctly across browsers and breakpoints
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -418,8 +462,7 @@ Turn the static showcase into an interactive platform where authenticated org me
 | M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 | M13 — Web Management Platform | Done | M12 |
-
-> M13 depends on M12 (Supabase + project showcase). Deployment requires: `supabase db push` for migration 00004, adding user to `org_members`, configuring OAuth redirect URLs, and setting Netlify env vars.
+| M14 — Platform Deployment & Service Configuration | Planned | M13 |
 
 ---
 
