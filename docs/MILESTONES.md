@@ -362,6 +362,89 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 
 ---
 
+## M13 — Web Management Platform
+
+Turn the static showcase into an interactive platform where authenticated org members can manage projects, milestones, and markdown documentation inline — same UI for everyone, CRUD controls visible only to members.
+
+### Tasks
+- [x] Database migration: `organizations`, `org_members`, `documents` tables + `org_id` on projects
+- [x] Org-scoped RLS policies replacing flat authenticated access
+- [x] Astro hybrid mode with `@astrojs/netlify` adapter
+- [x] Server-side Supabase client (user JWT + service role patterns)
+- [x] Cookie-based auth (Google OAuth via Supabase Auth, session refresh)
+- [x] Auth middleware resolving user + org membership into `Astro.locals`
+- [x] OAuth callback + logout API routes
+- [x] AuthButton component + Docs nav link in Navbar
+- [x] Project CRUD API routes (`/api/projects`)
+- [x] Milestone CRUD API routes (`/api/milestones`, `/api/projects/[id]/milestones`)
+- [x] Task CRUD API routes (`/api/tasks`, `/api/milestones/[id]/tasks`)
+- [x] Document CRUD API routes (`/api/documents`)
+- [x] Document data layer (`documents-data.ts`) with Supabase + empty fallback
+- [x] Project pages converted to SSR with inline CRUD controls (ES + EN)
+- [x] ProjectForm and MilestoneForm inline form components
+- [x] Markdown split-pane editor component (`InlineEditor.astro`) with `marked` preview
+- [x] Global documents pages (`/docs`, `/docs/[slug]`) with editor integration (ES + EN)
+- [x] DocumentCard component for doc listings
+- [x] Documents section added to project detail pages
+- [x] Edit icon on ProjectCard for authenticated members
+- [x] i18n keys for auth, docs, editor, and forms (ES + EN)
+- [x] Code review fixes: table name (`milestone_tasks`), XSS sanitization (`sanitize-html`), open redirect prevention, data integrity (`NOT NULL`, `created_at`), doc_type validation, cookie constant export
+
+### Acceptance Criteria
+- Anonymous users see the same read-only showcase as before
+- Authenticated org members see inline add/edit/delete controls on projects, milestones, tasks
+- Markdown documents can be created, viewed, and edited with a split-pane editor
+- Global documents listed at `/docs`, project-scoped documents on project detail pages
+- Auth flow works end-to-end (Google OAuth → cookie → middleware → CRUD)
+- No XSS via markdown rendering (server-side sanitization)
+- Build passes with 0 errors
+
+---
+
+## M14 — Platform Deployment & Service Configuration
+
+Consolidates all pending human-action tasks from M8, M10, M11, and M13 — external service accounts, credentials, deploy pipeline, and manual QA that couldn't be automated.
+
+### Supabase & Auth
+
+- [ ] Run `supabase db push` to apply migration `00004_organizations_and_documents.sql`
+- [ ] Add yourself to `organizations` and `org_members` tables via SQL INSERT
+- [ ] Configure OAuth redirect URLs in Supabase dashboard → Auth → URL Configuration:
+  - `http://localhost:4321/api/auth/callback` (dev)
+  - `https://topnotch-cl.netlify.app/api/auth/callback` (prod)
+- [ ] Test E2E login flow: Sign In → Google OAuth → cookie set → CRUD controls visible
+
+### Netlify & Environment
+
+- [ ] Set Netlify env vars in dashboard → Site settings → Environment variables:
+  - `SUPABASE_URL`
+  - `SUPABASE_ANON_KEY`
+  - (optional) `SUPABASE_SERVICE_ROLE_KEY`
+- [ ] Merge `feat/web-management-platform` branch to `main`
+- [ ] Verify auto-deploy triggers on Netlify and site loads correctly
+
+### External Services
+
+- [ ] Create Formspree account → set form ID in `src/components/ContactForm.astro` (replace `{YOUR_FORM_ID}`)
+- [ ] Create Umami Cloud account → set website ID in `src/layouts/BaseLayout.astro` (replace `UMAMI_WEBSITE_ID`)
+- [ ] Set up Google Search Console for `topnotch.cl`
+- [ ] Configure DNS for `topnotch.cl` domain (point to Netlify)
+
+### Manual QA
+
+- [ ] Cross-browser test: Chrome, Firefox, Safari (macOS/iOS)
+- [ ] Responsive spot-check at 375px, 768px, 1280px, 1920px
+
+### Acceptance Criteria
+
+- Site live at `topnotch.cl` with SSL
+- Auth flow works end-to-end (OAuth → session → CRUD)
+- Contact form delivers emails via Formspree
+- Analytics recording visits via Umami
+- All pages render correctly across browsers and breakpoints
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -378,9 +461,9 @@ Display subprojects and their milestone progress on the TopNotch site, with auto
 | M10 — Netlify Deployment | Done | M9 |
 | M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
-
-> M4, M6, and M7 can run in parallel after M2 is done. M5 can start after M3. M9 and M10 are sequential after QA. M11 and M12 are sequential after deployment.
+| M13 — Web Management Platform | Done | M12 |
+| M14 — Platform Deployment & Service Configuration | Planned | M13 |
 
 ---
 
-_Last updated: 2026-04-09_
+_Last updated: 2026-04-11_

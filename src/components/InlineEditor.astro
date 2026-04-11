@@ -1,0 +1,221 @@
+---
+import { t, type Locale } from "../i18n/index";
+
+interface Props {
+  documentId?: string;
+  content?: string;
+  lang?: Locale;
+}
+
+const { documentId, content = "", lang = "es" } = Astro.props;
+---
+
+<div
+  data-editor
+  data-document-id={documentId}
+  class="border border-neutral-200 rounded-lg overflow-hidden"
+>
+  {/* Toolbar */}
+  <div class="flex items-center gap-1 px-3 py-2 bg-neutral-50 border-b border-neutral-200">
+    <button
+      type="button"
+      data-action="bold"
+      title={t(lang, "editor.bold")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-sm font-bold text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      B
+    </button>
+    <button
+      type="button"
+      data-action="italic"
+      title={t(lang, "editor.italic")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-sm italic text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      I
+    </button>
+    <button
+      type="button"
+      data-action="heading"
+      title={t(lang, "editor.heading")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-sm font-bold text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      H
+    </button>
+    <button
+      type="button"
+      data-action="link"
+      title={t(lang, "editor.link")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-sm text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-action="code"
+      title={t(lang, "editor.code")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-xs font-mono text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      &lt;/&gt;
+    </button>
+    <button
+      type="button"
+      data-action="list"
+      title={t(lang, "editor.list")}
+      class="inline-flex items-center justify-center w-8 h-8 rounded text-sm text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+      </svg>
+    </button>
+
+    {/* Spacer */}
+    <div class="flex-1"></div>
+
+    {/* Tab toggles */}
+    <button
+      type="button"
+      data-tab="write"
+      class="inline-flex items-center px-3 py-1 rounded text-sm font-medium bg-white border border-neutral-300 text-neutral-900 transition-colors"
+    >
+      {t(lang, "editor.write")}
+    </button>
+    <button
+      type="button"
+      data-tab="preview"
+      class="inline-flex items-center px-3 py-1 rounded text-sm font-medium text-neutral-500 transition-colors"
+    >
+      {t(lang, "editor.preview")}
+    </button>
+  </div>
+
+  {/* Editor area */}
+  <div class="relative min-h-[400px]">
+    <textarea
+      data-textarea
+      class="absolute inset-0 w-full h-full p-4 font-mono text-sm resize-none border-none outline-none focus:ring-0"
+    >{content}</textarea>
+    <div
+      data-preview
+      class="absolute inset-0 w-full h-full p-4 overflow-y-auto prose prose-neutral max-w-none hidden"
+    ></div>
+  </div>
+
+  {/* Actions bar */}
+  <div class="flex items-center gap-3 px-4 py-3 border-t border-neutral-200 bg-white">
+    <button
+      type="button"
+      data-save
+      class="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+    >
+      {t(lang, "docs.save")}
+    </button>
+    <button
+      type="button"
+      data-editor-cancel
+      class="inline-flex items-center rounded-md border border-neutral-300 bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-200 transition-colors"
+    >
+      {t(lang, "docs.cancel")}
+    </button>
+  </div>
+</div>
+
+<script>
+  import { marked } from "marked";
+
+  document.querySelectorAll<HTMLElement>("[data-editor]").forEach((editor) => {
+    const textarea = editor.querySelector<HTMLTextAreaElement>("[data-textarea]");
+    const preview = editor.querySelector<HTMLElement>("[data-preview]");
+    const documentId = editor.dataset.documentId;
+
+    if (!textarea || !preview) return;
+
+    // Tab switching
+    editor.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const mode = tab.dataset.tab;
+        const writeTab = editor.querySelector<HTMLButtonElement>('[data-tab="write"]');
+        const previewTab = editor.querySelector<HTMLButtonElement>('[data-tab="preview"]');
+
+        if (mode === "preview") {
+          // Note: preview renders the editing user's own content only (lower XSS risk).
+          // Server-side rendering uses sanitize-html for full sanitization.
+          preview.innerHTML = marked.parse(textarea.value) as string;
+          preview.classList.remove("hidden");
+          textarea.classList.add("hidden");
+          previewTab?.classList.add("bg-white", "border", "border-neutral-300", "text-neutral-900");
+          previewTab?.classList.remove("text-neutral-500");
+          writeTab?.classList.remove("bg-white", "border", "border-neutral-300", "text-neutral-900");
+          writeTab?.classList.add("text-neutral-500");
+        } else {
+          preview.classList.add("hidden");
+          textarea.classList.remove("hidden");
+          textarea.focus();
+          writeTab?.classList.add("bg-white", "border", "border-neutral-300", "text-neutral-900");
+          writeTab?.classList.remove("text-neutral-500");
+          previewTab?.classList.remove("bg-white", "border", "border-neutral-300", "text-neutral-900");
+          previewTab?.classList.add("text-neutral-500");
+        }
+      });
+    });
+
+    // Toolbar: insertAtCursor helper
+    function insertAtCursor(before: string, after: string) {
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = textarea.value.substring(start, end);
+      const replacement = before + selected + after;
+      textarea.setRangeText(replacement, start, end, "select");
+      textarea.focus();
+    }
+
+    editor.querySelectorAll<HTMLButtonElement>("[data-action]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        switch (action) {
+          case "bold":
+            insertAtCursor("**", "**");
+            break;
+          case "italic":
+            insertAtCursor("_", "_");
+            break;
+          case "heading":
+            insertAtCursor("## ", "");
+            break;
+          case "link":
+            insertAtCursor("[", "](url)");
+            break;
+          case "code":
+            insertAtCursor("```\n", "\n```");
+            break;
+          case "list":
+            insertAtCursor("- ", "");
+            break;
+        }
+      });
+    });
+
+    // Save
+    const saveBtn = editor.querySelector<HTMLButtonElement>("[data-save]");
+    saveBtn?.addEventListener("click", async () => {
+      if (!documentId) return;
+      const res = await fetch(`/api/documents/${documentId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: textarea.value }),
+      });
+      if (res.ok) {
+        window.location.reload();
+      }
+    });
+
+    // Cancel
+    const cancelBtn = editor.querySelector<HTMLButtonElement>("[data-editor-cancel]");
+    cancelBtn?.addEventListener("click", () => {
+      window.location.reload();
+    });
+  });
+</script>

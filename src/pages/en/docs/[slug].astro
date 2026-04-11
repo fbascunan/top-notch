@@ -1,0 +1,82 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import InlineEditor from "@/components/InlineEditor.astro";
+import { t } from "../../../i18n/index";
+import { getDocumentBySlug } from "../../../lib/documents-data";
+import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
+
+const lang = "en";
+const isMember = Astro.locals.isMember;
+
+const { slug } = Astro.params;
+const doc = await getDocumentBySlug(slug!);
+
+if (!doc) {
+  return Astro.redirect("/en/404");
+}
+
+const editing = Astro.url.searchParams.get("edit") === "true" && isMember;
+const rawHtml = !editing ? (marked.parse(doc.content || "") as string) : "";
+const htmlContent = rawHtml ? sanitizeHtml(rawHtml) : "";
+---
+
+<BaseLayout
+  title={`${doc.title} — TopNotch`}
+  description={`${doc.title} — TopNotch documentation`}
+  url={`/en/docs/${slug}`}
+  breadcrumbs={[
+    { name: "Home", url: "/en" },
+    { name: t(lang, "docs.nav"), url: "/en/docs" },
+    { name: doc.title, url: `/en/docs/${slug}` },
+  ]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    <section class="pt-24 pb-20 sm:pt-32 sm:pb-28">
+      <Container>
+        <a
+          href="/en/docs"
+          class="inline-flex items-center text-sm text-neutral-500 hover:text-primary-600 transition-colors mb-6"
+        >
+          <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          {t(lang, "docs.backToDocs")}
+        </a>
+
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <h1 class="font-heading text-3xl sm:text-4xl font-bold text-neutral-900">
+            {doc.title}
+          </h1>
+          {isMember && !editing && (
+            <a
+              href={`/en/docs/${slug}?edit=true`}
+              class="inline-flex items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+              </svg>
+              {t(lang, "docs.edit")}
+            </a>
+          )}
+        </div>
+
+        {editing ? (
+          <InlineEditor documentId={doc.id} content={doc.content || ""} lang={lang} />
+        ) : (
+          <div class="prose prose-neutral max-w-none" set:html={htmlContent} />
+        )}
+      </Container>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

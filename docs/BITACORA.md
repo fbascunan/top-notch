@@ -127,3 +127,14 @@
 **Blocked:** nothing
 **Next:** push to main for auto-deploy; future improvements could add tech stack tags to projects and webhook-triggered rebuilds
 **Decision:** data layer uses async functions with Supabase-first + seed fallback pattern consistent with M11; project slugs derived from folder names via `folderToSlug()`
+
+### 2026-04-11 — agent — M13
+**Did:** built full web management platform. Design spec + implementation plan (brainstorming skill). Migration 00004: `organizations`, `org_members`, `documents` tables, `org_id` on projects, org-scoped RLS replacing flat policies. Astro hybrid mode with `@astrojs/netlify` adapter. Cookie-based Google OAuth flow (supabase-server.ts, auth.ts, middleware.ts). 8 API route files for full CRUD on projects, milestones, tasks, documents. AuthButton + Docs nav link in Navbar. ProjectForm, MilestoneForm, InlineEditor (markdown split-pane with `marked`), DocumentCard components. Project pages converted to SSR with inline CRUD. `/docs` and `/docs/[slug]` pages (ES+EN). Code review caught 4 critical + 4 important issues — all fixed: wrong table name (`tasks` → `milestone_tasks`), XSS via `set:html` (added `sanitize-html`), open redirect in auth callback, missing `NOT NULL`/`created_at` in migration, doc_type validation, cookie constant export. 15 commits on `feat/web-management-platform` branch. Build: 0 errors.
+**Blocked:** Human needs to: (1) `supabase db push` for migration 00004, (2) add themselves to `org_members` table, (3) configure OAuth redirect URLs in Supabase dashboard for localhost + production, (4) set Netlify env vars (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, optional `SUPABASE_SERVICE_ROLE_KEY`), (5) test login flow end-to-end, (6) merge branch to main.
+**Next:** Future milestones: automation trigger from web (run milestones remotely), multi-tenant org management UI, invite flow, replace `prompt()` with inline forms for document creation.
+**Decision:** Astro 6 dropped `output: 'hybrid'` — adapter + per-page `prerender = false` is the new pattern; chose `sanitize-html` over DOMPurify for server-side XSS prevention; org_id added as UUID (not BIGINT) since organizations are new tables while existing PKs stay BIGINT
+
+### 2026-04-11 — agent — M14
+**Did:** created M14 (Platform Deployment & Service Configuration) consolidating all 14 pending human-action tasks from M8, M10, M11, and M13 — Supabase migration + auth setup, Netlify env vars + merge, external services (Formspree, Umami, Google Search Console, DNS), and manual QA (cross-browser, responsive).
+**Blocked:** all M14 tasks require human credentials and manual verification
+**Next:** human works through M14 checklist; after that, future milestones: automation trigger from web, multi-tenant org management, invite flow

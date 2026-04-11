@@ -1,0 +1,113 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import DocumentCard from "@/components/DocumentCard.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import { t } from "../../i18n/index";
+import { getGlobalDocuments } from "../../lib/documents-data";
+
+const lang = "es";
+const isMember = Astro.locals.isMember;
+const documents = await getGlobalDocuments();
+---
+
+<BaseLayout
+  title={t(lang, "meta.docsTitle")}
+  description={t(lang, "meta.docsDescription")}
+  url="/docs"
+  breadcrumbs={[{ name: "Inicio", url: "/" }, { name: t(lang, "docs.nav"), url: "/docs" }]}
+  lang={lang}
+>
+  <Navbar lang={lang} />
+
+  <main>
+    <section class="pt-24 pb-20 sm:pt-32 sm:pb-28 bg-neutral-50">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "docs.eyebrow")}
+          heading={t(lang, "docs.heading")}
+          subheading={t(lang, "docs.subheading")}
+          align="center"
+          as="h1"
+        />
+
+        {documents.length === 0 && !isMember ? (
+          <p class="text-center text-neutral-500 mt-12">{t(lang, "docs.noDocuments")}</p>
+        ) : (
+          <div class="mt-14 max-w-3xl mx-auto space-y-3">
+            {documents.map((doc) => (
+              <DocumentCard
+                doc={doc}
+                href={`/docs/${doc.slug}`}
+                lang={lang}
+                editable={isMember}
+              />
+            ))}
+          </div>
+        )}
+
+        {isMember && (
+          <div class="mt-8 max-w-3xl mx-auto">
+            <button
+              type="button"
+              data-add-document
+              class="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-neutral-300 bg-white p-4 text-neutral-400 transition-all duration-200 hover:border-primary-400 hover:text-primary-600 hover:shadow-md cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <span class="text-sm font-medium">{t(lang, "docs.addDocument")}</span>
+            </button>
+          </div>
+        )}
+      </Container>
+    </section>
+
+    <CtaBanner lang={lang} />
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+{isMember && (
+  <script>
+    const addBtn = document.querySelector("[data-add-document]");
+
+    addBtn?.addEventListener("click", async () => {
+      const title = prompt("Título del documento:");
+      if (!title) return;
+
+      const slug = title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      const docType = prompt("Tipo (prospect, lineament, bitacora, spec, custom):", "custom");
+      if (!docType) return;
+
+      try {
+        const res = await fetch("/api/documents", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, slug, doc_type: docType, scope: "global", content: "" }),
+        });
+
+        if (res.ok) {
+          window.location.href = `/docs/${slug}`;
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Error creating document");
+        }
+      } catch {
+        alert("Network error");
+      }
+    });
+  </script>
+)}
