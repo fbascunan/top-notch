@@ -9,15 +9,18 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import Badge from "@/components/Badge.astro";
 import MilestoneTimeline from "@/components/MilestoneTimeline.astro";
 import MilestoneForm from "@/components/MilestoneForm.astro";
+import DocumentCard from "@/components/DocumentCard.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
 import { t } from "../../i18n/index";
 import { getProjectBySlug } from "../../lib/projects-data";
+import { getProjectDocuments } from "../../lib/documents-data";
 
 const lang = "es";
 const isMember = Astro.locals.isMember;
 
 const { slug } = Astro.params;
 const project = await getProjectBySlug(slug!);
+const projectDocs = project ? await getProjectDocuments(project.id) : [];
 
 if (!project) {
   return Astro.redirect("/404");
@@ -159,6 +162,33 @@ const statusLabel: Record<string, string> = {
       </Container>
     </section>
 
+    {/* Documents section */}
+    <section class="py-16 sm:py-20 bg-neutral-50">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "docs.eyebrow")}
+          heading={t(lang, "docs.heading")}
+        />
+        <div class="mt-10 max-w-3xl mx-auto space-y-3">
+          {projectDocs.map((doc) => (
+            <DocumentCard doc={doc} href={`/docs/${doc.slug}`} lang={lang} editable={isMember} />
+          ))}
+          {projectDocs.length === 0 && (
+            <p class="text-center text-neutral-500 text-sm">{t(lang, "docs.noDocuments")}</p>
+          )}
+          {isMember && (
+            <button
+              data-add-project-doc
+              data-project-id={project.id}
+              class="w-full p-4 rounded-lg border-2 border-dashed border-neutral-300 text-neutral-500 hover:border-primary-400 hover:text-primary-600 transition-colors text-sm cursor-pointer"
+            >
+              + {t(lang, "docs.addDocument")}
+            </button>
+          )}
+        </div>
+      </Container>
+    </section>
+
     <CtaBanner lang={lang} />
   </main>
 
@@ -234,6 +264,42 @@ const statusLabel: Record<string, string> = {
       const editBtn = e.target?.closest("[data-edit-milestone]");
       if (!editBtn) return;
       // TODO: wire edit form in Task 13
+    });
+
+    // Add project document
+    document.querySelector("[data-add-project-doc]")?.addEventListener("click", async () => {
+      const btn = document.querySelector("[data-add-project-doc]");
+      const projId = btn?.dataset?.projectId;
+
+      const title = prompt("Título del documento:");
+      if (!title) return;
+
+      const slug = title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      const docType = prompt("Tipo (prospect, lineament, bitacora, spec, custom):", "prospect");
+      if (!docType) return;
+
+      try {
+        const res = await fetch("/api/documents", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, slug, doc_type: docType, scope: "project", project_id: Number(projId), content: "" }),
+        });
+
+        if (res.ok) {
+          window.location.href = `/docs/${slug}?edit=true`;
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Error creating document");
+        }
+      } catch {
+        alert("Network error");
+      }
     });
 
     // Toggle task checkbox

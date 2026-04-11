@@ -53,7 +53,7 @@ export async function getDocumentBySlug(slug: string): Promise<DocumentFull | nu
     .from("documents")
     .select("*")
     .eq("slug", slug)
-    .eq("scope", "global")
+    .limit(1)
     .single();
   if (error || !data) return null;
   return data as DocumentFull;
