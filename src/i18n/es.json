@@ -192,7 +192,13 @@
     "type": "Tipo",
     "scope": "Alcance",
     "global": "Global",
-    "project": "Proyecto"
+    "project": "Proyecto",
+    "backToDocs": "Volver a documentos",
+    "typeProspect": "Prospecto",
+    "typeLineament": "Lineamiento",
+    "typeBitacora": "Bitácora",
+    "typeSpec": "Spec",
+    "typeCustom": "Personalizado"
   },
   "editor": {
     "preview": "Vista previa",
@@ -230,6 +236,8 @@
     "portfolioTitle": "Portafolio — TopNotch",
     "portfolioDescription": "Casos de estudio y proyectos que muestran nuestro trabajo en web, móvil, IA y consultoría.",
     "projectsTitle": "Proyectos — TopNotch",
-    "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real."
+    "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real.",
+    "docsTitle": "Documentos — TopNotch",
+    "docsDescription": "Lineamientos, specs y documentación compartida del equipo."
   }
 }

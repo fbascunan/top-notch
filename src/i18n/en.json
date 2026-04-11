@@ -192,7 +192,13 @@
     "type": "Type",
     "scope": "Scope",
     "global": "Global",
-    "project": "Project"
+    "project": "Project",
+    "backToDocs": "Back to documents",
+    "typeProspect": "Prospect",
+    "typeLineament": "Lineament",
+    "typeBitacora": "Bitacora",
+    "typeSpec": "Spec",
+    "typeCustom": "Custom"
   },
   "editor": {
     "preview": "Preview",
@@ -230,6 +236,8 @@
     "portfolioTitle": "Portfolio — TopNotch",
     "portfolioDescription": "Case studies and projects showcasing our work in web, mobile, AI, and consulting.",
     "projectsTitle": "Projects — TopNotch",
-    "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress."
+    "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress.",
+    "docsTitle": "Documents — TopNotch",
+    "docsDescription": "Lineaments, specs, and shared team documentation."
   }
 }
