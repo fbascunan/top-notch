@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createSSRClient } from "../../../lib/supabase-server";
 
+export const prerender = false;
 
 const MAX_CONTENT_SIZE = 1_000_000; // 1 MB
 

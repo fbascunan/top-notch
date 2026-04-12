@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createSSRClient } from "../../../lib/supabase-server";
 
+export const prerender = false;
 
 // PATCH — update project
 export const PATCH: APIRoute = async ({ params, request, locals, cookies }) => {
