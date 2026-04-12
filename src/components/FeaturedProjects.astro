@@ -1,0 +1,50 @@
+---
+import Container from "./Container.astro";
+import SectionHeading from "./SectionHeading.astro";
+import ProjectCard from "./ProjectCard.astro";
+import Button from "./Button.astro";
+import { t, getLocalePrefix, type Locale } from "../i18n/index";
+import { getFeaturedProjects } from "../lib/projects-data";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+const prefix = getLocalePrefix(lang);
+const projects = await getFeaturedProjects();
+---
+
+<section class="py-20 sm:py-28 bg-white">
+  <Container>
+    <SectionHeading
+      eyebrow={t(lang, "featuredProjects.eyebrow")}
+      heading={t(lang, "featuredProjects.heading")}
+      subheading={t(lang, "featuredProjects.subheading")}
+      align="center"
+    />
+
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {projects.map((project) => (
+        <ProjectCard
+          name={project.name}
+          slug={project.slug}
+          status={project.status}
+          domain={project.domain}
+          notes={project.notes}
+          progressPercent={project.progressPercent}
+          doneMilestones={project.doneMilestones}
+          totalMilestones={project.totalMilestones}
+          href={`${prefix}/projects/${project.slug}`}
+          lang={lang}
+        />
+      ))}
+    </div>
+
+    <div class="mt-12 text-center">
+      <Button href={`${prefix}/projects`} variant="outline" size="md">
+        {t(lang, "featuredProjects.viewAll")}
+      </Button>
+    </div>
+  </Container>
+</section>

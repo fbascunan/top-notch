@@ -19,21 +19,6 @@ const services = defineCollection({
   }),
 });
 
-const portfolio = defineCollection({
-  loader: glob({ base: "./src/content/portfolio", pattern: "**/*.md", generateId }),
-  schema: z.object({
-    title: z.string(),
-    slug: z.string(),
-    client: z.string(),
-    summary: z.string(),
-    techStack: z.array(z.string()),
-    date: z.coerce.date(),
-    featured: z.boolean().default(false),
-    color: z.string().optional(),
-    locale: z.enum(["es", "en"]).optional(),
-  }),
-});
-
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.md", generateId }),
   schema: z.object({
@@ -49,4 +34,4 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { services, portfolio, blog };
+export const collections = { services, blog };

@@ -156,3 +156,9 @@
 **Blocked:** Human needs to run `supabase db push` to apply migration 00005 and verify CRUD controls appear on `/projects` and `/docs`.
 **Next:** M17 (replace portfolio with featured projects) or M18 (rebrand services)
 **Decision:** self-referencing RLS policies in PostgreSQL cause the inner subquery to also be subject to the outer policy, effectively returning empty — always use direct column checks (`user_id = auth.uid()`) for the table's own SELECT policy
+
+### 2026-04-12 — agent — M17
+**Did:** replaced portfolio with featured projects. Removed `/portfolio` pages (ES+EN), portfolio content collection (6 `.md` files + schema), `PortfolioTeaser.astro`. Created `FeaturedProjects.astro` pulling real projects from Supabase (seed fallback). Added `getFeaturedProjects()` to `projects-data.ts`. Created migration `00006_add_featured_to_projects.sql` (`featured` boolean column). Removed portfolio from Navbar, Footer, Hero CTA. Updated i18n keys (`portfolio.*` → `featuredProjects.*`). Removed portfolio references from services detail pages. No portfolio URLs in sitemap or built HTML. Build: 0 errors.
+**Blocked:** Human needs to run `supabase db push` to apply migration 00006.
+**Next:** M18 (rebrand services based on real project offerings)
+**Decision:** `getFeaturedProjects()` uses Supabase `featured=true` filter with fallback to `priority <= 3` from seed data; reused existing `ProjectCard.astro` for homepage featured section instead of custom cards

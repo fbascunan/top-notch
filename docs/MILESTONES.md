@@ -518,20 +518,20 @@ The portfolio page (`/portfolio`, `/portfolio/[slug]`) uses placeholder case stu
 
 ### Tasks
 
-- [ ] Remove `/portfolio` index page and `/portfolio/[slug]` dynamic pages (ES + EN)
-- [ ] Remove `portfolio` content collection (schema + all `.md` files in `src/content/portfolio/`)
-- [ ] Remove "Portfolio" link from `Navbar.astro` (ES + EN)
-- [ ] Remove portfolio-related i18n keys from `es.json` / `en.json`
-- [ ] Refactor `PortfolioTeaser.astro` → `FeaturedProjects.astro` on the homepage:
+- [x] Remove `/portfolio` index page and `/portfolio/[slug]` dynamic pages (ES + EN)
+- [x] Remove `portfolio` content collection (schema + all `.md` files in `src/content/portfolio/`)
+- [x] Remove "Portfolio" link from `Navbar.astro` (ES + EN)
+- [x] Remove portfolio-related i18n keys from `es.json` / `en.json`
+- [x] Refactor `PortfolioTeaser.astro` → `FeaturedProjects.astro` on the homepage:
   - Fetch featured projects from Supabase `projects` table (or seed data fallback)
   - Display real project cards with name, status, milestone progress, domain link
   - "View all" links to `/projects`
-- [ ] Add `featured` boolean column to `projects` table (migration) or filter by priority
-- [ ] Update homepage section heading/copy from portfolio language to projects language
-- [ ] Update i18n keys for the new section
-- [ ] Remove any orphaned portfolio references (services pages "related portfolio", etc.)
-- [ ] Update sitemap — portfolio URLs should no longer be generated
-- [ ] Build passes, no broken links
+- [x] Add `featured` boolean column to `projects` table (migration) or filter by priority
+- [x] Update homepage section heading/copy from portfolio language to projects language
+- [x] Update i18n keys for the new section
+- [x] Remove any orphaned portfolio references (services pages "related portfolio", etc.)
+- [x] Update sitemap — portfolio URLs should no longer be generated
+- [x] Build passes, no broken links
 
 ### Acceptance Criteria
 
@@ -594,7 +594,7 @@ Current services content is generic filler created in M4. The real project regis
 | M14 — Platform Deployment & Service Configuration | In Progress | M13 |
 | M15 — Server Islands for Auth UI | Done | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Done | M14 |
-| M17 — Replace Portfolio with Featured Projects | Planned | M12 |
+| M17 — Replace Portfolio with Featured Projects | Done | M12 |
 | M18 — Rebrand Services Based on Real Offerings | Planned | M17 |
 
 ---

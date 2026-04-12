@@ -4,7 +4,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
 import Container from "@/components/Container.astro";
-import Badge from "@/components/Badge.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
 import { t } from "../../i18n/index";
 
@@ -12,24 +11,14 @@ const lang = "es";
 
 export async function getStaticPaths() {
   const services = await getCollection("services", ({ data }) => !data.locale || data.locale === "es");
-  const portfolio = await getCollection("portfolio", ({ data }) => !data.locale || data.locale === "es");
 
-  return services.map((service) => {
-    const relatedProjects = portfolio.filter((p) =>
-      p.data.techStack.some((tech) =>
-        service.data.title.toLowerCase().includes(tech.toLowerCase()) ||
-        tech.toLowerCase().includes(service.data.slug.split("-")[0])
-      )
-    );
-
-    return {
-      params: { slug: service.data.slug },
-      props: { service, relatedProjects },
-    };
-  });
+  return services.map((service) => ({
+    params: { slug: service.data.slug },
+    props: { service },
+  }));
 }
 
-const { service, relatedProjects } = Astro.props;
+const { service } = Astro.props;
 const { Content } = await render(service);
 ---
 
@@ -68,40 +57,6 @@ const { Content } = await render(service);
         </div>
       </Container>
     </section>
-
-    {/* Related portfolio items */}
-    {relatedProjects.length > 0 && (
-      <section class="py-16 sm:py-20 bg-neutral-50">
-        <Container>
-          <h2 class="font-heading text-2xl sm:text-3xl font-bold text-neutral-900 mb-8">
-            {t(lang, "services.relatedProjects")}
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedProjects.map((project) => (
-              <a
-                href={`/portfolio/${project.data.slug}`}
-                class="group block rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm transition-all duration-base hover:shadow-lg hover:-translate-y-1"
-              >
-                <div class={`h-40 bg-gradient-to-br ${project.data.color ?? "from-primary-100 to-primary-200"} flex items-center justify-center`}>
-                  <span class="font-heading text-lg font-semibold text-neutral-700/50">{t(lang, "portfolio.screenshot")}</span>
-                </div>
-                <div class="p-5">
-                  <h3 class="font-heading text-lg font-semibold text-neutral-900 mb-1">
-                    {project.data.title}
-                  </h3>
-                  <p class="text-sm text-neutral-600 mb-3">{project.data.summary}</p>
-                  <div class="flex flex-wrap gap-1.5">
-                    {project.data.techStack.slice(0, 4).map((tech) => (
-                      <Badge variant="primary">{tech}</Badge>
-                    ))}
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-        </Container>
-      </section>
-    )}
 
     <CtaBanner lang={lang} />
   </main>

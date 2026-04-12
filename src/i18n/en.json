@@ -1,7 +1,6 @@
 {
   "nav": {
     "services": "Services",
-    "portfolio": "Portfolio",
     "blog": "Blog",
     "contact": "Contact"
   },
@@ -59,17 +58,11 @@
       }
     ]
   },
-  "portfolio": {
+  "featuredProjects": {
     "eyebrow": "Our work",
-    "heading": "Portfolio",
-    "subheading": "A selection of projects that showcase our capabilities across web, mobile, AI, and consulting.",
-    "featuredHeading": "Featured projects",
-    "featuredSubheading": "A selection of recent work that showcases our capabilities.",
-    "viewAll": "View all projects",
-    "backToPortfolio": "Back to portfolio",
-    "techStack": "Tech stack",
-    "filterAll": "All",
-    "screenshot": "Screenshot"
+    "heading": "Featured projects",
+    "subheading": "Real projects we're building, with live progress tracking.",
+    "viewAll": "View all projects"
   },
   "cta": {
     "heading": "Ready to build something great?",
@@ -233,8 +226,6 @@
     "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
     "servicesTitle": "Services — TopNotch",
     "servicesDescription": "End-to-end software solutions: web development, mobile apps, AI & automation, and consulting.",
-    "portfolioTitle": "Portfolio — TopNotch",
-    "portfolioDescription": "Case studies and projects showcasing our work in web, mobile, AI, and consulting.",
     "projectsTitle": "Projects — TopNotch",
     "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress.",
     "docsTitle": "Documents — TopNotch",

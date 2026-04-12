@@ -224,6 +224,47 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
   };
 }
 
+export async function getFeaturedProjects(): Promise<ProjectWithProgress[]> {
+  if (!isSupabaseConfigured) {
+    return buildProjectsFromSeed().filter((p) => p.priority <= 3);
+  }
+
+  const supabase = getSupabaseClient()!;
+  const { data: projects, error: projectsError } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("featured", true)
+    .order("priority", { ascending: true });
+
+  if (projectsError || !projects || projects.length === 0) {
+    // Fallback: use seed data filtered by priority
+    return buildProjectsFromSeed().filter((p) => p.priority <= 3);
+  }
+
+  const { data: milestones } = await supabase
+    .from("milestones")
+    .select("id, project_id, status");
+
+  return projects.map((p: any) => {
+    const pMilestones = (milestones ?? []).filter((m: any) => m.project_id === p.id);
+    const done = pMilestones.filter((m: any) => m.status === "Done").length;
+    const total = pMilestones.length;
+    return {
+      id: p.id,
+      name: p.name,
+      slug: folderToSlug(p.folder),
+      folder: p.folder,
+      domain: p.domain,
+      status: p.status,
+      priority: p.priority,
+      notes: p.notes,
+      totalMilestones: total,
+      doneMilestones: done,
+      progressPercent: total > 0 ? Math.round((done / total) * 100) : 0,
+    };
+  });
+}
+
 export async function getAllProjectSlugs(): Promise<string[]> {
   if (!isSupabaseConfigured) {
     return seedProjects.map((p) => folderToSlug(p.folder));

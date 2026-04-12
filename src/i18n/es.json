@@ -1,7 +1,6 @@
 {
   "nav": {
     "services": "Servicios",
-    "portfolio": "Portafolio",
     "blog": "Blog",
     "contact": "Contacto"
   },
@@ -59,17 +58,11 @@
       }
     ]
   },
-  "portfolio": {
+  "featuredProjects": {
     "eyebrow": "Nuestro trabajo",
-    "heading": "Portafolio",
-    "subheading": "Una selección de proyectos que muestran nuestras capacidades en web, móvil, IA y consultoría.",
-    "featuredHeading": "Proyectos destacados",
-    "featuredSubheading": "Una selección de trabajos recientes que muestran nuestras capacidades.",
-    "viewAll": "Ver todos los proyectos",
-    "backToPortfolio": "Volver al portafolio",
-    "techStack": "Stack tecnológico",
-    "filterAll": "Todos",
-    "screenshot": "Captura de pantalla"
+    "heading": "Proyectos destacados",
+    "subheading": "Proyectos reales que estamos construyendo, con progreso en tiempo real.",
+    "viewAll": "Ver todos los proyectos"
   },
   "cta": {
     "heading": "¿Listo para construir algo genial?",
@@ -233,8 +226,6 @@
     "homeDescription": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
     "servicesTitle": "Servicios — TopNotch",
     "servicesDescription": "Soluciones de software integrales: desarrollo web, apps móviles, IA y automatización, y consultoría.",
-    "portfolioTitle": "Portafolio — TopNotch",
-    "portfolioDescription": "Casos de estudio y proyectos que muestran nuestro trabajo en web, móvil, IA y consultoría.",
     "projectsTitle": "Proyectos — TopNotch",
     "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real.",
     "docsTitle": "Documentos — TopNotch",
