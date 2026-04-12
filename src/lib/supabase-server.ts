@@ -1,4 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createServerClient, parseCookieHeader } from "@supabase/ssr";
+import type { AstroCookies } from "astro";
 
 const supabaseUrl = import.meta.env.SUPABASE_URL ?? "";
 const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY ?? "";
@@ -30,6 +32,28 @@ export function createServiceClient(): SupabaseClient | null {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+    },
+  });
+}
+
+/**
+ * Creates a Supabase SSR client from an Astro request context.
+ * Handles cookie-based auth automatically via @supabase/ssr.
+ * Use in API routes and middleware instead of createUserClient.
+ */
+export function createSSRClient(request: Request, cookies: AstroCookies) {
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return parseCookieHeader(request.headers.get("Cookie") ?? "").map(
+          (c) => ({ name: c.name, value: c.value ?? "" }),
+        );
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) =>
+          cookies.set(name, value, options),
+        );
+      },
     },
   });
 }

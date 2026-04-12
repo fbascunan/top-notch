@@ -1,20 +1,17 @@
 import type { APIRoute } from "astro";
-import { createUserClient } from "../../../lib/supabase-server";
-import { COOKIE_ACCESS } from "../../../lib/auth";
+import { createSSRClient } from "../../../lib/supabase-server";
 
 export const prerender = false;
 
 const MAX_CONTENT_SIZE = 1_000_000; // 1 MB
 
 // GET — list documents (filterable by scope, project_id, doc_type)
-export const GET: APIRoute = async ({ locals, cookies, url }) => {
+export const GET: APIRoute = async ({ request, locals, cookies, url }) => {
   if (!locals.isMember || !locals.org) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
-  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
-  if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
-  const supabase = createUserClient(accessToken);
+  const supabase = createSSRClient(request, cookies);
   let query = supabase
     .from("documents")
     .select("id, slug, title, scope, doc_type, project_id, updated_at")
@@ -40,8 +37,6 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
   if (!locals.isMember || !locals.org) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
-  const accessToken = cookies.get(COOKIE_ACCESS)?.value;
-  if (!accessToken) return new Response(JSON.stringify({ error: "No session" }), { status: 401 });
 
   const body = await request.json();
   const { slug, title, content, scope, project_id, doc_type } = body;
@@ -73,7 +68,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     return new Response(JSON.stringify({ error: "Content exceeds 1 MB limit" }), { status: 413 });
   }
 
-  const supabase = createUserClient(accessToken);
+  const supabase = createSSRClient(request, cookies);
   const { data, error } = await supabase
     .from("documents")
     .insert({

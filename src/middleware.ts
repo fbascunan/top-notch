@@ -1,6 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { getSessionFromCookies } from "./lib/auth";
-import { createUserClient } from "./lib/supabase-server";
+import { createSSRClient } from "./lib/supabase-server";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // 1. Set default locals
@@ -14,25 +13,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  // 3. Resolve session from cookies
-  const { user, accessToken } = await getSessionFromCookies(context.cookies);
+  // 3. Resolve session using @supabase/ssr
+  const supabase = createSSRClient(context.request, context.cookies);
+
+  const { data: { user: authUser } } = await supabase.auth.getUser();
 
   // 4. No user — continue as anonymous
-  if (!user || !accessToken) {
+  if (!authUser) {
     return next();
   }
 
   // 5. Authenticated user
-  context.locals.user = user;
+  context.locals.user = {
+    id: authUser.id,
+    email: authUser.email ?? "",
+    name: authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? "",
+    avatarUrl: authUser.user_metadata?.avatar_url ?? "",
+  };
 
   // 6–8. Resolve org membership (failure = read-only, don't crash)
   try {
-    const supabase = createUserClient(accessToken);
-
     const { data: membership } = await supabase
       .from("org_members")
       .select("org_id, role, organizations(id, name, slug)")
-      .eq("user_id", user.id)
+      .eq("user_id", authUser.id)
       .limit(1)
       .single();
 
