@@ -407,21 +407,23 @@ Consolidates all pending human-action tasks from M8, M10, M11, and M13 — exter
 
 ### Supabase & Auth
 
-- [ ] Run `supabase db push` to apply migration `00004_organizations_and_documents.sql`
-- [ ] Add yourself to `organizations` and `org_members` tables via SQL INSERT
-- [ ] Configure OAuth redirect URLs in Supabase dashboard → Auth → URL Configuration:
+- [x] Run `supabase db push` to apply migration `00004_organizations_and_documents.sql`
+- [x] Add yourself to `organizations` and `org_members` tables via SQL INSERT
+- [x] Configure OAuth redirect URLs in Supabase dashboard → Auth → URL Configuration:
   - `http://localhost:4321/api/auth/callback` (dev)
   - `https://topnotch-cl.netlify.app/api/auth/callback` (prod)
-- [ ] Test E2E login flow: Sign In → Google OAuth → cookie set → CRUD controls visible
+- [x] Configure Google OAuth provider in Supabase dashboard (Client ID + Secret from Google Cloud Console)
+- [x] Set Supabase Site URL to `https://topnotch-cl.netlify.app`
+- [x] Test E2E login flow: Sign In → Google OAuth → cookie set → session active
 
 ### Netlify & Environment
 
-- [ ] Set Netlify env vars in dashboard → Site settings → Environment variables:
+- [x] Set Netlify env vars in dashboard → Site settings → Environment variables:
   - `SUPABASE_URL`
   - `SUPABASE_ANON_KEY`
   - (optional) `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] Merge `feat/web-management-platform` branch to `main`
-- [ ] Verify auto-deploy triggers on Netlify and site loads correctly
+- [x] Merge `feat/web-management-platform` branch to `main`
+- [x] Verify auto-deploy triggers on Netlify and site loads correctly
 
 ### External Services
 
@@ -496,7 +498,7 @@ Static pages (home, blog, services, portfolio, contact) can't read cookies at bu
 | M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 | M13 — Web Management Platform | Done | M12 |
-| M14 — Platform Deployment & Service Configuration | Planned | M13 |
+| M14 — Platform Deployment & Service Configuration | In Progress | M13 |
 | M15 — Server Islands for Auth UI | Planned | M14 |
 
 ---

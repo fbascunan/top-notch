@@ -141,6 +141,6 @@
 
 ### 2026-04-12 — agent — M14 / M15
 **Did:** fixed OAuth login — migrated from manual `supabase-js` to `@supabase/ssr` (PKCE cookie management). Merged `feat/web-management-platform` to `main`. Login flow works end-to-end. Attempted `output: 'server'` to show auth state on all pages — reverted (overkill). Created M15 to solve auth UI on static pages via Astro Server Islands (`server:defer`).
-**Blocked:** M14 still has pending human tasks (Formspree, Umami, DNS, manual QA). M15 ready to implement.
-**Next:** implement M15 (Server Islands for AuthButton) — keeps pages static, defers only the auth component to server rendering.
+**Blocked:** M14 external services pending: Formspree, Umami, Google Search Console, DNS, manual QA. CRUD controls on `/projects` not showing despite user being in `org_members` — needs debugging.
+**Next:** debug CRUD visibility issue on `/projects`; then M15 (Server Islands for AuthButton).
 **Decision:** `@supabase/ssr` is the correct package for server-side auth (not raw `supabase-js`); Astro Server Islands (`server:defer`) is the right pattern for auth UI on static pages — avoids SSR-everything or client-side JS hacks
