@@ -138,3 +138,9 @@
 **Did:** created M14 (Platform Deployment & Service Configuration) consolidating all 14 pending human-action tasks from M8, M10, M11, and M13 — Supabase migration + auth setup, Netlify env vars + merge, external services (Formspree, Umami, Google Search Console, DNS), and manual QA (cross-browser, responsive).
 **Blocked:** all M14 tasks require human credentials and manual verification
 **Next:** human works through M14 checklist; after that, future milestones: automation trigger from web, multi-tenant org management, invite flow
+
+### 2026-04-12 — agent — M14 / M15
+**Did:** fixed OAuth login — migrated from manual `supabase-js` to `@supabase/ssr` (PKCE cookie management). Merged `feat/web-management-platform` to `main`. Login flow works end-to-end. Attempted `output: 'server'` to show auth state on all pages — reverted (overkill). Created M15 to solve auth UI on static pages via Astro Server Islands (`server:defer`).
+**Blocked:** M14 still has pending human tasks (Formspree, Umami, DNS, manual QA). M15 ready to implement.
+**Next:** implement M15 (Server Islands for AuthButton) — keeps pages static, defers only the auth component to server rendering.
+**Decision:** `@supabase/ssr` is the correct package for server-side auth (not raw `supabase-js`); Astro Server Islands (`server:defer`) is the right pattern for auth UI on static pages — avoids SSR-everything or client-side JS hacks

@@ -445,6 +445,40 @@ Consolidates all pending human-action tasks from M8, M10, M11, and M13 — exter
 
 ---
 
+## M15 — Server Islands for Auth UI
+
+Use Astro Server Islands (`server:defer`) to make the AuthButton server-rendered on demand across all pages — including static/prerendered ones — without converting the entire site to SSR.
+
+### Context
+
+Static pages (home, blog, services, portfolio, contact) can't read cookies at build time, so the Navbar always shows "Sign In" even when the user is logged in. Only SSR pages (`/projects`, `/docs`) show the correct auth state. Server Islands solve this by deferring just the AuthButton's rendering to the server at request time while the rest of the page stays static.
+
+### How It Works
+
+- `server:defer` on a component tells Astro to render it on the server **after** the page loads
+- The page ships with a fallback (e.g. a generic "Sign In" button) that gets replaced once the island resolves
+- Requires an adapter (already have `@astrojs/netlify`)
+- No changes to page rendering mode — pages stay prerendered/static
+
+### Tasks
+
+- [ ] Refactor `AuthButton.astro` to work as a server island (reads cookies, returns user state)
+- [ ] Add `server:defer` directive where AuthButton is used in `Navbar.astro`
+- [ ] Create a fallback component (e.g. skeleton or generic "Sign In" button) using the `slot="fallback"` pattern
+- [ ] Verify: static pages show fallback on initial load, then swap to real auth state
+- [ ] Verify: SSR pages (`/projects`, `/docs`) continue working as before
+- [ ] Test sign-in / sign-out cycle across static and SSR pages
+- [ ] Test both languages (ES/EN)
+
+### Acceptance Criteria
+
+- All pages show correct auth state (avatar + sign out when logged in, sign in when not)
+- Static pages remain prerendered — no `output: 'server'` or `prerender = false` changes
+- No visible layout shift (fallback matches final component dimensions)
+- Build passes, Lighthouse scores unaffected
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -463,7 +497,8 @@ Consolidates all pending human-action tasks from M8, M10, M11, and M13 — exter
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 | M13 — Web Management Platform | Done | M12 |
 | M14 — Platform Deployment & Service Configuration | Planned | M13 |
+| M15 — Server Islands for Auth UI | Planned | M14 |
 
 ---
 
-_Last updated: 2026-04-11_
+_Last updated: 2026-04-12_
