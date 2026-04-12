@@ -508,6 +508,41 @@ Login works end-to-end (Google OAuth → cookie → session). User appears logge
 
 ---
 
+## M17 — Replace Portfolio with Featured Projects
+
+Remove the portfolio section entirely and replace the homepage "portfolio teaser" with a real featured projects section pulling from the Supabase `projects` table.
+
+### Context
+
+The portfolio page (`/portfolio`, `/portfolio/[slug]`) uses placeholder case studies from a content collection. Meanwhile, real projects already exist in the Supabase database with live milestone data. The homepage section called "Portfolio Teaser" should display actual featured projects from the DB — not fake case studies.
+
+### Tasks
+
+- [ ] Remove `/portfolio` index page and `/portfolio/[slug]` dynamic pages (ES + EN)
+- [ ] Remove `portfolio` content collection (schema + all `.md` files in `src/content/portfolio/`)
+- [ ] Remove "Portfolio" link from `Navbar.astro` (ES + EN)
+- [ ] Remove portfolio-related i18n keys from `es.json` / `en.json`
+- [ ] Refactor `PortfolioTeaser.astro` → `FeaturedProjects.astro` on the homepage:
+  - Fetch featured projects from Supabase `projects` table (or seed data fallback)
+  - Display real project cards with name, status, milestone progress, domain link
+  - "View all" links to `/projects`
+- [ ] Add `featured` boolean column to `projects` table (migration) or filter by priority
+- [ ] Update homepage section heading/copy from portfolio language to projects language
+- [ ] Update i18n keys for the new section
+- [ ] Remove any orphaned portfolio references (services pages "related portfolio", etc.)
+- [ ] Update sitemap — portfolio URLs should no longer be generated
+- [ ] Build passes, no broken links
+
+### Acceptance Criteria
+
+- No `/portfolio` routes exist
+- Homepage shows real featured projects from the database (not placeholder case studies)
+- "View all" links to `/projects`
+- No broken internal links or orphaned references to portfolio
+- Build passes with 0 errors
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -528,6 +563,7 @@ Login works end-to-end (Google OAuth → cookie → session). User appears logge
 | M14 — Platform Deployment & Service Configuration | In Progress | M13 |
 | M15 — Server Islands for Auth UI | Planned | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Planned | M14 |
+| M17 — Replace Portfolio with Featured Projects | Planned | M12 |
 
 ---
 
