@@ -543,6 +543,37 @@ The portfolio page (`/portfolio`, `/portfolio/[slug]`) uses placeholder case stu
 
 ---
 
+## M18 — Rebrand Services Based on Real Offerings
+
+Replace the generic placeholder services (web development, mobile apps, AI/automation, consulting) with services derived from what TopNotch actually builds — evidenced by the real subprojects in the workspace.
+
+### Context
+
+Current services content is generic filler created in M4. The real project registry (MANIFEST.md) shows what TopNotch delivers: institutional/agency websites, mobile apps (Expo/React Native), AI-powered web apps (Supabase + LLM integrations), and civic/data-driven PWAs. The services section should reflect this real capability set.
+
+### Tasks
+
+- [ ] Audit current service `.md` files in `src/content/services/` and homepage `ServicesOverview.astro`
+- [ ] Define new service categories based on real subprojects:
+  - e.g. Web Platforms (climatotal, top-notch), Mobile Apps (not-preocupeit), AI-Powered Products (paes-o7), Data-Driven PWAs (notarías-de-chile)
+  - Final categories to be decided during implementation
+- [ ] Rewrite service `.md` content files (ES + EN) with real descriptions, real tech stacks, and links to corresponding projects
+- [ ] Update `ServicesOverview.astro` on the homepage — new icons, copy, and links matching the new services
+- [ ] Update service detail pages `/services/[slug]` — reference real projects as proof of capability instead of generic text
+- [ ] Cross-link services ↔ projects where relevant (e.g. "see climatotal" on the web platforms service page)
+- [ ] Update i18n keys if any service-related strings changed
+- [ ] Verify no broken links, build passes
+
+### Acceptance Criteria
+
+- Services reflect what TopNotch actually builds, evidenced by real projects
+- Each service page references at least one real project as proof
+- Homepage services section matches the new categories
+- Content is translated (ES + EN)
+- Build passes with 0 errors
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -564,6 +595,7 @@ The portfolio page (`/portfolio`, `/portfolio/[slug]`) uses placeholder case stu
 | M15 — Server Islands for Auth UI | Planned | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Planned | M14 |
 | M17 — Replace Portfolio with Featured Projects | Planned | M12 |
+| M18 — Rebrand Services Based on Real Offerings | Planned | M17 |
 
 ---
 
