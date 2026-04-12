@@ -6,6 +6,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
   adapter: netlify(),
   site: 'https://topnotch.cl',
   i18n: {

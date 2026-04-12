@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { createSSRClient } from "../../../../lib/supabase-server";
 
-export const prerender = false;
 
 // POST — create task for a milestone
 export const POST: APIRoute = async ({ params, request, locals, cookies }) => {
