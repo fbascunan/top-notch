@@ -9,7 +9,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // 2. Skip auth resolution for static assets
   const { pathname } = context.url;
-  if (pathname.startsWith("/_") || /\.\w+$/.test(pathname)) {
+  if ((pathname.startsWith("/_") && !pathname.startsWith("/_server-islands")) || /\.\w+$/.test(pathname)) {
     return next();
   }
 
