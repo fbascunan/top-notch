@@ -464,13 +464,13 @@ Static pages (home, blog, services, portfolio, contact) can't read cookies at bu
 
 ### Tasks
 
-- [ ] Refactor `AuthButton.astro` to work as a server island (reads cookies, returns user state)
-- [ ] Add `server:defer` directive where AuthButton is used in `Navbar.astro`
-- [ ] Create a fallback component (e.g. skeleton or generic "Sign In" button) using the `slot="fallback"` pattern
-- [ ] Verify: static pages show fallback on initial load, then swap to real auth state
-- [ ] Verify: SSR pages (`/projects`, `/docs`) continue working as before
-- [ ] Test sign-in / sign-out cycle across static and SSR pages
-- [ ] Test both languages (ES/EN)
+- [x] Refactor `AuthButton.astro` to work as a server island (reads cookies, returns user state)
+- [x] Add `server:defer` directive where AuthButton is used in `Navbar.astro`
+- [x] Create a fallback component (e.g. skeleton or generic "Sign In" button) using the `slot="fallback"` pattern
+- [x] Verify: static pages show fallback on initial load, then swap to real auth state
+- [x] Verify: SSR pages (`/projects`, `/docs`) continue working as before
+- [x] Test sign-in / sign-out cycle across static and SSR pages
+- [x] Test both languages (ES/EN)
 
 ### Acceptance Criteria
 
@@ -592,7 +592,7 @@ Current services content is generic filler created in M4. The real project regis
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 | M13 — Web Management Platform | Done | M12 |
 | M14 — Platform Deployment & Service Configuration | In Progress | M13 |
-| M15 — Server Islands for Auth UI | Planned | M14 |
+| M15 — Server Islands for Auth UI | Done | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Planned | M14 |
 | M17 — Replace Portfolio with Featured Projects | Planned | M12 |
 | M18 — Rebrand Services Based on Real Offerings | Planned | M17 |

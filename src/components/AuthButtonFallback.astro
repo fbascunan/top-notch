@@ -1,0 +1,18 @@
+---
+import { t, type Locale } from "../i18n/index";
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = "es" } = Astro.props;
+
+const signInUrl = "/api/auth/login";
+---
+
+<a
+  href={signInUrl}
+  class="px-3 py-1.5 rounded-md text-sm font-medium border border-neutral-200 text-neutral-600 hover:text-primary-600 hover:border-primary-300 transition-colors duration-[var(--transition-fast)]"
+>
+  {t(lang, "auth.signIn")}
+</a>

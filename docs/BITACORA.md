@@ -144,3 +144,9 @@
 **Blocked:** M14 external services pending: Formspree, Umami, Google Search Console, DNS, manual QA. CRUD controls on `/projects` not showing despite user being in `org_members` — needs debugging.
 **Next:** debug CRUD visibility issue on `/projects`; then M15 (Server Islands for AuthButton).
 **Decision:** `@supabase/ssr` is the correct package for server-side auth (not raw `supabase-js`); Astro Server Islands (`server:defer`) is the right pattern for auth UI on static pages — avoids SSR-everything or client-side JS hacks
+
+### 2026-04-12 — agent — M15
+**Did:** implemented Server Islands for AuthButton. Added `server:defer` directive to both desktop and mobile AuthButton usages in `Navbar.astro`. Created `AuthButtonFallback.astro` (generic "Sign In" button matching dimensions) as `slot="fallback"`. No changes to page rendering modes — static pages stay prerendered, SSR pages (`/projects`, `/docs`) unchanged. Build passes with 0 errors.
+**Blocked:** nothing
+**Next:** M16 (debug CRUD visibility for authenticated members) or M17 (replace portfolio with featured projects)
+**Decision:** AuthButton itself needed no changes — it already reads `Astro.locals.user` which works when rendered as a server island at request time; fallback matches sign-in button styles exactly to prevent layout shift

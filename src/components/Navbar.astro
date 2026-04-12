@@ -1,6 +1,7 @@
 ---
 import Container from "./Container.astro";
 import AuthButton from "./AuthButton.astro";
+import AuthButtonFallback from "./AuthButtonFallback.astro";
 import { t, getLocalizedPath, getLocalePrefix, type Locale } from "../i18n/index";
 
 interface Props {
@@ -66,7 +67,9 @@ const switchPath = getLocalizedPath(currentPath, alternateLang);
           </a>
         </li>
         <li class="ml-2">
-          <AuthButton lang={lang} />
+          <AuthButton server:defer lang={lang}>
+            <AuthButtonFallback slot="fallback" lang={lang} />
+          </AuthButton>
         </li>
       </ul>
 
@@ -116,7 +119,9 @@ const switchPath = getLocalizedPath(currentPath, alternateLang);
           </a>
         </li>
         <li class="pt-2 border-t border-neutral-100 mt-2">
-          <AuthButton lang={lang} />
+          <AuthButton server:defer lang={lang}>
+            <AuthButtonFallback slot="fallback" lang={lang} />
+          </AuthButton>
         </li>
       </ul>
     </Container>
