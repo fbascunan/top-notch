@@ -491,14 +491,14 @@ Login works end-to-end (Google OAuth → cookie → session). User appears logge
 
 ### Tasks
 
-- [ ] Verify middleware correctly resolves `isMember` from `org_members` join query
-- [ ] Check RLS policies on `org_members` and `organizations` tables — the middleware query may be blocked by RLS
-- [ ] Verify the `org_members` INSERT has the correct `user_id` matching `auth.uid()`
-- [ ] Add debug logging to middleware to trace: user resolved? → org query result? → isMember set?
-- [ ] Check Netlify function logs for errors during the org membership query
-- [ ] Fix the root cause
-- [ ] Verify: logged-in org member sees edit icons on project cards, add project button, milestone forms, document CRUD
-- [ ] Remove debug logging after fix
+- [x] Verify middleware correctly resolves `isMember` from `org_members` join query
+- [x] Check RLS policies on `org_members` and `organizations` tables — the middleware query may be blocked by RLS
+- [x] Verify the `org_members` INSERT has the correct `user_id` matching `auth.uid()`
+- [x] Add debug logging to middleware to trace: user resolved? → org query result? → isMember set?
+- [x] Check Netlify function logs for errors during the org membership query
+- [x] Fix the root cause
+- [x] Verify: logged-in org member sees edit icons on project cards, add project button, milestone forms, document CRUD
+- [x] Remove debug logging after fix
 
 ### Acceptance Criteria
 
@@ -593,7 +593,7 @@ Current services content is generic filler created in M4. The real project regis
 | M13 — Web Management Platform | Done | M12 |
 | M14 — Platform Deployment & Service Configuration | In Progress | M13 |
 | M15 — Server Islands for Auth UI | Done | M14 |
-| M16 — Debug CRUD Visibility for Authenticated Members | Planned | M14 |
+| M16 — Debug CRUD Visibility for Authenticated Members | Done | M14 |
 | M17 — Replace Portfolio with Featured Projects | Planned | M12 |
 | M18 — Rebrand Services Based on Real Offerings | Planned | M17 |
 

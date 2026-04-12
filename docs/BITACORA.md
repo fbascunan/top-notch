@@ -150,3 +150,9 @@
 **Blocked:** nothing
 **Next:** M16 (debug CRUD visibility for authenticated members) or M17 (replace portfolio with featured projects)
 **Decision:** AuthButton itself needed no changes — it already reads `Astro.locals.user` which works when rendered as a server island at request time; fallback matches sign-in button styles exactly to prevent layout shift
+
+### 2026-04-12 — agent — M16
+**Did:** found and fixed CRUD visibility bug. Root cause: `org_members` RLS policy was self-referencing — the SELECT policy's `USING` clause queried `org_members` itself via subquery, which was also subject to the same RLS policy, creating a circular dependency that always returned zero rows. Created migration `00005_fix_org_members_rls.sql` replacing the policy with `USING (user_id = auth.uid())`. Middleware logic was correct; no code changes needed beyond the RLS fix. Added/removed debug logging as part of investigation. Build passes with 0 errors.
+**Blocked:** Human needs to run `supabase db push` to apply migration 00005 and verify CRUD controls appear on `/projects` and `/docs`.
+**Next:** M17 (replace portfolio with featured projects) or M18 (rebrand services)
+**Decision:** self-referencing RLS policies in PostgreSQL cause the inner subquery to also be subject to the outer policy, effectively returning empty — always use direct column checks (`user_id = auth.uid()`) for the table's own SELECT policy
