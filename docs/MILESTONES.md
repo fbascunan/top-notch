@@ -553,16 +553,15 @@ Current services content is generic filler created in M4. The real project regis
 
 ### Tasks
 
-- [ ] Audit current service `.md` files in `src/content/services/` and homepage `ServicesOverview.astro`
-- [ ] Define new service categories based on real subprojects:
-  - e.g. Web Platforms (climatotal, top-notch), Mobile Apps (not-preocupeit), AI-Powered Products (paes-o7), Data-Driven PWAs (notarías-de-chile)
-  - Final categories to be decided during implementation
-- [ ] Rewrite service `.md` content files (ES + EN) with real descriptions, real tech stacks, and links to corresponding projects
-- [ ] Update `ServicesOverview.astro` on the homepage — new icons, copy, and links matching the new services
-- [ ] Update service detail pages `/services/[slug]` — reference real projects as proof of capability instead of generic text
-- [ ] Cross-link services ↔ projects where relevant (e.g. "see climatotal" on the web platforms service page)
-- [ ] Update i18n keys if any service-related strings changed
-- [ ] Verify no broken links, build passes
+- [x] Audit current service `.md` files in `src/content/services/` and homepage `ServicesOverview.astro`
+- [x] Define new service categories based on real subprojects:
+  - Web Platforms (climatotal, top-notch), Mobile Apps (not-preocupeit), AI-Powered Products (paes-o7), Data-Driven PWAs (notarías-de-chile)
+- [x] Rewrite service `.md` content files (ES + EN) with real descriptions, real tech stacks, and links to corresponding projects
+- [x] Update `ServicesOverview.astro` on the homepage — new icons, copy, and links matching the new services
+- [x] Update service detail pages `/services/[slug]` — reference real projects as proof of capability instead of generic text
+- [x] Cross-link services ↔ projects where relevant (e.g. "see climatotal" on the web platforms service page)
+- [x] Update i18n keys if any service-related strings changed
+- [x] Verify no broken links, build passes
 
 ### Acceptance Criteria
 
@@ -595,7 +594,7 @@ Current services content is generic filler created in M4. The real project regis
 | M15 — Server Islands for Auth UI | Done | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Done | M14 |
 | M17 — Replace Portfolio with Featured Projects | Done | M12 |
-| M18 — Rebrand Services Based on Real Offerings | Planned | M17 |
+| M18 — Rebrand Services Based on Real Offerings | Done | M17 |
 
 ---
 

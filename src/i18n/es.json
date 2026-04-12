@@ -22,20 +22,20 @@
     "relatedProjects": "Proyectos relacionados",
     "items": [
       {
-        "title": "Desarrollo Web",
-        "description": "Sitios web y aplicaciones web modernas y de alto rendimiento, construidas con los frameworks más recientes. Desde sitios de marketing hasta plataformas complejas."
+        "title": "Sitios Web & Plataformas",
+        "description": "Sitios institucionales y plataformas web de alto rendimiento — optimizados para SEO, velocidad y conversión. Astro, Tailwind, Supabase."
       },
       {
         "title": "Apps Móviles",
-        "description": "Aplicaciones móviles nativas y multiplataforma que ofrecen experiencias fluidas en iOS y Android."
+        "description": "Aplicaciones multiplataforma con Expo y React Native. Un código, dos plataformas — desde la idea hasta las tiendas de apps."
       },
       {
-        "title": "IA y Automatización",
-        "description": "Integra IA en tus flujos de trabajo. Desde chatbots inteligentes hasta pipelines de datos, te ayudamos a trabajar de forma más inteligente."
+        "title": "Productos con IA",
+        "description": "Aplicaciones web potenciadas por inteligencia artificial — tutores, asistentes y herramientas que integran LLMs como experiencia central."
       },
       {
-        "title": "Consultoría",
-        "description": "Estrategia técnica, revisiones de arquitectura y aumento de equipo. Te ayudamos a tomar las decisiones tecnológicas correctas."
+        "title": "Apps Cívicas & de Datos",
+        "description": "PWAs de datos abiertos y utilidad pública — transparencia, datos ciudadanos y herramientas que transforman información dispersa en valor."
       }
     ]
   },
@@ -225,7 +225,7 @@
     "homeTitle": "TopNotch — Agencia de Desarrollo de Software",
     "homeDescription": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
     "servicesTitle": "Servicios — TopNotch",
-    "servicesDescription": "Soluciones de software integrales: desarrollo web, apps móviles, IA y automatización, y consultoría.",
+    "servicesDescription": "Sitios web, apps móviles, productos con IA y aplicaciones de datos — respaldados por proyectos reales.",
     "projectsTitle": "Proyectos — TopNotch",
     "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real.",
     "docsTitle": "Documentos — TopNotch",

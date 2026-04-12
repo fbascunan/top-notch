@@ -22,20 +22,20 @@
     "relatedProjects": "Related projects",
     "items": [
       {
-        "title": "Web Development",
-        "description": "Modern, performant websites and web applications built with the latest frameworks. From marketing sites to complex platforms."
+        "title": "Websites & Platforms",
+        "description": "High-performance institutional websites and web platforms — optimized for SEO, speed, and conversion. Astro, Tailwind, Supabase."
       },
       {
         "title": "Mobile Apps",
-        "description": "Native and cross-platform mobile applications that deliver seamless experiences on iOS and Android."
+        "description": "Cross-platform apps with Expo and React Native. One codebase, two platforms — from idea to app stores."
       },
       {
-        "title": "AI & Automation",
-        "description": "Integrate AI into your workflows. From intelligent chatbots to data pipelines, we help you work smarter."
+        "title": "AI-Powered Products",
+        "description": "Web applications powered by artificial intelligence — tutors, assistants, and tools that integrate LLMs as the core experience."
       },
       {
-        "title": "Consulting",
-        "description": "Technical strategy, architecture reviews, and team augmentation. We help you make the right technology decisions."
+        "title": "Civic & Data-Driven Apps",
+        "description": "Open data PWAs and public utility tools — transparency, citizen data, and tools that turn scattered information into value."
       }
     ]
   },
@@ -225,7 +225,7 @@
     "homeTitle": "TopNotch — Software Development Agency",
     "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
     "servicesTitle": "Services — TopNotch",
-    "servicesDescription": "End-to-end software solutions: web development, mobile apps, AI & automation, and consulting.",
+    "servicesDescription": "Websites, mobile apps, AI-powered products, and data-driven apps — backed by real projects.",
     "projectsTitle": "Projects — TopNotch",
     "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress.",
     "docsTitle": "Documents — TopNotch",

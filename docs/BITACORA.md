@@ -161,4 +161,9 @@
 **Did:** replaced portfolio with featured projects. Removed `/portfolio` pages (ES+EN), portfolio content collection (6 `.md` files + schema), `PortfolioTeaser.astro`. Created `FeaturedProjects.astro` pulling real projects from Supabase (seed fallback). Added `getFeaturedProjects()` to `projects-data.ts`. Created migration `00006_add_featured_to_projects.sql` (`featured` boolean column). Removed portfolio from Navbar, Footer, Hero CTA. Updated i18n keys (`portfolio.*` → `featuredProjects.*`). Removed portfolio references from services detail pages. No portfolio URLs in sitemap or built HTML. Build: 0 errors.
 **Blocked:** Human needs to run `supabase db push` to apply migration 00006.
 **Next:** M18 (rebrand services based on real project offerings)
+
+### 2026-04-12 — agent — M18
+**Did:** rebranded services from generic placeholders to real project-based offerings. Replaced 4 service categories: Web Platforms (climatotal, top-notch), Mobile Apps (not-preocupeit), AI-Powered Products (paes-o7), Civic & Data-Driven Apps (notarías-de-chile). Rewrote all 8 service `.md` files (ES+EN) with real descriptions, tech stacks, and project links. Updated `ServicesOverview.astro` icons and slugs. Updated i18n keys and meta descriptions. Each service page cross-links to at least one real project. Build: 0 errors.
+**Blocked:** nothing
+**Next:** all current milestones complete; future work: M14 external services (Formspree, Umami, DNS), additional milestones as needed
 **Decision:** `getFeaturedProjects()` uses Supabase `featured=true` filter with fallback to `priority <= 3` from seed data; reused existing `ProjectCard.astro` for homepage featured section instead of custom cards
