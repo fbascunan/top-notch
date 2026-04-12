@@ -8,9 +8,7 @@ interface Props {
 const { lang = "es" } = Astro.props;
 
 const user = Astro.locals.user;
-const supabaseUrl = import.meta.env.SUPABASE_URL ?? "";
-const origin = Astro.url.origin;
-const signInUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${origin}/api/auth/callback`;
+const signInUrl = "/api/auth/login";
 ---
 
 {user ? (
