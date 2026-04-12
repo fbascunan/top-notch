@@ -481,6 +481,33 @@ Static pages (home, blog, services, portfolio, contact) can't read cookies at bu
 
 ---
 
+## M16 — Debug CRUD Visibility for Authenticated Members
+
+Investigate and fix why authenticated org members don't see inline CRUD controls (add/edit/delete) on `/projects` and `/docs` pages despite being in the `org_members` table with a valid session.
+
+### Context
+
+Login works end-to-end (Google OAuth → cookie → session). User appears logged in on SSR pages (`/projects`, `/docs`). However, the `isMember` flag — which gates all CRUD controls — is not resolving to `true`, so add/edit/delete buttons remain hidden.
+
+### Tasks
+
+- [ ] Verify middleware correctly resolves `isMember` from `org_members` join query
+- [ ] Check RLS policies on `org_members` and `organizations` tables — the middleware query may be blocked by RLS
+- [ ] Verify the `org_members` INSERT has the correct `user_id` matching `auth.uid()`
+- [ ] Add debug logging to middleware to trace: user resolved? → org query result? → isMember set?
+- [ ] Check Netlify function logs for errors during the org membership query
+- [ ] Fix the root cause
+- [ ] Verify: logged-in org member sees edit icons on project cards, add project button, milestone forms, document CRUD
+- [ ] Remove debug logging after fix
+
+### Acceptance Criteria
+
+- Authenticated org members see all inline CRUD controls on `/projects`, `/projects/[slug]`, `/docs`, `/docs/[slug]`
+- Anonymous users see read-only views (no regression)
+- No errors in Netlify function logs during auth resolution
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -500,6 +527,7 @@ Static pages (home, blog, services, portfolio, contact) can't read cookies at bu
 | M13 — Web Management Platform | Done | M12 |
 | M14 — Platform Deployment & Service Configuration | In Progress | M13 |
 | M15 — Server Islands for Auth UI | Planned | M14 |
+| M16 — Debug CRUD Visibility for Authenticated Members | Planned | M14 |
 
 ---
 
