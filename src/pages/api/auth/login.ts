@@ -3,25 +3,50 @@ import { createClient } from "@supabase/supabase-js";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url, redirect }) => {
+/**
+ * Generate PKCE code verifier and challenge manually so we can persist
+ * the verifier in a cookie between the login and callback requests.
+ */
+async function generatePKCE() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  const verifier = base64UrlEncode(array);
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(verifier),
+  );
+  const challenge = base64UrlEncode(new Uint8Array(digest));
+  return { verifier, challenge };
+}
+
+function base64UrlEncode(bytes: Uint8Array): string {
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+export const GET: APIRoute = async ({ url, redirect, cookies }) => {
   const supabaseUrl = import.meta.env.SUPABASE_URL ?? "";
-  const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY ?? "";
   const origin = url.origin;
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { flowType: "pkce" },
+  const { verifier, challenge } = await generatePKCE();
+
+  // Store verifier in a cookie so the callback can read it
+  cookies.set("sb-code-verifier", verifier, {
+    path: "/",
+    secure: true,
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 300, // 5 minutes, enough for OAuth round-trip
   });
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  // Build the authorization URL with PKCE parameters
+  const params = new URLSearchParams({
     provider: "google",
-    options: {
-      redirectTo: `${origin}/api/auth/callback`,
-    },
+    redirect_to: `${origin}/api/auth/callback`,
+    code_challenge: challenge,
+    code_challenge_method: "S256",
   });
 
-  if (error || !data.url) {
-    return redirect("/?error=oauth_init_failed", 302);
-  }
-
-  return redirect(data.url, 302);
+  return redirect(`${supabaseUrl}/auth/v1/authorize?${params.toString()}`, 302);
 };
