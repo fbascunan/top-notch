@@ -625,14 +625,14 @@ M20 works like the local script — flat files in, git commits out. This milesto
 
 ### Tasks
 
-- [ ] Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub Secrets
-- [ ] Add a pre-run step to the workflow: create a `run_history` row with status `running` via Supabase REST API (curl or a small Node script)
-- [ ] Replace flat-file milestone extraction with a Supabase query: fetch project + milestone + tasks by the provided inputs
-- [ ] Build the Claude prompt from DB data instead of parsing Markdown (reuse logic from `milestones-sync.ts` where possible)
-- [ ] Add a post-run step: update `run_history` with status (`completed`/`failed`), `finished_at`, `logs` (captured from Claude output), `commit_sha`, and `error` if applicable
-- [ ] Update milestone status in Supabase on successful completion (status → `Done`)
-- [ ] Update task completion in Supabase based on Claude's output
-- [ ] Add a callback step: POST to a Netlify function (`/api/run-callback`) to notify the website in real-time (optional — polling from M22 works as fallback)
+- [x] Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub Secrets
+- [x] Add a pre-run step to the workflow: create a `run_history` row with status `running` via Supabase REST API (curl or a small Node script)
+- [x] Replace flat-file milestone extraction with a Supabase query: fetch project + milestone + tasks by the provided inputs
+- [x] Build the Claude prompt from DB data instead of parsing Markdown (reuse logic from `milestones-sync.ts` where possible)
+- [x] Add a post-run step: update `run_history` with status (`completed`/`failed`), `finished_at`, `logs` (captured from Claude output), `commit_sha`, and `error` if applicable
+- [x] Update milestone status in Supabase on successful completion (status → `Done`)
+- [x] Update task completion in Supabase based on Claude's output
+- [x] Add a callback step: POST to a Netlify function (`/api/run-callback`) to notify the website in real-time (optional — polling from M22 works as fallback)
 
 ### Acceptance Criteria
 
@@ -733,7 +733,7 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 | M18 — Rebrand Services Based on Real Offerings | Done | M17 |
 | M19 — Run History Schema | Done | M11 |
 | M20 — GitHub Actions Milestone Runner | Done | — |
-| M21 — Supabase-Aware Runner | Planned | M19, M20 |
+| M21 — Supabase-Aware Runner | Done | M19, M20 |
 | M22 — Web Trigger & Monitoring UI | Planned | M21 |
 | M23 — Human Actions Dashboard | Planned | M22 |
 

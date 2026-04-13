@@ -22,6 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -45,8 +49,41 @@ jobs:
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
-      - name: Determine milestone
+      # ── Supabase: fetch context from DB ──────────────────────────
+      - name: Fetch milestone context from Supabase
+        id: supabase_context
+        run: |
+          RESULT=$(node .github/scripts/supabase-runner.mjs fetch-context \
+            "${{ inputs.project_folder }}" \
+            "${{ inputs.milestone_number }}" 2>/tmp/supabase-fetch-err.txt) || EXIT=$?
+
+          if [[ ${EXIT:-0} -eq 2 ]]; then
+            echo "::warning::Supabase not configured — falling back to flat-file extraction"
+            echo "supabase_available=false" >> "$GITHUB_OUTPUT"
+          elif [[ ${EXIT:-0} -ne 0 ]]; then
+            echo "::warning::Supabase fetch failed — falling back to flat-file extraction"
+            cat /tmp/supabase-fetch-err.txt
+            echo "supabase_available=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "supabase_available=true" >> "$GITHUB_OUTPUT"
+            # Parse JSON result
+            PROJECT_ID=$(echo "$RESULT" | jq -r '.project_id')
+            MILESTONE_ID=$(echo "$RESULT" | jq -r '.milestone_id')
+            MILESTONE_NUM=$(echo "$RESULT" | jq -r '.milestone_number')
+            MILESTONE_TITLE=$(echo "$RESULT" | jq -r '.milestone_title')
+            echo "$RESULT" | jq -r '.prompt' > /tmp/milestone-prompt.txt
+
+            echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+            echo "milestone_id=$MILESTONE_ID" >> "$GITHUB_OUTPUT"
+            echo "milestone_num=$MILESTONE_NUM" >> "$GITHUB_OUTPUT"
+            echo "milestone_title=$MILESTONE_TITLE" >> "$GITHUB_OUTPUT"
+            echo "## Milestone: M${MILESTONE_NUM} — ${MILESTONE_TITLE} (from Supabase)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # ── Fallback: flat-file extraction (when Supabase unavailable) ──
+      - name: Determine milestone (flat-file fallback)
         id: milestone
+        if: steps.supabase_context.outputs.supabase_available != 'true'
         run: |
           MILESTONES_FILE="docs/MILESTONES.md"
 
@@ -58,7 +95,6 @@ jobs:
           MILESTONE_NUM="${{ inputs.milestone_number }}"
 
           if [[ -z "$MILESTONE_NUM" ]]; then
-            # Find first Planned milestone from tracker table
             ROW=$(grep '| Planned |' "$MILESTONES_FILE" | head -1)
             if [[ -z "$ROW" ]]; then
               echo "::error::No Planned milestones found in tracker"
@@ -70,15 +106,15 @@ jobs:
           MILESTONE_ID="M${MILESTONE_NUM}"
           echo "milestone_id=$MILESTONE_ID" >> "$GITHUB_OUTPUT"
           echo "milestone_num=$MILESTONE_NUM" >> "$GITHUB_OUTPUT"
-          echo "## Milestone: $MILESTONE_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Milestone: $MILESTONE_ID (from flat file)" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Extract milestone content
+      - name: Extract milestone content (flat-file fallback)
         id: extract
+        if: steps.supabase_context.outputs.supabase_available != 'true'
         run: |
           MILESTONES_FILE="docs/MILESTONES.md"
           MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
 
-          # Extract section between ## M<N> heading and the next ## M or ## Tracker or ---
           CONTENT=$(awk -v mid="$MILESTONE_ID" '
             $0 ~ "^## " mid " " { found=1; next }
             found && /^## M[0-9]+/     { found=0 }
@@ -92,20 +128,17 @@ jobs:
             exit 1
           fi
 
-          # Write to a temp file (too large for env var)
           echo "$CONTENT" > /tmp/milestone-content.txt
           echo "Extracted $(wc -l < /tmp/milestone-content.txt) lines for $MILESTONE_ID"
 
-      - name: Build prompt and run Claude Code
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Build prompt (flat-file fallback)
+        if: steps.supabase_context.outputs.supabase_available != 'true'
         run: |
           MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
-          MAX_TURNS="${{ inputs.max_turns }}"
           PROJECT_NAME="${{ inputs.project_folder }}"
           MILESTONE_CONTENT=$(cat /tmp/milestone-content.txt)
 
-          PROMPT=$(cat <<PROMPT_EOF
+          cat <<PROMPT_EOF > /tmp/milestone-prompt.txt
           You are working on the "$PROJECT_NAME" project. Your goal is to complete milestone $MILESTONE_ID autonomously.
 
           ## Before you start
@@ -131,28 +164,72 @@ jobs:
           - Do NOT output the promise tag until everything is truly complete
           - If you get stuck on something, document what's blocking in BITACORA.md, commit, and output the promise tag with the blocker noted in the bitacora
           PROMPT_EOF
-          )
+
+      # ── Resolve milestone identifiers (unified) ─────────────────
+      - name: Set unified milestone vars
+        id: ms
+        run: |
+          if [[ "${{ steps.supabase_context.outputs.supabase_available }}" == "true" ]]; then
+            echo "num=${{ steps.supabase_context.outputs.milestone_num }}" >> "$GITHUB_OUTPUT"
+            echo "id=M${{ steps.supabase_context.outputs.milestone_num }}" >> "$GITHUB_OUTPUT"
+            echo "db_milestone_id=${{ steps.supabase_context.outputs.milestone_id }}" >> "$GITHUB_OUTPUT"
+            echo "db_project_id=${{ steps.supabase_context.outputs.project_id }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "num=${{ steps.milestone.outputs.milestone_num }}" >> "$GITHUB_OUTPUT"
+            echo "id=${{ steps.milestone.outputs.milestone_id }}" >> "$GITHUB_OUTPUT"
+            echo "db_milestone_id=" >> "$GITHUB_OUTPUT"
+            echo "db_project_id=" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Supabase: create run_history row ─────────────────────────
+      - name: Record run start in Supabase
+        id: run_start
+        if: steps.supabase_context.outputs.supabase_available == 'true'
+        run: |
+          RESULT=$(node .github/scripts/supabase-runner.mjs start-run \
+            "${{ steps.ms.outputs.db_project_id }}" \
+            "${{ steps.ms.outputs.db_milestone_id }}" 2>&1) || {
+            echo "::warning::Failed to create run_history row: $RESULT"
+            echo "run_id=" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          RUN_ID=$(echo "$RESULT" | jq -r '.run_id')
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "Run history row created: $RUN_ID"
+
+      # ── Run Claude Code ──────────────────────────────────────────
+      - name: Run Claude Code
+        id: claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          MILESTONE_ID="${{ steps.ms.outputs.id }}"
+          MAX_TURNS="${{ inputs.max_turns }}"
+          PROMPT=$(cat /tmp/milestone-prompt.txt)
 
           echo "Running Claude Code for $MILESTONE_ID (max turns: $MAX_TURNS)..."
 
+          EXIT_CODE=0
           claude -p "$PROMPT" \
             --allowedTools "Bash,Read,Edit,Write,Glob,Grep" \
             --max-turns "$MAX_TURNS" \
             2>&1 | tee /tmp/claude-output.log || EXIT_CODE=$?
 
-          if [[ ${EXIT_CODE:-0} -ne 0 ]]; then
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+          if [[ $EXIT_CODE -ne 0 ]]; then
             echo "::error::Claude Code exited with code ${EXIT_CODE}"
             echo "## Claude Code Failed" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
             tail -50 /tmp/claude-output.log >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
-            exit "${EXIT_CODE}"
           fi
 
+      # ── Verify milestone completion ──────────────────────────────
       - name: Verify milestone completion
         id: verify
         run: |
-          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+          MILESTONE_ID="${{ steps.ms.outputs.id }}"
           MILESTONES_FILE="docs/MILESTONES.md"
 
           if grep -P "${MILESTONE_ID}\s.*\|\s*Done\s*\|" "$MILESTONES_FILE" > /dev/null 2>&1; then
@@ -165,9 +242,11 @@ jobs:
             echo "Claude finished but the milestone was not marked as Done." >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # ── Commit and push changes ──────────────────────────────────
       - name: Commit and push changes
+        id: commit
         run: |
-          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+          MILESTONE_ID="${{ steps.ms.outputs.id }}"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -175,13 +254,81 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "No changes to commit."
+            echo "commit_sha=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           COMMIT_MSG="feat: complete ${MILESTONE_ID} via GitHub Actions milestone runner"
           git commit -m "$COMMIT_MSG"
           git push
-          echo "Pushed changes for $MILESTONE_ID"
 
           COMMIT_SHA=$(git rev-parse HEAD)
+          echo "commit_sha=$COMMIT_SHA" >> "$GITHUB_OUTPUT"
           echo "## Commit: \`${COMMIT_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      # ── Supabase: post-run updates ───────────────────────────────
+      - name: Update Supabase on success
+        if: always() && steps.supabase_context.outputs.supabase_available == 'true' && steps.verify.outputs.status == 'completed'
+        run: |
+          MILESTONE_DB_ID="${{ steps.ms.outputs.db_milestone_id }}"
+          RUN_ID="${{ steps.run_start.outputs.run_id }}"
+          COMMIT_SHA="${{ steps.commit.outputs.commit_sha }}"
+
+          # Update milestone status to Done
+          node .github/scripts/supabase-runner.mjs complete-milestone "$MILESTONE_DB_ID" || \
+            echo "::warning::Failed to update milestone status in Supabase"
+
+          # Update task completion based on Claude's output
+          node .github/scripts/supabase-runner.mjs update-tasks "$MILESTONE_DB_ID" /tmp/claude-output.log || \
+            echo "::warning::Failed to update tasks in Supabase"
+
+          # Update run_history with success
+          if [[ -n "$RUN_ID" ]]; then
+            node .github/scripts/supabase-runner.mjs finish-run "$RUN_ID" completed \
+              --commit-sha="$COMMIT_SHA" \
+              --logs-file=/tmp/claude-output.log || \
+              echo "::warning::Failed to update run_history in Supabase"
+          fi
+
+      - name: Update Supabase on failure
+        if: always() && steps.supabase_context.outputs.supabase_available == 'true' && steps.verify.outputs.status != 'completed'
+        run: |
+          RUN_ID="${{ steps.run_start.outputs.run_id }}"
+          EXIT_CODE="${{ steps.claude.outputs.exit_code }}"
+          COMMIT_SHA="${{ steps.commit.outputs.commit_sha }}"
+
+          if [[ -n "$RUN_ID" ]]; then
+            ERROR_MSG="Milestone not completed."
+            if [[ "$EXIT_CODE" != "0" ]]; then
+              ERROR_MSG="Claude exited with code ${EXIT_CODE}"
+            fi
+
+            node .github/scripts/supabase-runner.mjs finish-run "$RUN_ID" failed \
+              --commit-sha="$COMMIT_SHA" \
+              --error="$ERROR_MSG" \
+              --logs-file=/tmp/claude-output.log || \
+              echo "::warning::Failed to update run_history in Supabase"
+          fi
+
+      # ── Optional: callback to Netlify function ──────────────────
+      - name: Notify website (optional callback)
+        if: always() && steps.supabase_context.outputs.supabase_available == 'true' && steps.run_start.outputs.run_id != ''
+        run: |
+          RUN_ID="${{ steps.run_start.outputs.run_id }}"
+          STATUS="${{ steps.verify.outputs.status == 'completed' && 'completed' || 'failed' }}"
+          SITE_URL="${{ vars.SITE_URL || 'https://topnotch-cl.netlify.app' }}"
+
+          # Best-effort callback — don't fail the workflow if this doesn't work
+          node .github/scripts/supabase-runner.mjs callback \
+            "${SITE_URL}/api/run-callback" \
+            "$RUN_ID" \
+            "$STATUS" || true
+
+      # ── Final: fail job if Claude failed ─────────────────────────
+      - name: Exit with Claude's status
+        if: always()
+        run: |
+          EXIT_CODE="${{ steps.claude.outputs.exit_code }}"
+          if [[ "${EXIT_CODE:-0}" != "0" ]]; then
+            exit "$EXIT_CODE"
+          fi
