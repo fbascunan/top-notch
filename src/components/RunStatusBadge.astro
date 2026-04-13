@@ -1,0 +1,24 @@
+---
+import type { RunStatus } from "../lib/database.types";
+
+interface Props {
+  status: RunStatus;
+  label: string;
+}
+
+const { status, label } = Astro.props;
+
+const config: Record<RunStatus, { bg: string; text: string; dot: string }> = {
+  queued: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400" },
+  running: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-400 animate-pulse" },
+  completed: { bg: "bg-success-50", text: "text-success-700", dot: "bg-success-500" },
+  failed: { bg: "bg-error-50", text: "text-error-700", dot: "bg-error-500" },
+};
+
+const c = config[status] ?? config.queued;
+---
+
+<span class:list={["inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium", c.bg, c.text]}>
+  <span class:list={["w-1.5 h-1.5 rounded-full", c.dot]} />
+  {label}
+</span>

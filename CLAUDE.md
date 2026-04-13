@@ -6,6 +6,11 @@ Read the following files in `docs/` for full project context:
 - `docs/PROSPECT.md` — **read first** — defines the buyer and their needs; every decision must serve this
 - `docs/MILESTONES.md` — milestone tracker
 - `docs/BITACORA.md` — session log (read last entries, write new entry when done)
+- `docs/HUMAN-ACTIONS.md` — **check before starting any milestone**
+
+## Human Actions
+
+If during implementation you discover something that requires human action (credentials, account creation, running authenticated CLI commands, manual verification), add it to `docs/HUMAN-ACTIONS.md` under the relevant milestone section. Mark it as a blocker or post-deploy depending on whether it blocks progress. Do not leave it only as a comment in code.
 
 ## Stack
 

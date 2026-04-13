@@ -1,0 +1,106 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import RunHistoryTable from "@/components/RunHistoryTable.astro";
+import { t } from "../i18n/index";
+import { getAllRunHistory } from "../lib/run-history-data";
+import { getAllProjects } from "../lib/projects-data";
+
+const lang = "es";
+const isMember = Astro.locals.isMember;
+
+if (!isMember) {
+  return Astro.redirect("/");
+}
+
+const runs = await getAllRunHistory();
+const projects = await getAllProjects();
+---
+
+<BaseLayout
+  title={t(lang, "runs.pageTitle")}
+  description={t(lang, "runs.pageDescription")}
+  url="/runs"
+  breadcrumbs={[
+    { name: "Inicio", url: "/" },
+    { name: t(lang, "runs.nav"), url: "/runs" },
+  ]}
+  lang={lang}
+>
+  <Navbar lang={lang} isMember={isMember} />
+
+  <main>
+    <section class="pt-24 pb-16 sm:pt-32 sm:pb-20">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "runs.eyebrow")}
+          heading={t(lang, "runs.heading")}
+          subheading={t(lang, "runs.subheading")}
+        />
+
+        {/* Filters */}
+        <div class="mt-8 flex flex-wrap gap-3 max-w-4xl mx-auto" id="run-filters">
+          <select
+            id="filter-project"
+            class="rounded-md border border-neutral-300 px-3 py-1.5 text-sm text-neutral-700 bg-white"
+          >
+            <option value="">{t(lang, "runs.filterAll")} — {t(lang, "runs.filterProject")}</option>
+            {projects.map((p) => (
+              <option value={String(p.id)}>{p.name}</option>
+            ))}
+          </select>
+
+          <select
+            id="filter-status"
+            class="rounded-md border border-neutral-300 px-3 py-1.5 text-sm text-neutral-700 bg-white"
+          >
+            <option value="">{t(lang, "runs.filterAll")} — {t(lang, "runs.filterStatus")}</option>
+            <option value="queued">{t(lang, "runs.statusQueued")}</option>
+            <option value="running">{t(lang, "runs.statusRunning")}</option>
+            <option value="completed">{t(lang, "runs.statusCompleted")}</option>
+            <option value="failed">{t(lang, "runs.statusFailed")}</option>
+          </select>
+        </div>
+
+        <div class="mt-10 max-w-4xl mx-auto" id="runs-container">
+          <RunHistoryTable runs={runs} lang={lang} showProject={true} />
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script define:vars={{ runsJson: JSON.stringify(runs.map(r => ({ id: r.id, project_id: r.project_id, status: r.status }))) }}>
+  const runMeta = JSON.parse(runsJson);
+
+  document.getElementById("filter-project")?.addEventListener("change", applyFilters);
+  document.getElementById("filter-status")?.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const projectFilter = document.getElementById("filter-project")?.value || "";
+    const statusFilter = document.getElementById("filter-status")?.value || "";
+
+    document.querySelectorAll("[data-run-row]").forEach((row) => {
+      const runId = Number(row.dataset.runRow);
+      const meta = runMeta.find((r) => r.id === runId);
+      if (!meta) return;
+
+      let show = true;
+      if (projectFilter && String(meta.project_id) !== projectFilter) show = false;
+      if (statusFilter && meta.status !== statusFilter) show = false;
+
+      row.style.display = show ? "" : "none";
+
+      // Also hide/show corresponding logs row
+      const logsRow = document.querySelector(`[data-logs-row="${runId}"]`);
+      if (logsRow && !show) logsRow.classList.add("hidden");
+    });
+  }
+</script>

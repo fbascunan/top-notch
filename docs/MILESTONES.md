@@ -654,16 +654,16 @@ With M20+M21, milestones run in GitHub Actions with results in Supabase. This mi
 
 ### Tasks
 
-- [ ] Create Astro API route `POST /api/run-milestone` — validates auth (must be org member), calls GitHub workflow dispatch API, creates `run_history` row with status `queued`
-- [ ] Add GitHub token (PAT or GitHub App) to Netlify env vars for workflow dispatch API calls
-- [ ] "Run Next Milestone" button on `/projects/[slug]` — visible only to authenticated members, shows which milestone will run, confirms before triggering
-- [ ] "Run Milestone" button on individual milestones in the timeline — trigger a specific milestone
-- [ ] Polling for run status: API route `GET /api/run-history/[id]` reads from Supabase, frontend polls every 10s while status is `queued` or `running`
-- [ ] Run history section on `/projects/[slug]` — table showing recent runs: date, milestone, status badge, duration, commit link, expandable logs
-- [ ] Global run history page `/runs` (ES + EN) — all runs across projects, filterable by project and status
-- [ ] Add `/runs` link to Navbar for authenticated members
-- [ ] i18n keys for all new UI strings (ES + EN)
-- [ ] Disable "Run" button while a run is already in progress for that project (prevent concurrent runs)
+- [x] Create Astro API route `POST /api/run-milestone` — validates auth (must be org member), calls GitHub workflow dispatch API, creates `run_history` row with status `queued`
+- [x] Add GitHub token (PAT or GitHub App) to Netlify env vars for workflow dispatch API calls
+- [x] "Run Next Milestone" button on `/projects/[slug]` — visible only to authenticated members, shows which milestone will run, confirms before triggering
+- [x] "Run Milestone" button on individual milestones in the timeline — trigger a specific milestone
+- [x] Polling for run status: API route `GET /api/run-history/[id]` reads from Supabase, frontend polls every 10s while status is `queued` or `running`
+- [x] Run history section on `/projects/[slug]` — table showing recent runs: date, milestone, status badge, duration, commit link, expandable logs
+- [x] Global run history page `/runs` (ES + EN) — all runs across projects, filterable by project and status
+- [x] Add `/runs` link to Navbar for authenticated members
+- [x] i18n keys for all new UI strings (ES + EN)
+- [x] Disable "Run" button while a run is already in progress for that project (prevent concurrent runs)
 
 ### Acceptance Criteria
 
@@ -734,7 +734,7 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 | M19 — Run History Schema | Done | M11 |
 | M20 — GitHub Actions Milestone Runner | Done | — |
 | M21 — Supabase-Aware Runner | Done | M19, M20 |
-| M22 — Web Trigger & Monitoring UI | Planned | M21 |
+| M22 — Web Trigger & Monitoring UI | Done | M21 |
 | M23 — Human Actions Dashboard | Planned | M22 |
 
 ---

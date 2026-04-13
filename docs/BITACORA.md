@@ -195,3 +195,9 @@
 **Blocked:** Human must add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub repo Secrets (documented in HUMAN-ACTIONS.md)
 **Next:** M22 (Web Trigger & Monitoring UI)
 **Decision:** used Supabase REST API (PostgREST) via native `fetch()` in Node 22 instead of `@supabase/supabase-js` — avoids npm dependency in CI, service role key bypasses RLS; kept flat-file fallback so workflow still works without Supabase configured
+
+### 2026-04-12 — agent — M22
+**Did:** built web trigger & monitoring UI. Created `POST /api/run-milestone` (auth check, concurrent run prevention, GitHub workflow dispatch, run_history insert) and `GET /api/run-history/[id]`. Added `run-history-data.ts` data layer (Supabase + seed fallback). Built `RunStatusBadge.astro` (4 statuses with color-coded dot+label) and `RunHistoryTable.astro` (date, milestone, status, duration, commit link, expandable logs). Updated `MilestoneTimeline.astro` with per-milestone "Run" buttons (disabled when active run exists). Added "Run Next Milestone" button to project header on both ES/EN slug pages. Run history section on project pages (member-only). Global `/runs` page (ES+EN) with project/status filters. Added `/runs` to Navbar (member-only via new `isMember` prop). Frontend polls every 10s while status is `queued`/`running`. 30+ i18n keys added (ES+EN). Build: 0 errors, 0 warnings.
+**Blocked:** Human must add `GITHUB_TOKEN` (PAT with `actions:write` scope) to Netlify env vars (documented in HUMAN-ACTIONS.md)
+**Next:** M23 (Human Actions Dashboard) or human completes M14 external service setup
+**Decision:** added `isMember` prop to Navbar to conditionally show `/runs` link; run buttons disabled server-side when `hasActiveRun` is true; concurrent run check happens both client-side (disabled button) and server-side (409 response in API)

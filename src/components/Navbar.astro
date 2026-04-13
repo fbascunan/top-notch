@@ -7,15 +7,17 @@ import { t, getLocalizedPath, getLocalePrefix, type Locale } from "../i18n/index
 interface Props {
   class?: string;
   lang?: Locale;
+  isMember?: boolean;
 }
 
-const { class: className = "", lang = "es" } = Astro.props;
+const { class: className = "", lang = "es", isMember = false } = Astro.props;
 
 const prefix = getLocalePrefix(lang);
 
 const navLinks = [
   { label: t(lang, "nav.services"), href: `${prefix}/services` },
   { label: t(lang, "projects.nav"), href: `${prefix}/projects` },
+  ...(isMember ? [{ label: t(lang, "runs.nav"), href: `${prefix}/runs` }] : []),
   { label: t(lang, "docs.nav"), href: `${prefix}/docs` },
   { label: t(lang, "nav.blog"), href: `${prefix}/blog` },
   { label: t(lang, "nav.contact"), href: `${prefix}/contact` },

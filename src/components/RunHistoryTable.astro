@@ -1,0 +1,132 @@
+---
+import { t, type Locale } from "../i18n/index";
+import RunStatusBadge from "./RunStatusBadge.astro";
+import type { RunHistoryEntry } from "../lib/run-history-data";
+import { formatDuration } from "../lib/run-history-data";
+
+interface Props {
+  runs: RunHistoryEntry[];
+  lang?: Locale;
+  showProject?: boolean;
+}
+
+const { runs, lang = "es", showProject = false } = Astro.props;
+
+const statusLabels: Record<string, string> = {
+  queued: t(lang, "runs.statusQueued"),
+  running: t(lang, "runs.statusRunning"),
+  completed: t(lang, "runs.statusCompleted"),
+  failed: t(lang, "runs.statusFailed"),
+};
+
+const dateLocale = lang === "es" ? "es-CL" : "en-US";
+---
+
+{runs.length === 0 ? (
+  <p class="text-center text-neutral-500 text-sm py-6">{t(lang, "runs.noRuns")}</p>
+) : (
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-neutral-200 text-left text-neutral-500">
+          <th class="pb-2 pr-4 font-medium">{t(lang, "runs.date")}</th>
+          {showProject && <th class="pb-2 pr-4 font-medium">{t(lang, "runs.filterProject")}</th>}
+          <th class="pb-2 pr-4 font-medium">{t(lang, "runs.milestone")}</th>
+          <th class="pb-2 pr-4 font-medium">{t(lang, "runs.status")}</th>
+          <th class="pb-2 pr-4 font-medium">{t(lang, "runs.duration")}</th>
+          <th class="pb-2 pr-4 font-medium">{t(lang, "runs.commit")}</th>
+          <th class="pb-2 font-medium">{t(lang, "runs.logs")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {runs.map((run) => (
+          <Fragment>
+            <tr class="border-b border-neutral-100 hover:bg-neutral-50" data-run-row={run.id}>
+              <td class="py-3 pr-4 whitespace-nowrap text-neutral-600">
+                {new Date(run.started_at).toLocaleDateString(dateLocale, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </td>
+              {showProject && (
+                <td class="py-3 pr-4 whitespace-nowrap">
+                  {run.project_name ? (
+                    <a
+                      href={`${lang === "en" ? "/en" : ""}/projects/${run.project_folder?.toLowerCase().replace(/\s+/g, "-")}`}
+                      class="text-primary-600 hover:underline"
+                    >
+                      {run.project_name}
+                    </a>
+                  ) : (
+                    <span class="text-neutral-400">—</span>
+                  )}
+                </td>
+              )}
+              <td class="py-3 pr-4 whitespace-nowrap">
+                <span class="font-mono text-xs text-neutral-400 mr-1">
+                  M{run.milestone_number ?? "?"}
+                </span>
+                <span class="text-neutral-700">{run.milestone_title ?? ""}</span>
+              </td>
+              <td class="py-3 pr-4" data-run-status={run.id}>
+                <RunStatusBadge status={run.status} label={statusLabels[run.status] ?? run.status} />
+              </td>
+              <td class="py-3 pr-4 whitespace-nowrap text-neutral-500" data-run-duration={run.id}>
+                {formatDuration(run.started_at, run.finished_at)}
+              </td>
+              <td class="py-3 pr-4 whitespace-nowrap">
+                {run.commit_sha ? (
+                  <a
+                    href={`https://github.com/fbascunan/top-notch/commit/${run.commit_sha}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-mono text-xs text-primary-600 hover:underline"
+                  >
+                    {run.commit_sha.slice(0, 7)}
+                  </a>
+                ) : (
+                  <span class="text-neutral-300">—</span>
+                )}
+              </td>
+              <td class="py-3">
+                {(run.logs || run.error) ? (
+                  <button
+                    type="button"
+                    data-toggle-logs={run.id}
+                    class="text-xs text-primary-600 hover:text-primary-700 hover:underline cursor-pointer"
+                  >
+                    {t(lang, "runs.showLogs")}
+                  </button>
+                ) : (
+                  <span class="text-neutral-300">—</span>
+                )}
+              </td>
+            </tr>
+            {(run.logs || run.error) && (
+              <tr class="hidden" data-logs-row={run.id}>
+                <td colspan={showProject ? 7 : 6} class="p-0">
+                  <div class="bg-neutral-900 text-neutral-200 rounded-md m-2 p-4 text-xs font-mono max-h-64 overflow-auto whitespace-pre-wrap">
+                    {run.error && <div class="text-error-400 mb-2">Error: {run.error}</div>}
+                    {run.logs}
+                  </div>
+                </td>
+              </tr>
+            )}
+          </Fragment>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+<script>
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement)?.closest("[data-toggle-logs]") as HTMLElement | null;
+    if (!btn) return;
+    const runId = btn.dataset.toggleLogs;
+    const logsRow = document.querySelector(`[data-logs-row="${runId}"]`);
+    if (!logsRow) return;
+    logsRow.classList.toggle("hidden");
+    const isHidden = logsRow.classList.contains("hidden");
+    btn.textContent = isHidden
+      ? btn.dataset.showLabel ?? "Show logs"
+      : btn.dataset.hideLabel ?? "Hide logs";
+  });
+</script>

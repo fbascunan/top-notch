@@ -5,9 +5,13 @@ import type { MilestoneDetail } from "../lib/projects-data";
 interface Props {
   milestones: MilestoneDetail[];
   lang?: Locale;
+  isMember?: boolean;
+  projectId?: number;
+  projectFolder?: string;
+  hasActiveRun?: boolean;
 }
 
-const { milestones, lang = "es" } = Astro.props;
+const { milestones, lang = "es", isMember = false, projectId, projectFolder, hasActiveRun = false } = Astro.props;
 
 const statusConfig: Record<string, { color: string; bg: string; border: string; icon: string; label: string }> = {
   Done: {
@@ -89,6 +93,31 @@ const statusConfig: Record<string, { color: string; bg: string; border: string; 
                 {milestone.doneTasks}/{milestone.totalTasks} {t(lang, "projects.tasks")}
               </span>
             </div>
+          )}
+
+          {/* Run milestone button (member-only, non-Done milestones) */}
+          {isMember && milestone.status !== "Done" && projectId && projectFolder && (
+            <button
+              type="button"
+              data-run-milestone
+              data-project-id={projectId}
+              data-project-folder={projectFolder}
+              data-milestone-id={milestone.id}
+              data-milestone-number={milestone.number}
+              data-milestone-title={milestone.title}
+              disabled={hasActiveRun}
+              class:list={[
+                "mt-2 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer",
+                hasActiveRun
+                  ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                  : "bg-primary-50 text-primary-700 hover:bg-primary-100",
+              ]}
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z" />
+              </svg>
+              {hasActiveRun ? t(lang, "runs.runInProgress") : t(lang, "runs.runMilestone")}
+            </button>
           )}
         </div>
       </div>

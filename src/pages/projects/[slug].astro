@@ -11,9 +11,11 @@ import MilestoneTimeline from "@/components/MilestoneTimeline.astro";
 import MilestoneForm from "@/components/MilestoneForm.astro";
 import DocumentCard from "@/components/DocumentCard.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
+import RunHistoryTable from "@/components/RunHistoryTable.astro";
 import { t } from "../../i18n/index";
 import { getProjectBySlug } from "../../lib/projects-data";
 import { getProjectDocuments } from "../../lib/documents-data";
+import { getRunHistoryForProject, hasActiveRun } from "../../lib/run-history-data";
 
 const lang = "es";
 const isMember = Astro.locals.isMember;
@@ -21,6 +23,9 @@ const isMember = Astro.locals.isMember;
 const { slug } = Astro.params;
 const project = await getProjectBySlug(slug!);
 const projectDocs = project ? await getProjectDocuments(project.id) : [];
+const runHistory = project ? await getRunHistoryForProject(project.id) : [];
+const projectHasActiveRun = project ? await hasActiveRun(project.id) : false;
+const nextMilestone = project?.milestones.find((m) => m.status === "Planned" || m.status === "In Progress");
 
 if (!project) {
   return Astro.redirect("/404");
@@ -52,7 +57,7 @@ const statusLabel: Record<string, string> = {
   ]}
   lang={lang}
 >
-  <Navbar lang={lang} />
+  <Navbar lang={lang} isMember={isMember} />
 
   <main>
     {/* Header section */}
@@ -114,6 +119,35 @@ const statusLabel: Record<string, string> = {
             />
           </div>
         </div>
+
+        {/* Run Next Milestone button */}
+        {isMember && nextMilestone && (
+          <div class="mt-6">
+            <button
+              type="button"
+              data-run-milestone
+              data-project-id={project.id}
+              data-project-folder={project.folder}
+              data-milestone-id={nextMilestone.id}
+              data-milestone-number={nextMilestone.number}
+              data-milestone-title={nextMilestone.title}
+              disabled={projectHasActiveRun}
+              class:list={[
+                "inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer",
+                projectHasActiveRun
+                  ? "bg-neutral-200 text-neutral-500 cursor-not-allowed"
+                  : "bg-primary-600 text-white hover:bg-primary-700 shadow-sm",
+              ]}
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z" />
+              </svg>
+              {projectHasActiveRun
+                ? t(lang, "runs.runInProgress")
+                : `${t(lang, "runs.runNextMilestone")} — M${nextMilestone.number}`}
+            </button>
+          </div>
+        )}
       </Container>
     </section>
 
@@ -127,7 +161,7 @@ const statusLabel: Record<string, string> = {
         />
 
         <div class="mt-10 max-w-3xl mx-auto">
-          <MilestoneTimeline milestones={project.milestones} lang={lang} />
+          <MilestoneTimeline milestones={project.milestones} lang={lang} isMember={isMember} projectId={project.id} projectFolder={project.folder} hasActiveRun={projectHasActiveRun} />
 
           {/* Milestone action icons (edit/delete per milestone) */}
           {isMember && (
@@ -161,6 +195,21 @@ const statusLabel: Record<string, string> = {
         </div>
       </Container>
     </section>
+
+    {/* Run history section (member-only) */}
+    {isMember && (
+      <section class="py-16 sm:py-20 bg-white">
+        <Container>
+          <SectionHeading
+            eyebrow={t(lang, "runs.eyebrow")}
+            heading={t(lang, "runs.heading")}
+          />
+          <div class="mt-10 max-w-4xl mx-auto">
+            <RunHistoryTable runs={runHistory} lang={lang} />
+          </div>
+        </Container>
+      </section>
+    )}
 
     {/* Documents section */}
     <section class="py-16 sm:py-20 bg-neutral-50">
@@ -319,6 +368,78 @@ const statusLabel: Record<string, string> = {
       } catch {
         // Revert on failure
         checkbox.checked = !done;
+      }
+    });
+
+    // Run milestone trigger
+    document.addEventListener("click", async (e) => {
+      const btn = e.target?.closest("[data-run-milestone]");
+      if (!btn || btn.disabled) return;
+
+      const { projectId: pid, projectFolder, milestoneId, milestoneNumber, milestoneTitle } = btn.dataset;
+      const msg = `¿Ejecutar milestone M${milestoneNumber} — ${milestoneTitle}?`;
+      if (!confirm(msg)) return;
+
+      btn.disabled = true;
+      btn.textContent = "…";
+
+      try {
+        const res = await fetch("/api/run-milestone", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            project_id: Number(pid),
+            milestone_id: Number(milestoneId),
+            project_folder: projectFolder,
+            milestone_number: Number(milestoneNumber),
+          }),
+        });
+
+        if (res.ok) {
+          const run = await res.json();
+          // Start polling for status
+          pollRunStatus(run.id);
+          window.location.reload();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Error triggering run");
+          btn.disabled = false;
+          btn.textContent = "Ejecutar";
+        }
+      } catch {
+        alert("Network error");
+        btn.disabled = false;
+        btn.textContent = "Ejecutar";
+      }
+    });
+
+    // Poll run status
+    function pollRunStatus(runId) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/run-history/${runId}`);
+          if (!res.ok) { clearInterval(interval); return; }
+          const run = await res.json();
+          if (run.status !== "queued" && run.status !== "running") {
+            clearInterval(interval);
+            window.location.reload();
+          }
+        } catch {
+          clearInterval(interval);
+        }
+      }, 10000);
+    }
+
+    // Auto-poll any active runs on page load
+    document.querySelectorAll("[data-run-row]").forEach((row) => {
+      const statusEl = row.querySelector("[data-run-status]");
+      if (statusEl) {
+        const runId = statusEl.dataset.runStatus;
+        const badge = statusEl.querySelector("span");
+        const text = badge?.textContent?.trim().toLowerCase();
+        if (text === "en cola" || text === "queued" || text === "ejecutando" || text === "running") {
+          pollRunStatus(runId);
+        }
       }
     });
   </script>
