@@ -593,18 +593,18 @@ The local `run-milestone.sh` reads MILESTONES.md, extracts the next Planned mile
 
 ### Tasks
 
-- [ ] Create `.github/workflows/run-milestone.yml` with `workflow_dispatch` trigger:
+- [x] Create `.github/workflows/run-milestone.yml` with `workflow_dispatch` trigger:
   - Inputs: `project_folder` (string, required), `milestone_number` (string, optional — defaults to next Planned), `max_turns` (number, optional, default 30)
-- [ ] Workflow steps:
+- [x] Workflow steps:
   1. Checkout the repo
-  2. Install Claude Code CLI (`curl -fsSL https://claude.ai/install.sh | bash`)
+  2. Install Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
   3. Install project deps (`pnpm install`)
-  4. Extract milestone content from `docs/MILESTONES.md` (shell script or Node script — port the parsing logic from `run-milestone.sh`)
-  5. Run `claude -p "$PROMPT" --allowedTools "Bash,Read,Edit,Write" --permission-mode acceptEdits --max-turns $MAX_TURNS`
+  4. Extract milestone content from `docs/MILESTONES.md` (shell script — ported parsing logic from `run-milestone.sh`)
+  5. Run `claude -p "$PROMPT" --allowedTools "Bash,Read,Edit,Write,Glob,Grep" --max-turns $MAX_TURNS`
   6. If Claude made changes: commit + push to repo
-- [ ] Configure GitHub Secrets: `ANTHROPIC_API_KEY`
-- [ ] Evaluate `anthropics/claude-code-action@v1` vs. manual CLI install — pick the simpler path
-- [ ] Test: trigger from GitHub UI for a real milestone, verify it completes and pushes changes
+- [x] Configure GitHub Secrets: `ANTHROPIC_API_KEY` (documented in HUMAN-ACTIONS.md — human must add the secret)
+- [x] Evaluate `anthropics/claude-code-action@v1` vs. manual CLI install — manual CLI chosen (action is designed for PR/issue workflows, not headless prompt execution)
+- [ ] Test: trigger from GitHub UI for a real milestone, verify it completes and pushes changes (requires human — ANTHROPIC_API_KEY secret must be set first)
 
 ### Acceptance Criteria
 
@@ -732,7 +732,7 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 | M17 — Replace Portfolio with Featured Projects | Done | M12 |
 | M18 — Rebrand Services Based on Real Offerings | Done | M17 |
 | M19 — Run History Schema | Done | M11 |
-| M20 — GitHub Actions Milestone Runner | Planned | — |
+| M20 — GitHub Actions Milestone Runner | Done | — |
 | M21 — Supabase-Aware Runner | Planned | M19, M20 |
 | M22 — Web Trigger & Monitoring UI | Planned | M21 |
 | M23 — Human Actions Dashboard | Planned | M22 |

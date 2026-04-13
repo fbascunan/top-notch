@@ -184,3 +184,8 @@
 **Blocked:** nothing
 **Next:** M19 (small DB migration) or M20 (can start independently — no DB dependency)
 **Decision:** split original M19 into 4 milestones to keep each focused — M20 works standalone with flat files before M21 wires up Supabase
+
+### 2026-04-12 — agent — M20
+**Did:** created `.github/workflows/run-milestone.yml` — GitHub Actions workflow for headless milestone execution. Ported parsing logic from workspace `run-milestone.sh` (milestone detection, content extraction, prompt building). Evaluated `anthropics/claude-code-action@v1` — rejected (designed for PR/issue workflows, not headless prompts). Workflow: checkout → pnpm install → install Claude CLI → extract milestone from MILESTONES.md → run `claude -p` → verify completion → commit+push. Inputs: `project_folder` (required), `milestone_number` (optional, defaults to next Planned), `max_turns` (default 30). Failed runs show error output in job summary.
+**Blocked:** Human must add `ANTHROPIC_API_KEY` to GitHub repo Secrets and trigger a test run (documented in HUMAN-ACTIONS.md)
+**Next:** M21 (Supabase-aware runner — DB context + status reporting)

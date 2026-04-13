@@ -1,0 +1,187 @@
+name: Run Milestone
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_folder:
+        description: "Project folder (e.g. 'top-notch')"
+        required: true
+        type: string
+      milestone_number:
+        description: "Milestone number (e.g. '21'). Leave empty for next Planned milestone."
+        required: false
+        type: string
+      max_turns:
+        description: "Max Claude turns"
+        required: false
+        type: number
+        default: 30
+
+jobs:
+  run-milestone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install project dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Determine milestone
+        id: milestone
+        run: |
+          MILESTONES_FILE="docs/MILESTONES.md"
+
+          if [[ ! -f "$MILESTONES_FILE" ]]; then
+            echo "::error::MILESTONES.md not found at $MILESTONES_FILE"
+            exit 1
+          fi
+
+          MILESTONE_NUM="${{ inputs.milestone_number }}"
+
+          if [[ -z "$MILESTONE_NUM" ]]; then
+            # Find first Planned milestone from tracker table
+            ROW=$(grep '| Planned |' "$MILESTONES_FILE" | head -1)
+            if [[ -z "$ROW" ]]; then
+              echo "::error::No Planned milestones found in tracker"
+              exit 1
+            fi
+            MILESTONE_NUM=$(echo "$ROW" | awk -F'|' '{print $2}' | grep -oP 'M\d+' | sed 's/M//')
+          fi
+
+          MILESTONE_ID="M${MILESTONE_NUM}"
+          echo "milestone_id=$MILESTONE_ID" >> "$GITHUB_OUTPUT"
+          echo "milestone_num=$MILESTONE_NUM" >> "$GITHUB_OUTPUT"
+          echo "## Milestone: $MILESTONE_ID" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Extract milestone content
+        id: extract
+        run: |
+          MILESTONES_FILE="docs/MILESTONES.md"
+          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+
+          # Extract section between ## M<N> heading and the next ## M or ## Tracker or ---
+          CONTENT=$(awk -v mid="$MILESTONE_ID" '
+            $0 ~ "^## " mid " " { found=1; next }
+            found && /^## M[0-9]+/     { found=0 }
+            found && /^## Tracker/     { found=0 }
+            found && /^---$/           { found=0 }
+            found                      { print }
+          ' "$MILESTONES_FILE")
+
+          if [[ -z "$CONTENT" ]]; then
+            echo "::error::Could not extract content for $MILESTONE_ID from MILESTONES.md"
+            exit 1
+          fi
+
+          # Write to a temp file (too large for env var)
+          echo "$CONTENT" > /tmp/milestone-content.txt
+          echo "Extracted $(wc -l < /tmp/milestone-content.txt) lines for $MILESTONE_ID"
+
+      - name: Build prompt and run Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+          MAX_TURNS="${{ inputs.max_turns }}"
+          PROJECT_NAME="${{ inputs.project_folder }}"
+          MILESTONE_CONTENT=$(cat /tmp/milestone-content.txt)
+
+          PROMPT=$(cat <<PROMPT_EOF
+          You are working on the "$PROJECT_NAME" project. Your goal is to complete milestone $MILESTONE_ID autonomously.
+
+          ## Before you start
+          1. Read docs/PROSPECT.md first — understand who we are building for and why
+          2. Read docs/BITACORA.md for context on previous sessions
+          3. Read docs/MILESTONES.md for the full milestone list and dependencies
+          4. Read CLAUDE.md if it exists for project-specific instructions
+
+          ## Your milestone: $MILESTONE_ID
+
+          $MILESTONE_CONTENT
+
+          ## Rules
+          - Complete every task checkbox in this milestone
+          - Follow the "Done when" acceptance criteria exactly
+          - Always install dependencies locally in the project, never globally
+          - If this is a setup/scaffolding milestone and it completes successfully, create a brief README.md at the project root with: project name, one-line description, tech stack, and how to run it (dev/build/test commands)
+          - When ALL tasks are done AND acceptance criteria are met:
+            1. Update the tracker table in docs/MILESTONES.md — change this milestone's status from "Planned" to "Done"
+            2. Write a session entry in docs/BITACORA.md (follow the format in that file)
+            3. Commit your work with a clear message
+            4. Output <promise>MILESTONE_COMPLETE</promise> to signal completion
+          - Do NOT output the promise tag until everything is truly complete
+          - If you get stuck on something, document what's blocking in BITACORA.md, commit, and output the promise tag with the blocker noted in the bitacora
+          PROMPT_EOF
+          )
+
+          echo "Running Claude Code for $MILESTONE_ID (max turns: $MAX_TURNS)..."
+
+          claude -p "$PROMPT" \
+            --allowedTools "Bash,Read,Edit,Write,Glob,Grep" \
+            --max-turns "$MAX_TURNS" \
+            2>&1 | tee /tmp/claude-output.log || EXIT_CODE=$?
+
+          if [[ ${EXIT_CODE:-0} -ne 0 ]]; then
+            echo "::error::Claude Code exited with code ${EXIT_CODE}"
+            echo "## Claude Code Failed" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -50 /tmp/claude-output.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            exit "${EXIT_CODE}"
+          fi
+
+      - name: Verify milestone completion
+        id: verify
+        run: |
+          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+          MILESTONES_FILE="docs/MILESTONES.md"
+
+          if grep -P "${MILESTONE_ID}\s.*\|\s*Done\s*\|" "$MILESTONES_FILE" > /dev/null 2>&1; then
+            echo "status=completed" >> "$GITHUB_OUTPUT"
+            echo "## $MILESTONE_ID completed successfully" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "status=incomplete" >> "$GITHUB_OUTPUT"
+            echo "::warning::Claude finished but $MILESTONE_ID status is not 'Done' in tracker"
+            echo "## $MILESTONE_ID — incomplete" >> "$GITHUB_STEP_SUMMARY"
+            echo "Claude finished but the milestone was not marked as Done." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit and push changes
+        run: |
+          MILESTONE_ID="${{ steps.milestone.outputs.milestone_id }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          COMMIT_MSG="feat: complete ${MILESTONE_ID} via GitHub Actions milestone runner"
+          git commit -m "$COMMIT_MSG"
+          git push
+          echo "Pushed changes for $MILESTONE_ID"
+
+          COMMIT_SHA=$(git rev-parse HEAD)
+          echo "## Commit: \`${COMMIT_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
