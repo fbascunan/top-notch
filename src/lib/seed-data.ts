@@ -3,7 +3,7 @@
  * Mirrors the data in supabase/migrations/00003_seed_data.sql.
  */
 
-import type { ProjectStatus, MilestoneStatus } from "./database.types";
+import type { ProjectStatus, MilestoneStatus, RunStatus } from "./database.types";
 
 export interface SeedProject {
   id: number;
@@ -30,6 +30,20 @@ export interface SeedTask {
   milestone_id: number;
   description: string;
   done: boolean;
+}
+
+export interface SeedRunHistory {
+  id: number;
+  project_id: number;
+  milestone_id: number;
+  status: RunStatus;
+  triggered_by: string | null;
+  started_at: string;
+  finished_at: string | null;
+  logs: string | null;
+  commit_sha: string | null;
+  error: string | null;
+  created_at: string;
 }
 
 export const seedProjects: SeedProject[] = [
@@ -113,4 +127,46 @@ export const seedMilestones: SeedMilestone[] = [
   { id: 61, project_id: 5, number: 5,  title: "Notary Detail Page",                     description: "Dedicated page per notary with full info, procedures, cost history.",                             status: "Done", blocking: "M2" },
   { id: 62, project_id: 5, number: 6,  title: "Ads, Visual Identity & UX",              description: "Polish brand identity, integrate non-intrusive ads.",                                             status: "Done", blocking: "M5" },
   { id: 63, project_id: 5, number: 7,  title: "Testing, SEO & Deployment",              description: "Final testing, SEO optimization, production deployment to Netlify.",                              status: "Done", blocking: "M6" },
+];
+
+export const seedRunHistory: SeedRunHistory[] = [
+  {
+    id: 1,
+    project_id: 2,
+    milestone_id: 9,
+    status: "completed",
+    triggered_by: null,
+    started_at: "2026-03-15T01:19:00Z",
+    finished_at: "2026-03-15T01:25:00Z",
+    logs: "Scaffolded Astro 6 project with TS strict, Tailwind CSS v4.",
+    commit_sha: null,
+    error: null,
+    created_at: "2026-03-15T01:19:00Z",
+  },
+  {
+    id: 2,
+    project_id: 2,
+    milestone_id: 10,
+    status: "completed",
+    triggered_by: null,
+    started_at: "2026-03-15T02:00:00Z",
+    finished_at: "2026-03-15T02:08:00Z",
+    logs: "Built full design system — design tokens, components, /design page.",
+    commit_sha: null,
+    error: null,
+    created_at: "2026-03-15T02:00:00Z",
+  },
+  {
+    id: 3,
+    project_id: 2,
+    milestone_id: 9,
+    status: "failed",
+    triggered_by: null,
+    started_at: "2026-03-15T01:00:00Z",
+    finished_at: "2026-03-15T01:05:00Z",
+    logs: null,
+    commit_sha: null,
+    error: "Could not extract milestone content",
+    created_at: "2026-03-15T01:00:00Z",
+  },
 ];

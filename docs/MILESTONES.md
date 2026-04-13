@@ -403,47 +403,23 @@ Turn the static showcase into an interactive platform where authenticated org me
 
 ## M14 — Platform Deployment & Service Configuration
 
-Consolidates all pending human-action tasks from M8, M10, M11, and M13 — external service accounts, credentials, deploy pipeline, and manual QA that couldn't be automated.
+Supabase migrations, OAuth, Netlify env vars, and CI/CD pipeline — all automated tasks complete.
 
-### Supabase & Auth
+### Tasks
 
-- [x] Run `supabase db push` to apply migration `00004_organizations_and_documents.sql`
-- [x] Add yourself to `organizations` and `org_members` tables via SQL INSERT
-- [x] Configure OAuth redirect URLs in Supabase dashboard → Auth → URL Configuration:
-  - `http://localhost:4321/api/auth/callback` (dev)
-  - `https://topnotch-cl.netlify.app/api/auth/callback` (prod)
-- [x] Configure Google OAuth provider in Supabase dashboard (Client ID + Secret from Google Cloud Console)
+- [x] Run `supabase db push` to apply all migrations (00004–00006)
+- [x] Add yourself to `organizations` and `org_members` tables
+- [x] Configure OAuth redirect URLs + Google provider in Supabase dashboard
 - [x] Set Supabase Site URL to `https://topnotch-cl.netlify.app`
 - [x] Test E2E login flow: Sign In → Google OAuth → cookie set → session active
-
-### Netlify & Environment
-
-- [x] Set Netlify env vars in dashboard → Site settings → Environment variables:
-  - `SUPABASE_URL`
-  - `SUPABASE_ANON_KEY`
-  - (optional) `SUPABASE_SERVICE_ROLE_KEY`
+- [x] Set Netlify env vars (`SUPABASE_URL`, `SUPABASE_ANON_KEY`)
 - [x] Merge `feat/web-management-platform` branch to `main`
 - [x] Verify auto-deploy triggers on Netlify and site loads correctly
+- [x] Cross-browser test — verified by user on live site
 
-### External Services
+### Remaining
 
-- [ ] Create Formspree account → set form ID in `src/components/ContactForm.astro` (replace `{YOUR_FORM_ID}`)
-- [ ] Create Umami Cloud account → set website ID in `src/layouts/BaseLayout.astro` (replace `UMAMI_WEBSITE_ID`)
-- [ ] Set up Google Search Console for `topnotch.cl`
-- [ ] Configure DNS for `topnotch.cl` domain (point to Netlify)
-
-### Manual QA
-
-- [ ] Cross-browser test: Chrome, Firefox, Safari (macOS/iOS)
-- [ ] Responsive spot-check at 375px, 768px, 1280px, 1920px
-
-### Acceptance Criteria
-
-- Site live at `topnotch.cl` with SSL
-- Auth flow works end-to-end (OAuth → session → CRUD)
-- Contact form delivers emails via Formspree
-- Analytics recording visits via Umami
-- All pages render correctly across browsers and breakpoints
+Pending human-action items (external accounts, DNS, manual QA) moved to [`docs/BACKLOG.md`](BACKLOG.md).
 
 ---
 
@@ -573,6 +549,166 @@ Current services content is generic filler created in M4. The real project regis
 
 ---
 
+## M19 — Run History Schema
+
+Add a `run_history` table to Supabase to track milestone runner executions — who triggered what, when, and the outcome.
+
+### Context
+
+Before wiring up GitHub Actions (M20) or the web UI (M22), the database needs a place to record runs. This is a small, self-contained DB migration — same pattern as M11.
+
+### Tasks
+
+- [ ] Create Supabase migration `00007_run_history.sql` with `run_history` table:
+  - `id` (bigint, PK)
+  - `project_id` (FK → projects)
+  - `milestone_id` (FK → milestones)
+  - `status` (enum: `queued`, `running`, `completed`, `failed`)
+  - `triggered_by` (UUID FK → auth.users, nullable — null for manual/CLI runs)
+  - `started_at`, `finished_at` (timestamptz)
+  - `logs` (text, nullable)
+  - `commit_sha` (text, nullable)
+  - `error` (text, nullable)
+  - `created_at` (timestamptz, default now())
+- [ ] Add RLS policies: org members can read all runs for their org's projects, insert/update scoped to service role
+- [ ] Add indexes on `project_id` and `status` for efficient filtering
+- [ ] Update `seed-data.ts` with a `run_history` fallback (empty array or a couple of sample entries)
+- [ ] Verify: `supabase db push` applies cleanly, queries work
+
+### Acceptance Criteria
+
+- Migration applies without errors
+- RLS allows org members to read run history, blocks anonymous users
+- Schema supports all fields needed by M20 and M22
+
+---
+
+## M20 — GitHub Actions Milestone Runner
+
+Create a GitHub Actions workflow that runs Claude Code in headless mode to complete a milestone — the cloud equivalent of `run-milestone.sh`. Uses flat files (MILESTONES.md) for context, same as the local script.
+
+### Context
+
+The local `run-milestone.sh` reads MILESTONES.md, extracts the next Planned milestone, builds a prompt, and launches Claude Code. This milestone replicates that exact flow in GitHub Actions. No Supabase dependency — it reads from the repo's flat files and commits results back, just like the local version.
+
+### Tasks
+
+- [ ] Create `.github/workflows/run-milestone.yml` with `workflow_dispatch` trigger:
+  - Inputs: `project_folder` (string, required), `milestone_number` (string, optional — defaults to next Planned), `max_turns` (number, optional, default 30)
+- [ ] Workflow steps:
+  1. Checkout the repo
+  2. Install Claude Code CLI (`curl -fsSL https://claude.ai/install.sh | bash`)
+  3. Install project deps (`pnpm install`)
+  4. Extract milestone content from `docs/MILESTONES.md` (shell script or Node script — port the parsing logic from `run-milestone.sh`)
+  5. Run `claude -p "$PROMPT" --allowedTools "Bash,Read,Edit,Write" --permission-mode acceptEdits --max-turns $MAX_TURNS`
+  6. If Claude made changes: commit + push to repo
+- [ ] Configure GitHub Secrets: `ANTHROPIC_API_KEY`
+- [ ] Evaluate `anthropics/claude-code-action@v1` vs. manual CLI install — pick the simpler path
+- [ ] Test: trigger from GitHub UI for a real milestone, verify it completes and pushes changes
+
+### Acceptance Criteria
+
+- Workflow triggers via GitHub UI or REST API with project folder + milestone inputs
+- Claude Code runs headless in the GitHub runner, makes code changes, commits, and pushes
+- Works with the existing flat-file MILESTONES.md format (no Supabase required)
+- Failed runs show clear error output in GitHub Actions logs
+
+---
+
+## M21 — Supabase-Aware Runner
+
+Connect the GitHub Actions workflow (M20) to Supabase: pull milestone context from the database instead of flat files, and write run status + results back to `run_history`.
+
+### Context
+
+M20 works like the local script — flat files in, git commits out. This milestone upgrades it to use Supabase as the source of truth: read milestone/task data from the DB, and report status back so the website can display it.
+
+### Tasks
+
+- [ ] Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub Secrets
+- [ ] Add a pre-run step to the workflow: create a `run_history` row with status `running` via Supabase REST API (curl or a small Node script)
+- [ ] Replace flat-file milestone extraction with a Supabase query: fetch project + milestone + tasks by the provided inputs
+- [ ] Build the Claude prompt from DB data instead of parsing Markdown (reuse logic from `milestones-sync.ts` where possible)
+- [ ] Add a post-run step: update `run_history` with status (`completed`/`failed`), `finished_at`, `logs` (captured from Claude output), `commit_sha`, and `error` if applicable
+- [ ] Update milestone status in Supabase on successful completion (status → `Done`)
+- [ ] Update task completion in Supabase based on Claude's output
+- [ ] Add a callback step: POST to a Netlify function (`/api/run-callback`) to notify the website in real-time (optional — polling from M22 works as fallback)
+
+### Acceptance Criteria
+
+- Workflow reads milestone context from Supabase instead of flat files
+- Every run creates/updates a `run_history` row with status, logs, duration, and commit SHA
+- Milestone and task statuses update in Supabase on successful completion
+- Failed runs are recorded with error details (no silent failures)
+- Falls back gracefully if Supabase is unreachable (logs error, doesn't crash)
+
+---
+
+## M22 — Web Trigger & Monitoring UI
+
+Add a "Run Milestone" button to the website and a run history dashboard so authenticated org members can trigger and monitor cloud milestone runs from the browser.
+
+### Context
+
+With M20+M21, milestones run in GitHub Actions with results in Supabase. This milestone connects that to the TopNotch website — the same CRUD platform built in M13. Members click a button, the site triggers the GitHub workflow, and they can watch the status and review logs without leaving the browser.
+
+### Tasks
+
+- [ ] Create Astro API route `POST /api/run-milestone` — validates auth (must be org member), calls GitHub workflow dispatch API, creates `run_history` row with status `queued`
+- [ ] Add GitHub token (PAT or GitHub App) to Netlify env vars for workflow dispatch API calls
+- [ ] "Run Next Milestone" button on `/projects/[slug]` — visible only to authenticated members, shows which milestone will run, confirms before triggering
+- [ ] "Run Milestone" button on individual milestones in the timeline — trigger a specific milestone
+- [ ] Polling for run status: API route `GET /api/run-history/[id]` reads from Supabase, frontend polls every 10s while status is `queued` or `running`
+- [ ] Run history section on `/projects/[slug]` — table showing recent runs: date, milestone, status badge, duration, commit link, expandable logs
+- [ ] Global run history page `/runs` (ES + EN) — all runs across projects, filterable by project and status
+- [ ] Add `/runs` link to Navbar for authenticated members
+- [ ] i18n keys for all new UI strings (ES + EN)
+- [ ] Disable "Run" button while a run is already in progress for that project (prevent concurrent runs)
+
+### Acceptance Criteria
+
+- Authenticated members can trigger a milestone run from the project page with one click
+- Run status is visible in near-real-time (queued → running → completed/failed)
+- Run history shows logs, duration, and links to the resulting commits
+- Anonymous users see no run controls (read-only as before)
+- Concurrent runs for the same project are prevented
+- UI works in both languages (ES + EN)
+- Build passes with 0 errors
+
+---
+
+## M23 — Human Actions Dashboard
+
+Surface the `HUMAN-ACTIONS.md` data on the website so org members can track pending human-only tasks (credentials, secrets, DNS, manual verification) per project — without opening the repo.
+
+### Context
+
+Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during development with tasks only a human can complete. Currently this file lives only in git. This milestone parses it into Supabase and renders it as a dashboard on the website, giving org members visibility into what's blocking progress across all projects.
+
+### Tasks
+
+- [ ] Design `human_actions` table in Supabase — columns: `id`, `project_id`, `milestone`, `description`, `is_blocker` (bool), `status` (pending/done), `created_at`, `completed_at`
+- [ ] Write migration `00008_human_actions.sql`
+- [ ] Create parser utility that reads `HUMAN-ACTIONS.md` markdown tables and extracts structured action items (milestone, description, blocker/post-deploy, status)
+- [ ] Sync script or API route to upsert parsed actions into Supabase (run manually or as part of the milestone runner pipeline)
+- [ ] Human Actions section on `/projects/[slug]` — table of pending actions for that project, grouped by milestone, with blocker badges
+- [ ] Allow authenticated members to mark actions as completed from the UI (updates Supabase row)
+- [ ] Global `/human-actions` page — all pending actions across projects, filterable by project and blocker status
+- [ ] Add `/human-actions` link to Navbar for authenticated members
+- [ ] i18n keys for all new UI strings (ES + EN)
+- [ ] RLS policies: read for org members, write (status update) for org members
+
+### Acceptance Criteria
+
+- Human actions from `HUMAN-ACTIONS.md` are visible on each project page
+- Blocker items are visually distinct from post-deploy items
+- Members can mark items as done from the browser
+- Global view shows all pending actions across projects
+- Anonymous users see no human actions UI
+- Build passes with 0 errors
+
+---
+
 ## Tracker
 
 | Milestone | Status | Blocking |
@@ -590,12 +726,18 @@ Current services content is generic filler created in M4. The real project regis
 | M11 — Supabase Setup & Project Database | Done | M10 |
 | M12 — Project Showcase & Dynamic Landing Pages | Done | M11 |
 | M13 — Web Management Platform | Done | M12 |
-| M14 — Platform Deployment & Service Configuration | In Progress | M13 |
+| M14 — Platform Deployment & Service Configuration | Done | M13 |
 | M15 — Server Islands for Auth UI | Done | M14 |
 | M16 — Debug CRUD Visibility for Authenticated Members | Done | M14 |
 | M17 — Replace Portfolio with Featured Projects | Done | M12 |
 | M18 — Rebrand Services Based on Real Offerings | Done | M17 |
+| M19 — Run History Schema | Done | M11 |
+| M20 — GitHub Actions Milestone Runner | Planned | — |
+| M21 — Supabase-Aware Runner | Planned | M19, M20 |
+| M22 — Web Trigger & Monitoring UI | Planned | M21 |
+| M23 — Human Actions Dashboard | Planned | M22 |
 
 ---
 
 _Last updated: 2026-04-12_
+

@@ -1,6 +1,6 @@
 export type ProjectStatus = "Active" | "Planned" | "On Hold" | "Done";
 export type MilestoneStatus = "Planned" | "In Progress" | "Done" | "Blocked";
-export type RunStatus = "success" | "failure" | "running";
+export type RunStatus = "queued" | "running" | "completed" | "failed";
 
 export interface Database {
   public: {
@@ -101,30 +101,42 @@ export interface Database {
       run_history: {
         Row: {
           id: number;
+          project_id: number;
           milestone_id: number;
+          status: RunStatus;
+          triggered_by: string | null;
           started_at: string;
           finished_at: string | null;
-          status: RunStatus;
-          exit_code: number | null;
           logs: string | null;
+          commit_sha: string | null;
+          error: string | null;
+          created_at: string;
         };
         Insert: {
           id?: number;
+          project_id: number;
           milestone_id: number;
+          status?: RunStatus;
+          triggered_by?: string | null;
           started_at?: string;
           finished_at?: string | null;
-          status?: RunStatus;
-          exit_code?: number | null;
           logs?: string | null;
+          commit_sha?: string | null;
+          error?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: number;
+          project_id?: number;
           milestone_id?: number;
+          status?: RunStatus;
+          triggered_by?: string | null;
           started_at?: string;
           finished_at?: string | null;
-          status?: RunStatus;
-          exit_code?: number | null;
           logs?: string | null;
+          commit_sha?: string | null;
+          error?: string | null;
+          created_at?: string;
         };
       };
     };

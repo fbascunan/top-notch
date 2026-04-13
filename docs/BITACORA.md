@@ -167,3 +167,20 @@
 **Blocked:** nothing
 **Next:** all current milestones complete; future work: M14 external services (Formspree, Umami, DNS), additional milestones as needed
 **Decision:** `getFeaturedProjects()` uses Supabase `featured=true` filter with fallback to `priority <= 3` from seed data; reused existing `ProjectCard.astro` for homepage featured section instead of custom cards
+
+### 2026-04-12 — agent — M15/M16 fix
+**Did:** fixed auth regression across all pages. Root cause: middleware `/_` prefix guard (`pathname.startsWith("/_")`) was skipping auth resolution for `/_server-islands/AuthButton` requests. One-line fix to exempt `/_server-islands` from the skip. Also applied pending Supabase migrations 00005 (org_members RLS fix) and 00006 (featured column). Pushed to main → Netlify auto-deploy.
+**Blocked:** human needs to log in on live site to verify auth flow end-to-end
+**Next:** human verifies: (1) login on https://topnotch-cl.netlify.app shows avatar on all pages, (2) CRUD controls visible on /projects and /docs
+**Decision:** server island requests go to `/_server-islands/*` — middleware must not skip auth for these; validated via debug logging that `getUser()` is now called for island requests
+
+### 2026-04-12 — agent — M19
+**Did:** expanded `run_history` table via migration `00007_run_history.sql`. Replaced `run_status` enum (`success/failure/running` → `queued/running/completed/failed`). Added columns: `project_id` (FK → projects, NOT NULL), `triggered_by` (FK → auth.users, nullable), `commit_sha`, `error`, `created_at`. Added indexes on `project_id` and `status`. Updated RLS: org members can read/insert/update runs for their org's projects, anon users blocked. Updated `database.types.ts` and `seed-data.ts` with 3 sample run entries. Build passes.
+**Blocked:** Human needs to run `supabase db push` to apply migration 00007.
+**Next:** M20 (GitHub Actions milestone runner) or M21 (Supabase-aware runner)
+
+### 2026-04-12 — agent — M19–M22 planning
+**Did:** added 4 milestones for cloud runner: M19 (run_history schema), M20 (GitHub Actions milestone runner — flat files, no Supabase), M21 (Supabase-aware runner — DB context + status reporting), M22 (web trigger + monitoring UI). Verified feasibility via Context7: workflow_dispatch API, `claude -p` headless mode, `anthropics/claude-code-action@v1`, Astro SSR endpoints all confirmed.
+**Blocked:** nothing
+**Next:** M19 (small DB migration) or M20 (can start independently — no DB dependency)
+**Decision:** split original M19 into 4 milestones to keep each focused — M20 works standalone with flat files before M21 wires up Supabase
