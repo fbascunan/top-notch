@@ -252,6 +252,29 @@
     "filterStatus": "Status",
     "concurrent": "A run is already in progress for this project"
   },
+  "humanActions": {
+    "nav": "Human Actions",
+    "eyebrow": "Pending Actions",
+    "heading": "Human Actions",
+    "subheading": "Tasks only a human can complete — credentials, secrets, DNS, manual verification.",
+    "pageTitle": "Human Actions — TopNotch",
+    "pageDescription": "Pending tasks requiring human action across all projects.",
+    "noActions": "No pending actions.",
+    "milestone": "Milestone",
+    "description": "Description",
+    "status": "Status",
+    "blocker": "Blocker",
+    "postDeploy": "Post-deploy",
+    "pending": "Pending",
+    "done": "Done",
+    "markDone": "Mark as done",
+    "markPending": "Mark as pending",
+    "filterAll": "All",
+    "filterProject": "Project",
+    "filterBlockers": "Blockers only",
+    "pendingCount": "pending",
+    "blockerCount": "blocker(s)"
+  },
   "meta": {
     "homeTitle": "TopNotch — Software Development Agency",
     "homeDescription": "From web apps to AI-powered automation, TopNotch delivers high-quality software solutions with speed, clarity, and craft.",
@@ -260,6 +283,8 @@
     "projectsTitle": "Projects — TopNotch",
     "projectsDescription": "Subprojects we're building at TopNotch, with real-time milestone progress.",
     "docsTitle": "Documents — TopNotch",
-    "docsDescription": "Lineaments, specs, and shared team documentation."
+    "docsDescription": "Lineaments, specs, and shared team documentation.",
+    "humanActionsTitle": "Human Actions — TopNotch",
+    "humanActionsDescription": "Pending tasks requiring human action across all projects."
   }
 }

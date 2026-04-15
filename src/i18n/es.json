@@ -252,6 +252,29 @@
     "filterStatus": "Estado",
     "concurrent": "Ya hay una ejecución activa para este proyecto"
   },
+  "humanActions": {
+    "nav": "Acciones humanas",
+    "eyebrow": "Acciones pendientes",
+    "heading": "Acciones Humanas",
+    "subheading": "Tareas que solo un humano puede completar — credenciales, secretos, DNS, verificación manual.",
+    "pageTitle": "Acciones Humanas — TopNotch",
+    "pageDescription": "Tareas pendientes que requieren acción humana en todos los proyectos.",
+    "noActions": "No hay acciones pendientes.",
+    "milestone": "Milestone",
+    "description": "Descripción",
+    "status": "Estado",
+    "blocker": "Bloqueante",
+    "postDeploy": "Post-deploy",
+    "pending": "Pendiente",
+    "done": "Completada",
+    "markDone": "Marcar como completada",
+    "markPending": "Marcar como pendiente",
+    "filterAll": "Todos",
+    "filterProject": "Proyecto",
+    "filterBlockers": "Solo bloqueantes",
+    "pendingCount": "pendiente(s)",
+    "blockerCount": "bloqueante(s)"
+  },
   "meta": {
     "homeTitle": "TopNotch — Agencia de Desarrollo de Software",
     "homeDescription": "Desde aplicaciones web hasta automatización con IA, TopNotch entrega soluciones de software de alta calidad con rapidez, claridad y oficio.",
@@ -260,6 +283,8 @@
     "projectsTitle": "Proyectos — TopNotch",
     "projectsDescription": "Subproyectos que estamos construyendo en TopNotch, con progreso de milestones en tiempo real.",
     "docsTitle": "Documentos — TopNotch",
-    "docsDescription": "Lineamientos, specs y documentación compartida del equipo."
+    "docsDescription": "Lineamientos, specs y documentación compartida del equipo.",
+    "humanActionsTitle": "Acciones Humanas — TopNotch",
+    "humanActionsDescription": "Tareas pendientes que requieren acción humana en todos los proyectos."
   }
 }

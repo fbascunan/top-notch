@@ -687,16 +687,16 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 
 ### Tasks
 
-- [ ] Design `human_actions` table in Supabase — columns: `id`, `project_id`, `milestone`, `description`, `is_blocker` (bool), `status` (pending/done), `created_at`, `completed_at`
-- [ ] Write migration `00008_human_actions.sql`
-- [ ] Create parser utility that reads `HUMAN-ACTIONS.md` markdown tables and extracts structured action items (milestone, description, blocker/post-deploy, status)
-- [ ] Sync script or API route to upsert parsed actions into Supabase (run manually or as part of the milestone runner pipeline)
-- [ ] Human Actions section on `/projects/[slug]` — table of pending actions for that project, grouped by milestone, with blocker badges
-- [ ] Allow authenticated members to mark actions as completed from the UI (updates Supabase row)
-- [ ] Global `/human-actions` page — all pending actions across projects, filterable by project and blocker status
-- [ ] Add `/human-actions` link to Navbar for authenticated members
-- [ ] i18n keys for all new UI strings (ES + EN)
-- [ ] RLS policies: read for org members, write (status update) for org members
+- [x] Design `human_actions` table in Supabase — columns: `id`, `project_id`, `milestone`, `description`, `is_blocker` (bool), `status` (pending/done), `created_at`, `completed_at`
+- [x] Write migration `00008_human_actions.sql`
+- [x] Create parser utility that reads `HUMAN-ACTIONS.md` markdown tables and extracts structured action items (milestone, description, blocker/post-deploy, status)
+- [x] Sync script or API route to upsert parsed actions into Supabase (run manually or as part of the milestone runner pipeline)
+- [x] Human Actions section on `/projects/[slug]` — table of pending actions for that project, grouped by milestone, with blocker badges
+- [x] Allow authenticated members to mark actions as completed from the UI (updates Supabase row)
+- [x] Global `/human-actions` page — all pending actions across projects, filterable by project and blocker status
+- [x] Add `/human-actions` link to Navbar for authenticated members
+- [x] i18n keys for all new UI strings (ES + EN)
+- [x] RLS policies: read for org members, write (status update) for org members
 
 ### Acceptance Criteria
 
@@ -705,6 +705,142 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 - Members can mark items as done from the browser
 - Global view shows all pending actions across projects
 - Anonymous users see no human actions UI
+- Build passes with 0 errors
+
+---
+
+## M24 — Routine Setup & Trigger API
+
+Replace the GitHub Actions workflow dispatch with a Claude Code Routine trigger. The website's "Run Milestone" button will fire a routine on Anthropic's cloud (using the user's Max subscription) instead of dispatching a GitHub Actions workflow that requires a separate API key.
+
+### Context
+
+M20–M22 built milestone automation on GitHub Actions using `claude -p` with `ANTHROPIC_API_KEY` (pay-per-token billing). The user has a Claude Max subscription (15 routine runs/day) which powers the same automation at no extra cost via Claude Code Routines. This milestone rewires the trigger mechanism — the UI stays the same, the backend changes.
+
+**Important:** Claude Code Routines is a new feature. Each session implementing this milestone MUST read the latest documentation via Context7 (`resolve-library-id` for "Claude Code", then `query-docs` for routines, triggers, API fire endpoint, bearer token auth, routine commit behavior). Do not rely on training data.
+
+### Tasks
+
+- [ ] Read Claude Code Routines docs via Context7 — understand `/fire` API format, bearer token auth, routine creation, env var configuration, and commit behavior
+- [ ] Create a Claude Code routine for the `fbascunan/top-notch` repo (manual setup via `/schedule` command or claude.ai/code/routines)
+- [ ] Configure routine: repo access, prompt template for milestone execution (reuse/adapt `buildPrompt()` from `.github/scripts/supabase-runner.mjs`)
+- [ ] Write Supabase migration `00008_run_history_routines.sql`: add `correlation_id` (TEXT, nullable, unique where not null) and `trigger_source` (TEXT, NOT NULL, default `'manual'`) columns to `run_history`
+- [ ] Apply migration with `supabase db push`
+- [ ] Update `src/lib/database.types.ts` and `RunHistoryEntry` in `src/lib/run-history-data.ts` to include new columns
+- [ ] Rewire `POST /api/run-milestone` — replace GitHub `workflow_dispatch` with POST to routine `/fire` endpoint; generate UUID `correlation_id` per run, include in `/fire` payload
+- [ ] Add stale-run cleanup at the start of the API endpoint: auto-fail any `queued`/`running` rows older than 2 hours before checking for active runs
+- [ ] Handle errors in the API: rate limit (15/day exceeded), `/fire` endpoint failures, timeout — map to user-facing messages
+- [ ] Store routine trigger bearer token as Netlify env var (replaces `GITHUB_TOKEN`)
+- [ ] Document routine creation steps in `docs/HUMAN-ACTIONS.md` (bearer token, routine config)
+- [ ] **Deliverable:** Document the routine commit format (author, message pattern, branch behavior) for M25 — add as a note in this milestone or in the spec
+
+### Acceptance Criteria
+
+- Website "Run Milestone" button fires a Claude Code Routine instead of a GitHub Actions workflow
+- `run_history` rows include `correlation_id` and `trigger_source` columns
+- Stale runs (>2 hours in queued/running) are auto-failed before active-run check
+- Error responses from the routine API are surfaced to the user (rate limit, failure)
+- No `ANTHROPIC_API_KEY` needed — runs under Claude Max subscription
+- Build passes with 0 errors
+
+---
+
+## M25 — GitHub Webhook Listener
+
+Create a lightweight GitHub Action that fires on push events, detects routine-originated commits, and updates Supabase with run results. This replaces the post-run steps that were inside the old M20 workflow.
+
+### Context
+
+With routines (M24), Claude runs on Anthropic's cloud and pushes commits to GitHub. A separate process needs to detect those commits and update Supabase (run_history status, milestone completion, task progress). This webhook listens for pushes, parses the `[run:<correlation_id>]` tag from commit messages, and writes results back to the database.
+
+**Important:** Each session implementing this milestone MUST read Claude Code Routines docs via Context7 to understand: what commit format routines use, what branch they push to, how to distinguish routine commits from human commits. Use the commit format documentation from M24's deliverable.
+
+### Tasks
+
+- [ ] Read Claude Code Routines docs via Context7 — understand routine commit format, branch behavior
+- [ ] Create `.github/workflows/routine-webhook.yml` — triggers on push to `main`
+- [ ] Parse commit messages for `[run:<correlation_id>]` tag; ignore pushes without it (human commits)
+- [ ] Match `correlation_id` to `run_history` row in Supabase
+- [ ] Update `run_history`: set status to `completed` or `failed`, record `commit_sha`, `finished_at`
+- [ ] Check MILESTONES.md diff to detect if the routine marked a milestone as Done — if so, update milestone status in Supabase
+- [ ] Parse task completion from committed changes (diff-based, not Claude output parsing)
+- [ ] Refactor `supabase-runner.mjs` — extract `finish-run`, `complete-milestone`, `update-tasks` for reuse by the webhook
+- [ ] Handle stale runs: auto-fail any `queued`/`running` rows older than 2 hours on each webhook fire
+- [ ] Handle unmatched correlation IDs gracefully (log warning, don't fail)
+
+### Acceptance Criteria
+
+- Routine-originated pushes are detected and matched to `run_history` rows via `correlation_id`
+- `run_history` is updated with final status, commit SHA, and timestamp
+- Milestones marked as Done by the routine are reflected in Supabase
+- Task completion is detected from committed changes
+- Human pushes (no `[run:...]` tag) are ignored — webhook is a no-op
+- Stale runs are cleaned up on each webhook fire
+- Build passes with 0 errors
+
+---
+
+## M26 — Scheduled Routine (Ralph Loop)
+
+Set up a scheduled Claude Code Routine that autonomously runs the next planned milestone following project priority order — like Ralph Loop but in the cloud.
+
+### Context
+
+M24 lets members trigger milestones from the website. This milestone adds autonomous execution: a cron-scheduled routine that picks the next Planned milestone by priority and runs it. The webhook (M25) handles result tracking the same way as manual runs. The website becomes a monitoring dashboard for autonomous progress.
+
+**Important:** The routine runs on Anthropic's cloud and clones the repo from GitHub. It does NOT have access to workspace-level files like `MANIFEST.md` (which is outside this repo). Priority must come from `docs/MILESTONES.md` tracker table or the Supabase `projects` table.
+
+**Important:** Each session implementing this milestone MUST read Claude Code Routines docs via Context7 to understand: scheduled triggers, cron configuration, daily run limits (15 for Max plan), and how scheduled vs API-triggered runs interact.
+
+### Tasks
+
+- [ ] Read Claude Code Routines docs via Context7 — understand scheduled triggers, cron configuration, limits
+- [ ] Design the scheduled routine prompt: read `docs/MILESTONES.md`, find next Planned milestone by tracker table order, execute it, commit with `[run:scheduled-<ISO timestamp>]` tag
+- [ ] Create the scheduled routine via `/schedule` command or claude.ai/code/routines — set cron frequency (daily recommended, user decides exact time)
+- [ ] Ensure scheduled runs create `run_history` entries via the webhook (M25) with `trigger_source = 'scheduled'`, `triggered_by = NULL`
+- [ ] Update UI to show "scheduled" indicator on run history entries (use `trigger_source` column)
+- [ ] Add i18n keys for scheduled trigger label (ES + EN)
+- [ ] Test: let the cron fire, verify the routine picks the right milestone, commits, webhook updates Supabase, UI shows the result
+
+### Acceptance Criteria
+
+- Scheduled routine fires on cron and picks the next Planned milestone by priority
+- Routine commits include `[run:scheduled-<timestamp>]` tag for webhook detection
+- Run history distinguishes manual vs scheduled runs in the UI
+- Daily run limit (15) is respected — schedule does not exceed budget
+- Website shows scheduled run results alongside manual ones
+- Build passes with 0 errors
+
+---
+
+## M27 — Cleanup & Reconciliation
+
+Remove the old GitHub Actions runner, clean up dead code, and verify the full end-to-end flow (manual + scheduled triggers through routines).
+
+### Context
+
+M24–M26 replaced the GitHub Actions runner with Claude Code Routines. The old workflow, secrets, and related code are now dead. This milestone cleans up and does a final end-to-end verification.
+
+### Tasks
+
+- [ ] Verify at least one successful end-to-end routine cycle (manual trigger) before removing old code
+- [ ] Verify at least one successful scheduled routine cycle
+- [ ] Remove `.github/workflows/run-milestone.yml` (old workflow)
+- [ ] Remove `callback` command from `supabase-runner.mjs` (replaced by webhook)
+- [ ] Remove dead `workflow_dispatch` references from API routes and components
+- [ ] Remove GitHub Secrets that are no longer needed: `ANTHROPIC_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (these were for the old workflow — the webhook uses its own)
+- [ ] Update `docs/HUMAN-ACTIONS.md` — mark old M20/M21/M22 items done, ensure routine-specific items are current
+- [ ] Update this file (`docs/MILESTONES.md`) — mark M24–M27 status
+- [ ] Write bitacora entry summarizing the migration
+- [ ] Final check: no references to `workflow_dispatch`, `ANTHROPIC_API_KEY`, or old `GITHUB_TOKEN` usage remain in code
+
+### Acceptance Criteria
+
+- Manual trigger works end-to-end: website button → routine → push → webhook → Supabase → UI
+- Scheduled trigger works end-to-end: cron → routine → push → webhook → Supabase → UI
+- No dead code from the old GitHub Actions runner remains
+- No unused GitHub Secrets remain
+- Docs are up to date
 - Build passes with 0 errors
 
 ---
@@ -735,9 +871,13 @@ Each project has a `docs/HUMAN-ACTIONS.md` file that agents populate during deve
 | M20 — GitHub Actions Milestone Runner | Done | — |
 | M21 — Supabase-Aware Runner | Done | M19, M20 |
 | M22 — Web Trigger & Monitoring UI | Done | M21 |
-| M23 — Human Actions Dashboard | Planned | M22 |
+| M23 — Human Actions Dashboard | Done | M22 |
+| M24 — Routine Setup & Trigger API | Planned | M22 |
+| M25 — GitHub Webhook Listener | Planned | M24 |
+| M26 — Scheduled Routine (Ralph Loop) | Planned | M25 |
+| M27 — Cleanup & Reconciliation | Planned | M24–M26 |
 
 ---
 
-_Last updated: 2026-04-12_
+_Last updated: 2026-04-14_
 

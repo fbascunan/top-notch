@@ -17,7 +17,10 @@ const prefix = getLocalePrefix(lang);
 const navLinks = [
   { label: t(lang, "nav.services"), href: `${prefix}/services` },
   { label: t(lang, "projects.nav"), href: `${prefix}/projects` },
-  ...(isMember ? [{ label: t(lang, "runs.nav"), href: `${prefix}/runs` }] : []),
+  ...(isMember ? [
+    { label: t(lang, "runs.nav"), href: `${prefix}/runs` },
+    { label: t(lang, "humanActions.nav"), href: `${prefix}/human-actions` },
+  ] : []),
   { label: t(lang, "docs.nav"), href: `${prefix}/docs` },
   { label: t(lang, "nav.blog"), href: `${prefix}/blog` },
   { label: t(lang, "nav.contact"), href: `${prefix}/contact` },

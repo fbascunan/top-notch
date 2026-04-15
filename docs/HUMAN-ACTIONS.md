@@ -22,7 +22,7 @@ Carried over from completed milestones (M8, M10, M14).
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` | BLOCKER |
+| [x] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` | BLOCKER |
 
 ---
 
@@ -40,7 +40,7 @@ Carried over from completed milestones (M8, M10, M14).
 | Status | Item | Blocker? |
 |--------|------|----------|
 | [ ] | **Supabase Secrets in GitHub** — Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub repo Secrets | BLOCKER |
-| [ ] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` (from M19) | BLOCKER |
+| [x] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` (from M19) | BLOCKER |
 
 ---
 
@@ -49,6 +49,15 @@ Carried over from completed milestones (M8, M10, M14).
 | Status | Item | Blocker? |
 |--------|------|----------|
 | [ ] | **GitHub token for website** — Create a GitHub PAT (or GitHub App) with `actions:write` scope → add to Netlify env vars as `GITHUB_TOKEN` | BLOCKER |
+
+---
+
+## M23 — Human Actions Dashboard
+
+| Status | Item | Blocker? |
+|--------|------|----------|
+| [ ] | **Apply migration** — Run `supabase db push` to apply `00008_human_actions.sql` | BLOCKER |
+| [ ] | **Sync existing actions** — After migration, call `POST /api/human-actions/sync` with this file's content to populate Supabase | post-deploy |
 
 ---
 
@@ -61,4 +70,4 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
-_Last updated: 2026-04-12_
+_Last updated: 2026-04-14_

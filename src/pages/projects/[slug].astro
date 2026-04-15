@@ -12,10 +12,12 @@ import MilestoneForm from "@/components/MilestoneForm.astro";
 import DocumentCard from "@/components/DocumentCard.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
 import RunHistoryTable from "@/components/RunHistoryTable.astro";
+import HumanActionsTable from "@/components/HumanActionsTable.astro";
 import { t } from "../../i18n/index";
 import { getProjectBySlug } from "../../lib/projects-data";
 import { getProjectDocuments } from "../../lib/documents-data";
 import { getRunHistoryForProject, hasActiveRun } from "../../lib/run-history-data";
+import { getHumanActionsForProject } from "../../lib/human-actions-data";
 
 const lang = "es";
 const isMember = Astro.locals.isMember;
@@ -24,6 +26,7 @@ const { slug } = Astro.params;
 const project = await getProjectBySlug(slug!);
 const projectDocs = project ? await getProjectDocuments(project.id) : [];
 const runHistory = project ? await getRunHistoryForProject(project.id) : [];
+const humanActions = project ? await getHumanActionsForProject(project.id) : [];
 const projectHasActiveRun = project ? await hasActiveRun(project.id) : false;
 const nextMilestone = project?.milestones.find((m) => m.status === "Planned" || m.status === "In Progress");
 
@@ -211,8 +214,23 @@ const statusLabel: Record<string, string> = {
       </section>
     )}
 
+    {/* Human Actions section (member-only) */}
+    {isMember && humanActions.length > 0 && (
+      <section class="py-16 sm:py-20 bg-neutral-50">
+        <Container>
+          <SectionHeading
+            eyebrow={t(lang, "humanActions.eyebrow")}
+            heading={t(lang, "humanActions.heading")}
+          />
+          <div class="mt-10 max-w-3xl mx-auto">
+            <HumanActionsTable actions={humanActions} lang={lang} isMember={isMember} />
+          </div>
+        </Container>
+      </section>
+    )}
+
     {/* Documents section */}
-    <section class="py-16 sm:py-20 bg-neutral-50">
+    <section class:list={["py-16 sm:py-20", isMember && humanActions.length > 0 ? "bg-white" : "bg-neutral-50"]}>
       <Container>
         <SectionHeading
           eyebrow={t(lang, "docs.eyebrow")}
@@ -348,6 +366,30 @@ const statusLabel: Record<string, string> = {
         }
       } catch {
         alert("Network error");
+      }
+    });
+
+    // Toggle human action status
+    document.addEventListener("click", async (e) => {
+      const btn = e.target?.closest("[data-toggle-action]");
+      if (!btn) return;
+
+      const actionId = btn.dataset.toggleAction;
+      const currentStatus = btn.dataset.currentStatus;
+      const newStatus = currentStatus === "done" ? "pending" : "done";
+
+      try {
+        const res = await fetch(`/api/human-actions/${actionId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (res.ok) {
+          window.location.reload();
+        }
+      } catch {
+        // Silently fail
       }
     });
 

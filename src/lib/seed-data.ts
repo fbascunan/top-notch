@@ -3,7 +3,7 @@
  * Mirrors the data in supabase/migrations/00003_seed_data.sql.
  */
 
-import type { ProjectStatus, MilestoneStatus, RunStatus } from "./database.types";
+import type { ProjectStatus, MilestoneStatus, RunStatus, HumanActionStatus } from "./database.types";
 
 export interface SeedProject {
   id: number;
@@ -127,6 +127,30 @@ export const seedMilestones: SeedMilestone[] = [
   { id: 61, project_id: 5, number: 5,  title: "Notary Detail Page",                     description: "Dedicated page per notary with full info, procedures, cost history.",                             status: "Done", blocking: "M2" },
   { id: 62, project_id: 5, number: 6,  title: "Ads, Visual Identity & UX",              description: "Polish brand identity, integrate non-intrusive ads.",                                             status: "Done", blocking: "M5" },
   { id: 63, project_id: 5, number: 7,  title: "Testing, SEO & Deployment",              description: "Final testing, SEO optimization, production deployment to Netlify.",                              status: "Done", blocking: "M6" },
+];
+
+export interface SeedHumanAction {
+  id: number;
+  project_id: number;
+  milestone: string;
+  description: string;
+  is_blocker: boolean;
+  status: HumanActionStatus;
+  completed_at: string | null;
+}
+
+export const seedHumanActions: SeedHumanAction[] = [
+  { id: 1,  project_id: 2, milestone: "M10", description: "Formspree — Create account at formspree.io → set form ID in src/components/ContactForm.astro (replace {YOUR_FORM_ID})", is_blocker: false, status: "pending", completed_at: null },
+  { id: 2,  project_id: 2, milestone: "M10", description: "Umami — Create account at cloud.umami.is → set website ID in src/layouts/BaseLayout.astro (replace UMAMI_WEBSITE_ID)", is_blocker: false, status: "pending", completed_at: null },
+  { id: 3,  project_id: 2, milestone: "M14", description: "Google Search Console — Set up for topnotch.cl", is_blocker: false, status: "pending", completed_at: null },
+  { id: 4,  project_id: 2, milestone: "M14", description: "DNS — Configure topnotch.cl domain to point to Netlify (currently live at topnotch-cl.netlify.app)", is_blocker: false, status: "pending", completed_at: null },
+  { id: 5,  project_id: 2, milestone: "M14", description: "Responsive QA — Spot-check at 375px, 768px, 1280px, 1920px", is_blocker: false, status: "pending", completed_at: null },
+  { id: 6,  project_id: 2, milestone: "M19", description: "Apply migration — Run supabase db push to apply 00007_run_history.sql", is_blocker: true, status: "done", completed_at: "2026-04-14T00:00:00Z" },
+  { id: 7,  project_id: 2, milestone: "M20", description: "Anthropic API Key — Add ANTHROPIC_API_KEY to GitHub repo Secrets (Settings → Secrets → Actions)", is_blocker: true, status: "pending", completed_at: null },
+  { id: 8,  project_id: 2, milestone: "M20", description: "First test run — Trigger the workflow manually from GitHub Actions UI to verify end-to-end", is_blocker: true, status: "pending", completed_at: null },
+  { id: 9,  project_id: 2, milestone: "M21", description: "Supabase Secrets in GitHub — Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to GitHub repo Secrets", is_blocker: true, status: "pending", completed_at: null },
+  { id: 10, project_id: 2, milestone: "M21", description: "Apply migration — Run supabase db push to apply 00007_run_history.sql (from M19)", is_blocker: true, status: "done", completed_at: "2026-04-14T00:00:00Z" },
+  { id: 11, project_id: 2, milestone: "M22", description: "GitHub token for website — Create a GitHub PAT (or GitHub App) with actions:write scope → add to Netlify env vars as GITHUB_TOKEN", is_blocker: true, status: "pending", completed_at: null },
 ];
 
 export const seedRunHistory: SeedRunHistory[] = [

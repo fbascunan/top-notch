@@ -1,6 +1,7 @@
 export type ProjectStatus = "Active" | "Planned" | "On Hold" | "Done";
 export type MilestoneStatus = "Planned" | "In Progress" | "Done" | "Blocked";
 export type RunStatus = "queued" | "running" | "completed" | "failed";
+export type HumanActionStatus = "pending" | "done";
 
 export interface Database {
   public: {
@@ -139,6 +140,38 @@ export interface Database {
           created_at?: string;
         };
       };
+      human_actions: {
+        Row: {
+          id: number;
+          project_id: number;
+          milestone: string;
+          description: string;
+          is_blocker: boolean;
+          status: HumanActionStatus;
+          created_at: string;
+          completed_at: string | null;
+        };
+        Insert: {
+          id?: number;
+          project_id: number;
+          milestone: string;
+          description: string;
+          is_blocker?: boolean;
+          status?: HumanActionStatus;
+          created_at?: string;
+          completed_at?: string | null;
+        };
+        Update: {
+          id?: number;
+          project_id?: number;
+          milestone?: string;
+          description?: string;
+          is_blocker?: boolean;
+          status?: HumanActionStatus;
+          created_at?: string;
+          completed_at?: string | null;
+        };
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -146,6 +179,7 @@ export interface Database {
       project_status: ProjectStatus;
       milestone_status: MilestoneStatus;
       run_status: RunStatus;
+      human_action_status: HumanActionStatus;
     };
   };
 }

@@ -1,0 +1,124 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import Container from "@/components/Container.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import HumanActionsTable from "@/components/HumanActionsTable.astro";
+import { t } from "../i18n/index";
+import { getAllHumanActions } from "../lib/human-actions-data";
+import { getAllProjects } from "../lib/projects-data";
+
+const lang = "es";
+const isMember = Astro.locals.isMember;
+
+if (!isMember) {
+  return Astro.redirect("/");
+}
+
+const allActions = await getAllHumanActions();
+const projects = await getAllProjects();
+---
+
+<BaseLayout
+  title={t(lang, "humanActions.pageTitle")}
+  description={t(lang, "humanActions.pageDescription")}
+  url="/human-actions"
+  breadcrumbs={[
+    { name: "Inicio", url: "/" },
+    { name: t(lang, "humanActions.nav"), url: "/human-actions" },
+  ]}
+  lang={lang}
+>
+  <Navbar lang={lang} isMember={isMember} />
+
+  <main>
+    <section class="pt-24 pb-16 sm:pt-32 sm:pb-20">
+      <Container>
+        <SectionHeading
+          eyebrow={t(lang, "humanActions.eyebrow")}
+          heading={t(lang, "humanActions.heading")}
+          subheading={t(lang, "humanActions.subheading")}
+        />
+
+        {/* Filters */}
+        <div class="mt-8 flex flex-wrap gap-3 max-w-4xl mx-auto" id="action-filters">
+          <select
+            id="filter-project"
+            class="rounded-md border border-neutral-300 px-3 py-1.5 text-sm text-neutral-700 bg-white"
+          >
+            <option value="">{t(lang, "humanActions.filterAll")} — {t(lang, "humanActions.filterProject")}</option>
+            {projects.map((p) => (
+              <option value={String(p.id)}>{p.name}</option>
+            ))}
+          </select>
+
+          <label class="inline-flex items-center gap-2 text-sm text-neutral-600 cursor-pointer">
+            <input
+              type="checkbox"
+              id="filter-blockers"
+              class="rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+            />
+            {t(lang, "humanActions.filterBlockers")}
+          </label>
+        </div>
+
+        <div class="mt-10 max-w-4xl mx-auto" id="actions-container">
+          <HumanActionsTable actions={allActions} lang={lang} isMember={isMember} showProject={true} />
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script define:vars={{ actionsJson: JSON.stringify(allActions.map(a => ({ id: a.id, project_id: a.project_id, is_blocker: a.is_blocker, status: a.status }))) }}>
+  const actionMeta = JSON.parse(actionsJson);
+
+  document.getElementById("filter-project")?.addEventListener("change", applyFilters);
+  document.getElementById("filter-blockers")?.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const projectFilter = document.getElementById("filter-project")?.value || "";
+    const blockersOnly = document.getElementById("filter-blockers")?.checked || false;
+
+    document.querySelectorAll("[data-action-row]").forEach((row) => {
+      const actionId = Number(row.dataset.actionRow);
+      const meta = actionMeta.find((a) => a.id === actionId);
+      if (!meta) return;
+
+      let show = true;
+      if (projectFilter && String(meta.project_id) !== projectFilter) show = false;
+      if (blockersOnly && !meta.is_blocker) show = false;
+
+      row.style.display = show ? "" : "none";
+    });
+  }
+
+  // Toggle human action status
+  document.addEventListener("click", async (e) => {
+    const btn = e.target?.closest("[data-toggle-action]");
+    if (!btn) return;
+
+    const actionId = btn.dataset.toggleAction;
+    const currentStatus = btn.dataset.currentStatus;
+    const newStatus = currentStatus === "done" ? "pending" : "done";
+
+    try {
+      const res = await fetch(`/api/human-actions/${actionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        window.location.reload();
+      }
+    } catch {
+      // Silently fail
+    }
+  });
+</script>
