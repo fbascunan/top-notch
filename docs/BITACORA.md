@@ -167,3 +167,8 @@
 **Blocked:** nothing
 **Next:** all current milestones complete; future work: M14 external services (Formspree, Umami, DNS), additional milestones as needed
 **Decision:** `getFeaturedProjects()` uses Supabase `featured=true` filter with fallback to `priority <= 3` from seed data; reused existing `ProjectCard.astro` for homepage featured section instead of custom cards
+
+### 2026-04-15 09:00 — runner — (none)
+**Did:** scanned Tracker table in MILESTONES.md — no Planned milestones remaining
+**Blocked:** No Planned milestones remaining. M14 is In Progress (external services/DNS/QA require human action); M1–M13, M15–M18 are Done.
+**Next:** human completes M14 checklist (Formspree, Umami, Google Search Console, DNS, cross-browser QA), then new milestones should be defined in MILESTONES.md to continue work
