@@ -4,8 +4,7 @@
  * Supabase Runner Helper — handles all Supabase interactions for the
  * GitHub Actions milestone runner workflow.
  *
- * Uses the Supabase REST API (PostgREST) directly via fetch().
- * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.
+ * Delegates to shared helpers in supabase-helpers.mjs for reusable operations.
  *
  * Commands:
  *   fetch-context <project_folder> [milestone_number]
@@ -28,41 +27,13 @@
  *     → POSTs run status to a Netlify function (optional, best-effort).
  */
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-function isConfigured() {
-  return Boolean(SUPABASE_URL && SUPABASE_KEY);
-}
-
-function headers(extra = {}) {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-    Prefer: "return=representation",
-    ...extra,
-  };
-}
-
-function restUrl(table, query = "") {
-  return `${SUPABASE_URL}/rest/v1/${table}${query ? `?${query}` : ""}`;
-}
-
-async function supaFetch(table, { query = "", method = "GET", body = null } = {}) {
-  const url = restUrl(table, query);
-  const opts = { method, headers: headers(), };
-  if (body) opts.body = JSON.stringify(body);
-
-  const res = await fetch(url, opts);
-  const text = await res.text();
-
-  if (!res.ok) {
-    throw new Error(`Supabase ${method} ${table}: ${res.status} — ${text}`);
-  }
-
-  return text ? JSON.parse(text) : null;
-}
+import {
+  isConfigured,
+  supaFetch,
+  finishRun,
+  completeMilestone,
+  updateTasksFromOutput,
+} from "./supabase-helpers.mjs";
 
 // ────────────────────────────────────────────────────────────────
 // Commands
@@ -177,96 +148,6 @@ async function startRun(projectId, milestoneId) {
   return rows[0];
 }
 
-async function finishRun(runId, status, opts = {}) {
-  const { commitSha, error, logsFile } = opts;
-  const update = {
-    status,
-    finished_at: new Date().toISOString(),
-  };
-
-  if (commitSha) update.commit_sha = commitSha;
-  if (error) update.error = error.substring(0, 10000); // Cap error length
-
-  if (logsFile) {
-    const { readFile } = await import("node:fs/promises");
-    try {
-      let logs = await readFile(logsFile, "utf-8");
-      // Cap logs at 100KB to avoid DB bloat
-      if (logs.length > 100_000) {
-        logs = logs.substring(0, 50_000) + "\n\n... [truncated] ...\n\n" + logs.substring(logs.length - 50_000);
-      }
-      update.logs = logs;
-    } catch {
-      // Log file not found — not critical
-    }
-  }
-
-  await supaFetch("run_history", {
-    method: "PATCH",
-    query: `id=eq.${runId}`,
-    body: update,
-  });
-}
-
-async function completeMilestone(milestoneId) {
-  await supaFetch("milestones", {
-    method: "PATCH",
-    query: `id=eq.${milestoneId}`,
-    body: {
-      status: "Done",
-      completed_at: new Date().toISOString(),
-    },
-  });
-}
-
-async function updateTasks(milestoneId, claudeOutputFile) {
-  const { readFile } = await import("node:fs/promises");
-  let output;
-  try {
-    output = await readFile(claudeOutputFile, "utf-8");
-  } catch {
-    console.error(`Could not read Claude output file: ${claudeOutputFile}`);
-    return;
-  }
-
-  // Fetch current tasks
-  const tasks = await supaFetch("milestone_tasks", {
-    query: `milestone_id=eq.${milestoneId}&select=*&order=id.asc`,
-  });
-
-  if (!tasks || tasks.length === 0) return;
-
-  // Check if MILESTONE_COMPLETE tag is present — if so, mark all tasks done
-  const isComplete = output.includes("MILESTONE_COMPLETE");
-
-  // Also check for individual task completion markers in Claude's output
-  // Claude typically checks off tasks with [x] in its output
-  for (const task of tasks) {
-    let shouldMarkDone = false;
-
-    if (isComplete) {
-      // Milestone was completed — mark all tasks done
-      shouldMarkDone = true;
-    } else {
-      // Check if this specific task description appears as completed in the output
-      // Look for patterns like "- [x] <task description>" in the output
-      const escapedDesc = task.description.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const pattern = new RegExp(`\\[x\\]\\s*${escapedDesc.substring(0, 60)}`, "i");
-      if (pattern.test(output)) {
-        shouldMarkDone = true;
-      }
-    }
-
-    if (shouldMarkDone && !task.done) {
-      await supaFetch("milestone_tasks", {
-        method: "PATCH",
-        query: `id=eq.${task.id}`,
-        body: { done: true },
-      });
-    }
-  }
-}
-
 async function callback(netlifyUrl, runId, status) {
   try {
     const res = await fetch(netlifyUrl, {
@@ -367,7 +248,7 @@ async function main() {
           console.error("Usage: update-tasks <milestone_id> <claude_output_file>");
           process.exit(1);
         }
-        await updateTasks(milestoneId, claudeOutputFile);
+        await updateTasksFromOutput(milestoneId, claudeOutputFile);
         console.log(`Tasks updated for milestone ${milestoneId}`);
         break;
       }

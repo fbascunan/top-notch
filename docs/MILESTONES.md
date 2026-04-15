@@ -769,16 +769,16 @@ With routines (M24), Claude runs on Anthropic's cloud and pushes commits to GitH
 
 ### Tasks
 
-- [ ] Read Claude Code Routines docs via Context7 — understand routine commit format, branch behavior
-- [ ] Create `.github/workflows/routine-webhook.yml` — triggers on push to `main`
-- [ ] Parse commit messages for `[run:<correlation_id>]` tag; ignore pushes without it (human commits)
-- [ ] Match `correlation_id` to `run_history` row in Supabase
-- [ ] Update `run_history`: set status to `completed` or `failed`, record `commit_sha`, `finished_at`
-- [ ] Check MILESTONES.md diff to detect if the routine marked a milestone as Done — if so, update milestone status in Supabase
-- [ ] Parse task completion from committed changes (diff-based, not Claude output parsing)
-- [ ] Refactor `supabase-runner.mjs` — extract `finish-run`, `complete-milestone`, `update-tasks` for reuse by the webhook
-- [ ] Handle stale runs: auto-fail any `queued`/`running` rows older than 2 hours on each webhook fire
-- [ ] Handle unmatched correlation IDs gracefully (log warning, don't fail)
+- [x] Read Claude Code Routines docs via Context7 — understand routine commit format, branch behavior
+- [x] Create `.github/workflows/routine-webhook.yml` — triggers on push to `main`
+- [x] Parse commit messages for `[run:<correlation_id>]` tag; ignore pushes without it (human commits)
+- [x] Match `correlation_id` to `run_history` row in Supabase
+- [x] Update `run_history`: set status to `completed` or `failed`, record `commit_sha`, `finished_at`
+- [x] Check MILESTONES.md diff to detect if the routine marked a milestone as Done — if so, update milestone status in Supabase
+- [x] Parse task completion from committed changes (diff-based, not Claude output parsing)
+- [x] Refactor `supabase-runner.mjs` — extract `finish-run`, `complete-milestone`, `update-tasks` for reuse by the webhook
+- [x] Handle stale runs: auto-fail any `queued`/`running` rows older than 2 hours on each webhook fire
+- [x] Handle unmatched correlation IDs gracefully (log warning, don't fail)
 
 ### Acceptance Criteria
 
@@ -885,7 +885,7 @@ M24–M26 replaced the GitHub Actions runner with Claude Code Routines. The old 
 | M22 — Web Trigger & Monitoring UI | Done | M21 |
 | M23 — Human Actions Dashboard | Done | M22 |
 | M24 — Routine Setup & Trigger API | Done | M22 |
-| M25 — GitHub Webhook Listener | Planned | M24 |
+| M25 — GitHub Webhook Listener | Done | M24 |
 | M26 — Scheduled Routine (Ralph Loop) | Planned | M25 |
 | M27 — Cleanup & Reconciliation | Planned | M24–M26 |
 

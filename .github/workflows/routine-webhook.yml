@@ -1,0 +1,57 @@
+name: Routine Webhook
+
+# Fires on every push to main. Detects routine-originated commits
+# (those with [run:<correlation_id>] tags) and updates Supabase
+# with run results, milestone completions, and task progress.
+# Human pushes (no [run:...] tag) are ignored — the workflow exits
+# early as a no-op.
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  process-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # Fetch enough history to diff between before/after SHAs
+          fetch-depth: 50
+
+      - name: Quick check for correlation tags
+        id: check
+        run: |
+          # Read commit messages from the push event and check for [run:...] tags.
+          # If none found, skip the rest of the workflow (human push).
+          EVENT_FILE="${GITHUB_EVENT_PATH}"
+          if ! grep -q '\[run:' "$EVENT_FILE" 2>/dev/null; then
+            echo "No [run:...] tags in push event — human push, skipping."
+            echo "has_tags=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found [run:...] tag(s) — processing routine push."
+            echo "has_tags=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run routine webhook handler
+        if: steps.check.outputs.has_tags == 'true'
+        run: node .github/scripts/routine-webhook.mjs
+
+      - name: Stale run cleanup only (human push)
+        if: steps.check.outputs.has_tags != 'true'
+        run: |
+          # Even on human pushes, clean up stale runs as a housekeeping task.
+          # Uses a minimal inline script to avoid running the full webhook.
+          node -e "
+            import { isConfigured, cleanupStaleRuns } from './.github/scripts/supabase-helpers.mjs';
+            if (!isConfigured()) { console.log('Supabase not configured — skipping stale cleanup.'); process.exit(0); }
+            cleanupStaleRuns().then(n => console.log('Cleaned up ' + n + ' stale run(s).'))
+              .catch(e => { console.warn('Stale cleanup failed: ' + e.message); });
+          " --input-type=module || true

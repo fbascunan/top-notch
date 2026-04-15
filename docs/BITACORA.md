@@ -218,3 +218,9 @@
 **Blocked:** Human needs to: (1) apply migration 00009 via `supabase db push`, (2) create routine at claude.ai/code/routines, (3) add API trigger + generate bearer token, (4) set `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` in Netlify env vars.
 **Next:** M25 (GitHub Webhook Listener — detect routine commits, update Supabase).
 **Decision:** Routine `/fire` API uses `anthropic-beta: experimental-cc-routine-2026-04-01` header (research preview). Env vars `ROUTINE_TRIGGER_ID` + `ROUTINE_BEARER_TOKEN` replace old `GITHUB_TOKEN`. Routines push to `claude/`-prefixed branches by default — must enable "Allow unrestricted branch pushes" for `main`.
+
+### 2026-04-14 — agent — M25
+**Did:** built GitHub webhook listener for routine commits. Created `.github/workflows/routine-webhook.yml` (triggers on push to `main`). Created `.github/scripts/routine-webhook.mjs` (parses `[run:<correlation_id>]` from commit messages, matches to `run_history`, updates status/commit_sha/finished_at, detects milestone Done from MILESTONES.md diff, parses task completion from diffs). Extracted shared helpers into `.github/scripts/supabase-helpers.mjs` (`finishRun`, `completeMilestone`, `updateTasksFromDiff`, `cleanupStaleRuns`, `findRunByCorrelationId`). Refactored `supabase-runner.mjs` to import from shared module. Stale runs auto-failed on every webhook fire. Human pushes exit early as no-op. Build: 0 errors.
+**Blocked:** nothing
+**Next:** M26 (Scheduled Routine / Ralph Loop) or M27 (Cleanup & Reconciliation).
+**Decision:** split Supabase helpers into shared module (`.github/scripts/supabase-helpers.mjs`) so both the old runner and new webhook use the same DB operations; diff-based task detection uses git diff on `docs/MILESTONES.md` rather than parsing Claude output.
