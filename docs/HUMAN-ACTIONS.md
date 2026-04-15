@@ -61,6 +61,19 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
+## M24 — Routine Setup & Trigger API
+
+| Status | Item | Blocker? |
+|--------|------|----------|
+| [ ] | **Apply migration** — Run `supabase db push` to apply `00009_run_history_routines.sql` | BLOCKER |
+| [ ] | **Create routine** — Go to [claude.ai/code/routines](https://claude.ai/code/routines), click "New routine". Name: "TopNotch Milestone Runner". Prompt: see `docs/ROUTINE-PROMPT.md` below. Repository: `fbascunan/top-notch`. Enable "Allow unrestricted branch pushes" so the routine can push to `main`. Select appropriate cloud environment. | BLOCKER |
+| [ ] | **Add API trigger** — Edit the routine, scroll to "Select a trigger", click "Add another trigger", choose "API". Copy the trigger URL (contains the trigger ID like `trig_01XXXXX`). Click "Generate token" and save the bearer token securely — it is shown only once. | BLOCKER |
+| [ ] | **Set Netlify env vars** — Go to Netlify dashboard → Site settings → Environment variables. Add: `ROUTINE_TRIGGER_ID` (the `trig_01XXXXX` part from the URL) and `ROUTINE_BEARER_TOKEN` (the `sk-ant-oat01-xxxxx` token). These replace the old `GITHUB_TOKEN`. | BLOCKER |
+| [ ] | **Configure cloud environment** — In the routine's cloud environment settings, add env vars needed by the routine (e.g., `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` if the routine needs DB access). Set network access to "Trusted" or "Full". | post-deploy |
+| [ ] | **Test fire** — After setting env vars, trigger a test run from the website "Run Milestone" button or from the routine detail page "Run now" button. Verify the routine starts and appears in your sessions at claude.ai/code. | post-deploy |
+
+---
+
 ## How to Use This File
 
 1. Before starting a milestone, check if it has BLOCKERs here
@@ -70,4 +83,4 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
-_Last updated: 2026-04-14_
+_Last updated: 2026-04-14 (M24)_

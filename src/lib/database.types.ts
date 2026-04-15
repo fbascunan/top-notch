@@ -112,6 +112,8 @@ export interface Database {
           commit_sha: string | null;
           error: string | null;
           created_at: string;
+          correlation_id: string | null;
+          trigger_source: string;
         };
         Insert: {
           id?: number;
@@ -125,6 +127,8 @@ export interface Database {
           commit_sha?: string | null;
           error?: string | null;
           created_at?: string;
+          correlation_id?: string | null;
+          trigger_source?: string;
         };
         Update: {
           id?: number;
@@ -138,6 +142,8 @@ export interface Database {
           commit_sha?: string | null;
           error?: string | null;
           created_at?: string;
+          correlation_id?: string | null;
+          trigger_source?: string;
         };
       };
       human_actions: {

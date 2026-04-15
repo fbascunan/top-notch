@@ -5,8 +5,11 @@ export const prerender = false;
 
 /**
  * POST /api/run-milestone
- * Triggers a GitHub Actions workflow dispatch for a milestone run.
- * Creates a run_history row with status "queued".
+ * Triggers a Claude Code Routine via the /fire API endpoint.
+ * Creates a run_history row with status "queued" and a correlation_id.
+ *
+ * Replaces the old GitHub Actions workflow_dispatch approach (M20–M22).
+ * Runs under the user's Claude Max subscription — no ANTHROPIC_API_KEY needed.
  */
 export const POST: APIRoute = async ({ request, locals, cookies }) => {
   if (!locals.isMember || !locals.org) {
@@ -25,7 +28,21 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
 
   const supabase = createSSRClient(request, cookies);
 
-  // Check for an active run on this project (prevent concurrent runs)
+  // ── Stale-run cleanup ────────────────────────────────────────────
+  // Auto-fail any queued/running rows older than 2 hours before checking
+  // for active runs. Prevents stuck runs from blocking new ones forever.
+  const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+  await supabase
+    .from("run_history")
+    .update({
+      status: "failed",
+      error: "Auto-failed: stuck in queued/running for over 2 hours",
+      finished_at: new Date().toISOString(),
+    })
+    .in("status", ["queued", "running"])
+    .lt("started_at", twoHoursAgo);
+
+  // ── Active run check ─────────────────────────────────────────────
   const { data: activeRuns } = await supabase
     .from("run_history")
     .select("id")
@@ -40,46 +57,96 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     );
   }
 
-  // Trigger GitHub Actions workflow dispatch
-  const githubToken = import.meta.env.GITHUB_TOKEN;
-  if (!githubToken) {
+  // ── Routine trigger config ───────────────────────────────────────
+  const routineTriggerId = import.meta.env.ROUTINE_TRIGGER_ID;
+  const routineBearerToken = import.meta.env.ROUTINE_BEARER_TOKEN;
+
+  if (!routineTriggerId || !routineBearerToken) {
     return new Response(
-      JSON.stringify({ error: "GitHub token not configured" }),
+      JSON.stringify({ error: "Routine trigger not configured. Set ROUTINE_TRIGGER_ID and ROUTINE_BEARER_TOKEN in Netlify env vars." }),
       { status: 500 },
     );
   }
 
-  const repo = "fbascunan/top-notch";
-  const workflowId = "run-milestone.yml";
+  // ── Generate correlation ID ──────────────────────────────────────
+  const correlationId = crypto.randomUUID();
 
-  const ghResponse = await fetch(
-    `https://api.github.com/repos/${repo}/actions/workflows/${workflowId}/dispatches`,
-    {
+  // ── Fire the routine ─────────────────────────────────────────────
+  const fireUrl = `https://api.anthropic.com/v1/claude_code/routines/${routineTriggerId}/fire`;
+  const triggerText = [
+    `Milestone: M${milestone_number}`,
+    `Project folder: ${project_folder}`,
+    `Correlation ID: ${correlationId}`,
+    ``,
+    `Include [run:${correlationId}] in all commit messages for this run.`,
+    `Read docs/MILESTONES.md, find M${milestone_number}, and complete it.`,
+  ].join("\n");
+
+  let fireResponse: Response;
+  try {
+    fireResponse = await fetch(fireUrl, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: "application/vnd.github.v3+json",
+        "Authorization": `Bearer ${routineBearerToken}`,
+        "anthropic-beta": "experimental-cc-routine-2026-04-01",
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        ref: "main",
-        inputs: {
-          project_folder: String(project_folder),
-          milestone_number: String(milestone_number),
-        },
-      }),
-    },
-  );
-
-  if (!ghResponse.ok) {
-    const errorText = await ghResponse.text();
+      body: JSON.stringify({ text: triggerText }),
+      signal: AbortSignal.timeout(30_000),
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error && err.name === "TimeoutError"
+      ? "Routine API request timed out (30s). The service may be temporarily unavailable."
+      : `Failed to reach routine API: ${err instanceof Error ? err.message : String(err)}`;
     return new Response(
-      JSON.stringify({ error: `GitHub API error: ${ghResponse.status} ${errorText}` }),
+      JSON.stringify({ error: message }),
       { status: 502 },
     );
   }
 
-  // Create run_history row
+  if (!fireResponse.ok) {
+    const errorText = await fireResponse.text();
+
+    // Map known error statuses to user-facing messages
+    if (fireResponse.status === 429) {
+      return new Response(
+        JSON.stringify({
+          error: "Daily routine run limit reached (15/day for Max plan). Try again tomorrow.",
+          detail: errorText,
+        }),
+        { status: 429 },
+      );
+    }
+
+    if (fireResponse.status === 401 || fireResponse.status === 403) {
+      return new Response(
+        JSON.stringify({
+          error: "Routine authentication failed. The bearer token may be expired or revoked.",
+          detail: errorText,
+        }),
+        { status: 502 },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        error: `Routine API error: ${fireResponse.status}`,
+        detail: errorText,
+      }),
+      { status: 502 },
+    );
+  }
+
+  // Parse the routine response to get session info
+  let routineResult: { claude_code_session_id?: string; claude_code_session_url?: string } = {};
+  try {
+    routineResult = await fireResponse.json();
+  } catch {
+    // Non-critical — we still have the correlation_id for tracking
+  }
+
+  // ── Create run_history row ───────────────────────────────────────
   const { data: run, error: insertError } = await supabase
     .from("run_history")
     .insert({
@@ -88,6 +155,8 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       status: "queued",
       triggered_by: locals.user?.id ?? null,
       started_at: new Date().toISOString(),
+      correlation_id: correlationId,
+      trigger_source: "manual",
     })
     .select()
     .single();
@@ -99,8 +168,14 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     );
   }
 
-  return new Response(JSON.stringify(run), {
-    status: 201,
-    headers: { "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({
+      ...run,
+      session_url: routineResult.claude_code_session_url ?? null,
+    }),
+    {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 };

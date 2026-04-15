@@ -19,6 +19,8 @@ export interface RunHistoryEntry {
   commit_sha: string | null;
   error: string | null;
   created_at: string;
+  correlation_id: string | null;
+  trigger_source: string;
   project_name?: string;
   project_folder?: string;
   milestone_number?: number;
@@ -28,6 +30,8 @@ export interface RunHistoryEntry {
 function buildFromSeed(projectId?: number): RunHistoryEntry[] {
   let runs = seedRunHistory.map((r) => ({
     ...r,
+    correlation_id: null as string | null,
+    trigger_source: "manual",
     project_name: undefined as string | undefined,
     project_folder: undefined as string | undefined,
     milestone_number: undefined as number | undefined,
@@ -68,6 +72,8 @@ export async function getRunHistoryForProject(projectId: number): Promise<RunHis
     commit_sha: r.commit_sha,
     error: r.error,
     created_at: r.created_at,
+    correlation_id: r.correlation_id,
+    trigger_source: r.trigger_source ?? "manual",
     project_name: r.projects?.name,
     project_folder: r.projects?.folder,
     milestone_number: r.milestones?.number,
@@ -103,6 +109,8 @@ export async function getAllRunHistory(): Promise<RunHistoryEntry[]> {
     commit_sha: r.commit_sha,
     error: r.error,
     created_at: r.created_at,
+    correlation_id: r.correlation_id,
+    trigger_source: r.trigger_source ?? "manual",
     project_name: r.projects?.name,
     project_folder: r.projects?.folder,
     milestone_number: r.milestones?.number,
