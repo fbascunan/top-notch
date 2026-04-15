@@ -74,6 +74,16 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
+## M26 — Scheduled Routine (Ralph Loop)
+
+| Status | Item | Blocker? |
+|--------|------|----------|
+| [x] | **Create scheduled routine** — Created via `/schedule` command. Trigger ID: `trig_0163UmuiPJAJ6uaaLLbsWVUC`. Schedule: daily at 13:03 UTC (~9:03 AM Chile). Manage at [claude.ai/code/scheduled](https://claude.ai/code/scheduled/trig_0163UmuiPJAJ6uaaLLbsWVUC) | BLOCKER |
+| [ ] | **Verify first scheduled run** — Wait for the next cron fire (13:03 UTC daily), verify the routine picks the right milestone, commits with `[run:scheduled-<timestamp>]` tag, webhook updates Supabase, and UI shows the result | post-deploy |
+| [ ] | **Adjust schedule if needed** — If the daily time doesn't work, update the cron at [claude.ai/code/scheduled](https://claude.ai/code/scheduled/trig_0163UmuiPJAJ6uaaLLbsWVUC) | post-deploy |
+
+---
+
 ## How to Use This File
 
 1. Before starting a milestone, check if it has BLOCKERs here
@@ -83,4 +93,4 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
-_Last updated: 2026-04-14 (M24)_
+_Last updated: 2026-04-15 (M26)_

@@ -250,7 +250,10 @@
     "filterAll": "All",
     "filterProject": "Project",
     "filterStatus": "Status",
-    "concurrent": "A run is already in progress for this project"
+    "concurrent": "A run is already in progress for this project",
+    "trigger": "Trigger",
+    "triggerManual": "Manual",
+    "triggerScheduled": "Scheduled"
   },
   "humanActions": {
     "nav": "Human Actions",

@@ -36,6 +36,8 @@ import {
   cleanupStaleRuns,
   findRunByCorrelationId,
   findMilestone,
+  findProjectByFolder,
+  createScheduledRun,
 } from "./supabase-helpers.mjs";
 
 // ────────────────────────────────────────────────────────────────
@@ -132,6 +134,35 @@ function determineRunStatus(commitMessage, milestoneCompletions) {
   return "failed";
 }
 
+/**
+ * Check if a correlation ID is from a scheduled routine run.
+ * Scheduled runs use the format: scheduled-<ISO timestamp>
+ */
+function isScheduledRun(correlationId) {
+  return correlationId.startsWith("scheduled-");
+}
+
+/**
+ * Extract milestone number from a commit message.
+ * Looks for patterns like: M27, (M27), feat(M27):
+ */
+function extractMilestoneNumber(commitMessage) {
+  const match = commitMessage.match(/\bM(\d+)\b/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+/**
+ * Resolve the project for this repo from Supabase.
+ * Uses GITHUB_REPOSITORY env var (e.g., "fbascunan/top-notch") to find folder.
+ */
+async function resolveProject() {
+  const repo = process.env.GITHUB_REPOSITORY || "";
+  const repoName = repo.split("/").pop() || "";
+  if (!repoName) return null;
+
+  return findProjectByFolder(repoName);
+}
+
 // ────────────────────────────────────────────────────────────────
 // Main
 // ────────────────────────────────────────────────────────────────
@@ -210,6 +241,89 @@ async function main() {
       continue;
     }
 
+    // ── Scheduled run: no pre-existing row ───────────────────────
+    if (!run && isScheduledRun(correlationId)) {
+      console.log(`  Scheduled run detected (no pre-existing row). Creating run_history entry...`);
+
+      // Resolve project from repo name
+      const project = await resolveProject();
+      if (!project) {
+        console.warn(`  Could not resolve project from GITHUB_REPOSITORY. Skipping.`);
+        continue;
+      }
+
+      // Extract milestone number from commit message
+      const milestoneNum = extractMilestoneNumber(message);
+      let milestoneId = null;
+      if (milestoneNum !== null) {
+        const milestone = await findMilestone(project.id, milestoneNum);
+        if (milestone) {
+          milestoneId = milestone.id;
+          console.log(`  Resolved milestone: M${milestoneNum} (id=${milestoneId})`);
+        } else {
+          console.warn(`  Could not find milestone M${milestoneNum} for project ${project.id}`);
+        }
+      } else {
+        // Try to infer from milestone completions detected in the diff
+        if (milestoneCompletions.length > 0) {
+          const milestone = await findMilestone(project.id, milestoneCompletions[0]);
+          if (milestone) {
+            milestoneId = milestone.id;
+            console.log(`  Inferred milestone from diff: M${milestoneCompletions[0]} (id=${milestoneId})`);
+          }
+        }
+      }
+
+      if (!milestoneId) {
+        console.warn(`  Could not determine milestone for scheduled run. Skipping.`);
+        continue;
+      }
+
+      // Determine status and create the row
+      const status = determineRunStatus(message, milestoneCompletions);
+      try {
+        const newRun = await createScheduledRun(
+          project.id,
+          milestoneId,
+          correlationId,
+          commitSha,
+          status,
+          { error: status === "failed" ? "Scheduled routine completed but milestone was not marked as Done" : undefined },
+        );
+        console.log(`  Created scheduled run_history: id=${newRun?.id}, status=${status}`);
+      } catch (err) {
+        console.error(`  Failed to create scheduled run_history: ${err.message}`);
+      }
+
+      // Update milestone status if marked Done
+      if (milestoneCompletions.length > 0) {
+        for (const completedNum of milestoneCompletions) {
+          try {
+            const milestone = await findMilestone(project.id, completedNum);
+            if (milestone && milestone.status !== "Done") {
+              await completeMilestone(milestone.id);
+              console.log(`  Marked milestone M${completedNum} (id=${milestone.id}) as Done in Supabase.`);
+            }
+          } catch (err) {
+            console.warn(`  Failed to update milestone M${completedNum}: ${err.message}`);
+          }
+        }
+      }
+
+      // Parse task completion from diff
+      if (pushDiff && milestoneId) {
+        try {
+          await updateTasksFromDiff(milestoneId, pushDiff);
+          console.log(`  Updated tasks from diff for milestone_id=${milestoneId}.`);
+        } catch (err) {
+          console.warn(`  Failed to update tasks from diff: ${err.message}`);
+        }
+      }
+
+      continue;
+    }
+
+    // ── No row found and not a scheduled run ─────────────────────
     if (!run) {
       console.warn(`  WARNING: No run_history row found for correlation_id="${correlationId}". Skipping.`);
       continue;

@@ -248,3 +248,54 @@ export async function findMilestone(projectId, milestoneNumber) {
   if (!rows || rows.length === 0) return null;
   return rows[0];
 }
+
+/**
+ * Find a project by folder name (case-insensitive match).
+ */
+export async function findProjectByFolder(folder) {
+  const rows = await supaFetch("projects", {
+    query: `folder=ilike.${encodeURIComponent(folder)}&select=*`,
+  });
+
+  if (!rows || rows.length === 0) return null;
+  return rows[0];
+}
+
+/**
+ * Create a run_history entry for a scheduled run (no pre-existing row).
+ * Used by the webhook when it detects [run:scheduled-<timestamp>] commits.
+ */
+export async function createScheduledRun(projectId, milestoneId, correlationId, commitSha, status, opts = {}) {
+  const { error: errorMsg } = opts;
+
+  // Use the timestamp from the correlation ID as started_at if available
+  let startedAt;
+  const tsMatch = correlationId.match(/^scheduled-(.+)$/);
+  if (tsMatch) {
+    const parsed = new Date(tsMatch[1]);
+    startedAt = isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+  } else {
+    startedAt = new Date().toISOString();
+  }
+
+  const row = {
+    project_id: projectId,
+    milestone_id: milestoneId,
+    status,
+    triggered_by: null,
+    started_at: startedAt,
+    finished_at: new Date().toISOString(),
+    commit_sha: commitSha,
+    correlation_id: correlationId,
+    trigger_source: "scheduled",
+  };
+
+  if (errorMsg) row.error = errorMsg.substring(0, 10000);
+
+  const result = await supaFetch("run_history", {
+    method: "POST",
+    body: row,
+  });
+
+  return result?.[0] ?? null;
+}

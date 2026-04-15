@@ -250,7 +250,10 @@
     "filterAll": "Todos",
     "filterProject": "Proyecto",
     "filterStatus": "Estado",
-    "concurrent": "Ya hay una ejecución activa para este proyecto"
+    "concurrent": "Ya hay una ejecución activa para este proyecto",
+    "trigger": "Origen",
+    "triggerManual": "Manual",
+    "triggerScheduled": "Programado"
   },
   "humanActions": {
     "nav": "Acciones humanas",

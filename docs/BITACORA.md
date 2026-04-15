@@ -224,3 +224,9 @@
 **Blocked:** nothing
 **Next:** M26 (Scheduled Routine / Ralph Loop) or M27 (Cleanup & Reconciliation).
 **Decision:** split Supabase helpers into shared module (`.github/scripts/supabase-helpers.mjs`) so both the old runner and new webhook use the same DB operations; diff-based task detection uses git diff on `docs/MILESTONES.md` rather than parsing Claude output.
+
+### 2026-04-15 — agent — M26
+**Did:** set up scheduled routine for autonomous milestone execution. Created trigger `trig_0163UmuiPJAJ6uaaLLbsWVUC` via RemoteTrigger API (daily at 13:03 UTC / ~9:03 AM Chile). Designed routine prompt (`docs/SCHEDULED-ROUTINE-PROMPT.md`) that reads MILESTONES.md tracker, finds next Planned milestone, executes it, commits with `[run:scheduled-<timestamp>]` tag. Updated webhook (`routine-webhook.mjs`) to handle scheduled runs — creates new `run_history` rows with `trigger_source='scheduled'` when no pre-existing row exists. Added `findProjectByFolder()` and `createScheduledRun()` to `supabase-helpers.mjs`. Updated `RunHistoryTable.astro` with Trigger column showing Manual/Scheduled badges (purple for scheduled, neutral for manual). Added 3 i18n keys (ES+EN): `trigger`, `triggerManual`, `triggerScheduled`. Build: 0 errors.
+**Blocked:** nothing — routine is live and will fire at next scheduled time
+**Next:** M27 (Cleanup & Reconciliation). Human should verify first scheduled run fires correctly.
+**Decision:** scheduled runs create run_history rows via the webhook (not pre-created) because there's no API call to pre-register them; correlation IDs use `scheduled-<ISO timestamp>` prefix to distinguish from manual runs (UUID format)

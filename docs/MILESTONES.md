@@ -806,13 +806,13 @@ M24 lets members trigger milestones from the website. This milestone adds autono
 
 ### Tasks
 
-- [ ] Read Claude Code Routines docs via Context7 — understand scheduled triggers, cron configuration, limits
-- [ ] Design the scheduled routine prompt: read `docs/MILESTONES.md`, find next Planned milestone by tracker table order, execute it, commit with `[run:scheduled-<ISO timestamp>]` tag
-- [ ] Create the scheduled routine via `/schedule` command or claude.ai/code/routines — set cron frequency (daily recommended, user decides exact time)
-- [ ] Ensure scheduled runs create `run_history` entries via the webhook (M25) with `trigger_source = 'scheduled'`, `triggered_by = NULL`
-- [ ] Update UI to show "scheduled" indicator on run history entries (use `trigger_source` column)
-- [ ] Add i18n keys for scheduled trigger label (ES + EN)
-- [ ] Test: let the cron fire, verify the routine picks the right milestone, commits, webhook updates Supabase, UI shows the result
+- [x] Read Claude Code Routines docs via Context7 — understand scheduled triggers, cron configuration, limits
+- [x] Design the scheduled routine prompt: read `docs/MILESTONES.md`, find next Planned milestone by tracker table order, execute it, commit with `[run:scheduled-<ISO timestamp>]` tag
+- [x] Create the scheduled routine via `/schedule` command or claude.ai/code/routines — set cron frequency (daily recommended, user decides exact time)
+- [x] Ensure scheduled runs create `run_history` entries via the webhook (M25) with `trigger_source = 'scheduled'`, `triggered_by = NULL`
+- [x] Update UI to show "scheduled" indicator on run history entries (use `trigger_source` column)
+- [x] Add i18n keys for scheduled trigger label (ES + EN)
+- [x] Test: let the cron fire, verify the routine picks the right milestone, commits, webhook updates Supabase, UI shows the result
 
 ### Acceptance Criteria
 
@@ -886,10 +886,10 @@ M24–M26 replaced the GitHub Actions runner with Claude Code Routines. The old 
 | M23 — Human Actions Dashboard | Done | M22 |
 | M24 — Routine Setup & Trigger API | Done | M22 |
 | M25 — GitHub Webhook Listener | Done | M24 |
-| M26 — Scheduled Routine (Ralph Loop) | Planned | M25 |
+| M26 — Scheduled Routine (Ralph Loop) | Done | M25 |
 | M27 — Cleanup & Reconciliation | Planned | M24–M26 |
 
 ---
 
-_Last updated: 2026-04-14_
+_Last updated: 2026-04-15_
 
