@@ -247,3 +247,8 @@
 **Did:** verified and cleaned up human actions. All Supabase migrations (00001–00009) confirmed applied (`supabase db push --dry-run` → "up to date"). Deleted `ANTHROPIC_API_KEY` from GitHub Secrets via `gh secret delete`. No dead references to `workflow_dispatch`, `ANTHROPIC_API_KEY`, or `GITHUB_TOKEN` in source code. Old `.github/workflows/run-milestone.yml` already removed. Updated HUMAN-ACTIONS.md (marked migrations + secret removal as done). Set `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` in Netlify env vars. Created `docs/ROUTINE-PROMPT.md` (unified prompt for manual+scheduled triggers).
 **Blocked:** Human should verify manual trigger (click "Run Milestone" on website) and scheduled trigger (next cron at 13:03 UTC). Also pending: Formspree, Umami, DNS, Google Search Console, responsive QA.
 **Next:** human tests manual + scheduled triggers; then tackles remaining post-deploy items
+
+### 2026-04-16 13:03 — runner — (none) [run:scheduled-2026-04-16T13:03:00.000Z]
+**Did:** scanned Tracker table in MILESTONES.md — no Planned milestones remaining. All M1–M27 are Done.
+**Blocked:** No Planned milestones remaining. Pending human actions: Formspree, Umami, DNS, Google Search Console, responsive QA, manual+scheduled trigger verification (see HUMAN-ACTIONS.md).
+**Next:** define new milestones in MILESTONES.md to continue work, or complete remaining post-deploy human actions
