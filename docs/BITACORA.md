@@ -168,6 +168,7 @@
 **Next:** all current milestones complete; future work: M14 external services (Formspree, Umami, DNS), additional milestones as needed
 **Decision:** `getFeaturedProjects()` uses Supabase `featured=true` filter with fallback to `priority <= 3` from seed data; reused existing `ProjectCard.astro` for homepage featured section instead of custom cards
 
+<<<<<<< HEAD
 ### 2026-04-12 — agent — M15/M16 fix
 **Did:** fixed auth regression across all pages. Root cause: middleware `/_` prefix guard (`pathname.startsWith("/_")`) was skipping auth resolution for `/_server-islands/AuthButton` requests. One-line fix to exempt `/_server-islands` from the skip. Also applied pending Supabase migrations 00005 (org_members RLS fix) and 00006 (featured column). Pushed to main → Netlify auto-deploy.
 **Blocked:** human needs to log in on live site to verify auth flow end-to-end
@@ -237,7 +238,12 @@
 **Next:** human completes M24 routine setup, then verifies manual trigger (website button → routine → commit → webhook → Supabase → UI) and scheduled trigger (cron → routine → commit → webhook → Supabase → UI). After verification, delete `ANTHROPIC_API_KEY` from GitHub Secrets.
 **Decision:** `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` GitHub Secrets are NOT removed — `routine-webhook.yml` still needs them. Only `ANTHROPIC_API_KEY` is truly dead. Removed `supabase-runner.mjs` entirely (not just the `callback` command) because all its commands were exclusive to the deleted workflow.
 
+### 2026-04-15 09:00 — runner — (none)
+**Did:** scanned Tracker table in MILESTONES.md — no Planned milestones remaining
+**Blocked:** No Planned milestones remaining. M14 is In Progress (external services/DNS/QA require human action); M1–M13, M15–M18 are Done.
+**Next:** human completes M14 checklist (Formspree, Umami, Google Search Console, DNS, cross-browser QA), then new milestones should be defined in MILESTONES.md to continue work
+
 ### 2026-04-15 — agent + human — Human Actions cleanup
-**Did:** verified and cleaned up human actions. All Supabase migrations (00001–00009) confirmed applied (`supabase db push --dry-run` → "up to date"). Deleted `ANTHROPIC_API_KEY` from GitHub Secrets via `gh secret delete`. No dead references to `workflow_dispatch`, `ANTHROPIC_API_KEY`, or `GITHUB_TOKEN` in source code. Old `.github/workflows/run-milestone.yml` already removed. Updated HUMAN-ACTIONS.md (marked migrations + secret removal as done).
-**Blocked:** Human still needs to: (1) create routine at claude.ai/code/routines, (2) generate API trigger + bearer token, (3) set `ROUTINE_TRIGGER_ID` + `ROUTINE_BEARER_TOKEN` in Netlify env vars, (4) verify manual + scheduled triggers. Also pending: Formspree, Umami, DNS, Google Search Console, responsive QA.
-**Next:** human completes routine setup (M24 blockers), then tests manual + scheduled triggers (M27 verification)
+**Did:** verified and cleaned up human actions. All Supabase migrations (00001–00009) confirmed applied (`supabase db push --dry-run` → "up to date"). Deleted `ANTHROPIC_API_KEY` from GitHub Secrets via `gh secret delete`. No dead references to `workflow_dispatch`, `ANTHROPIC_API_KEY`, or `GITHUB_TOKEN` in source code. Old `.github/workflows/run-milestone.yml` already removed. Updated HUMAN-ACTIONS.md (marked migrations + secret removal as done). Set `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` in Netlify env vars. Created `docs/ROUTINE-PROMPT.md` (unified prompt for manual+scheduled triggers).
+**Blocked:** Human should verify manual trigger (click "Run Milestone" on website) and scheduled trigger (next cron at 13:03 UTC). Also pending: Formspree, Umami, DNS, Google Search Console, responsive QA.
+**Next:** human tests manual + scheduled triggers; then tackles remaining post-deploy items
