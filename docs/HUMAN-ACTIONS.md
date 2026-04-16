@@ -26,29 +26,29 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
-## M20 — GitHub Actions Milestone Runner
+## M20 — GitHub Actions Milestone Runner (OBSOLETE — replaced by Routines in M24)
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Anthropic API Key** — Add `ANTHROPIC_API_KEY` to GitHub repo Secrets (Settings → Secrets → Actions) | BLOCKER |
-| [ ] | **First test run** — Trigger the workflow manually from GitHub Actions UI to verify end-to-end | BLOCKER |
+| [x] | ~~**Anthropic API Key** — Add `ANTHROPIC_API_KEY` to GitHub repo Secrets~~ — **OBSOLETE**: old workflow removed in M27. Runs now use Claude Max subscription via Routines. | — |
+| [x] | ~~**First test run** — Trigger the workflow manually from GitHub Actions UI~~ — **OBSOLETE**: old workflow removed in M27. | — |
 
 ---
 
-## M21 — Supabase-Aware Runner
+## M21 — Supabase-Aware Runner (OBSOLETE — replaced by Routines in M24)
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Supabase Secrets in GitHub** — Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to GitHub repo Secrets | BLOCKER |
-| [x] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` (from M19) | BLOCKER |
+| [x] | **Supabase Secrets in GitHub** — `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are still needed by `routine-webhook.yml` | — |
+| [x] | **Apply migration** — Run `supabase db push` to apply `00007_run_history.sql` (from M19) | — |
 
 ---
 
-## M22 — Web Trigger & Monitoring UI
+## M22 — Web Trigger & Monitoring UI (OBSOLETE — replaced by Routines in M24)
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **GitHub token for website** — Create a GitHub PAT (or GitHub App) with `actions:write` scope → add to Netlify env vars as `GITHUB_TOKEN` | BLOCKER |
+| [x] | ~~**GitHub token for website** — Create a GitHub PAT with `actions:write` scope → add to Netlify env vars as `GITHUB_TOKEN`~~ — **OBSOLETE**: replaced by `ROUTINE_BEARER_TOKEN` in M24. | — |
 
 ---
 
@@ -84,6 +84,17 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
+## M27 — Cleanup & Reconciliation
+
+| Status | Item | Blocker? |
+|--------|------|----------|
+| [ ] | **Remove `ANTHROPIC_API_KEY` from GitHub Secrets** — Go to GitHub repo Settings → Secrets → Actions → delete `ANTHROPIC_API_KEY` (no longer used — routines run under Claude Max subscription) | post-deploy |
+| [ ] | **Complete M24 routine setup** — Create routine at claude.ai/code/routines, generate bearer token, set `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` in Netlify env vars (see M24 section above) | BLOCKER |
+| [ ] | **Verify manual trigger end-to-end** — After routine setup, click "Run Milestone" on the website → verify routine fires, commits with `[run:<id>]` tag, webhook updates Supabase, UI shows result | BLOCKER |
+| [ ] | **Verify scheduled trigger end-to-end** — Wait for next cron fire (13:03 UTC daily), verify routine picks correct milestone, commits with `[run:scheduled-<timestamp>]`, webhook updates Supabase | post-deploy |
+
+---
+
 ## How to Use This File
 
 1. Before starting a milestone, check if it has BLOCKERs here
@@ -93,4 +104,4 @@ Carried over from completed milestones (M8, M10, M14).
 
 ---
 
-_Last updated: 2026-04-15 (M26)_
+_Last updated: 2026-04-15 (M27)_

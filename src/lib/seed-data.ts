@@ -146,11 +146,11 @@ export const seedHumanActions: SeedHumanAction[] = [
   { id: 4,  project_id: 2, milestone: "M14", description: "DNS — Configure topnotch.cl domain to point to Netlify (currently live at topnotch-cl.netlify.app)", is_blocker: false, status: "pending", completed_at: null },
   { id: 5,  project_id: 2, milestone: "M14", description: "Responsive QA — Spot-check at 375px, 768px, 1280px, 1920px", is_blocker: false, status: "pending", completed_at: null },
   { id: 6,  project_id: 2, milestone: "M19", description: "Apply migration — Run supabase db push to apply 00007_run_history.sql", is_blocker: true, status: "done", completed_at: "2026-04-14T00:00:00Z" },
-  { id: 7,  project_id: 2, milestone: "M20", description: "Anthropic API Key — Add ANTHROPIC_API_KEY to GitHub repo Secrets (Settings → Secrets → Actions)", is_blocker: true, status: "pending", completed_at: null },
-  { id: 8,  project_id: 2, milestone: "M20", description: "First test run — Trigger the workflow manually from GitHub Actions UI to verify end-to-end", is_blocker: true, status: "pending", completed_at: null },
-  { id: 9,  project_id: 2, milestone: "M21", description: "Supabase Secrets in GitHub — Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to GitHub repo Secrets", is_blocker: true, status: "pending", completed_at: null },
+  { id: 7,  project_id: 2, milestone: "M20", description: "Anthropic API Key — (OBSOLETE: replaced by Claude Code Routines in M24)", is_blocker: false, status: "done", completed_at: "2026-04-15T00:00:00Z" },
+  { id: 8,  project_id: 2, milestone: "M20", description: "First test run — (OBSOLETE: old GitHub Actions workflow removed in M27)", is_blocker: false, status: "done", completed_at: "2026-04-15T00:00:00Z" },
+  { id: 9,  project_id: 2, milestone: "M21", description: "Supabase Secrets in GitHub — Still needed by routine-webhook.yml", is_blocker: false, status: "done", completed_at: "2026-04-14T00:00:00Z" },
   { id: 10, project_id: 2, milestone: "M21", description: "Apply migration — Run supabase db push to apply 00007_run_history.sql (from M19)", is_blocker: true, status: "done", completed_at: "2026-04-14T00:00:00Z" },
-  { id: 11, project_id: 2, milestone: "M22", description: "GitHub token for website — Create a GitHub PAT (or GitHub App) with actions:write scope → add to Netlify env vars as GITHUB_TOKEN", is_blocker: true, status: "pending", completed_at: null },
+  { id: 11, project_id: 2, milestone: "M22", description: "GitHub token for website — (OBSOLETE: replaced by ROUTINE_BEARER_TOKEN in M24)", is_blocker: false, status: "done", completed_at: "2026-04-15T00:00:00Z" },
 ];
 
 export const seedRunHistory: SeedRunHistory[] = [

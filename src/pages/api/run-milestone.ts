@@ -8,8 +8,7 @@ export const prerender = false;
  * Triggers a Claude Code Routine via the /fire API endpoint.
  * Creates a run_history row with status "queued" and a correlation_id.
  *
- * Replaces the old GitHub Actions workflow_dispatch approach (M20–M22).
- * Runs under the user's Claude Max subscription — no ANTHROPIC_API_KEY needed.
+ * Runs under the user's Claude Max subscription via Claude Code Routines.
  */
 export const POST: APIRoute = async ({ request, locals, cookies }) => {
   if (!locals.isMember || !locals.org) {

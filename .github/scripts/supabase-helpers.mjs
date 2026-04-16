@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Shared Supabase helpers — used by both supabase-runner.mjs (GitHub Actions)
- * and routine-webhook.mjs (push event webhook).
+ * Shared Supabase helpers — used by routine-webhook.mjs (push event webhook).
  *
  * Uses the Supabase REST API (PostgREST) directly via fetch().
  * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.
@@ -99,51 +98,6 @@ export async function completeMilestone(milestoneId) {
       completed_at: new Date().toISOString(),
     },
   });
-}
-
-/**
- * Update tasks for a milestone based on Claude output file (output parsing).
- * Used by the old GitHub Actions runner (supabase-runner.mjs).
- */
-export async function updateTasksFromOutput(milestoneId, claudeOutputFile) {
-  const { readFile } = await import("node:fs/promises");
-  let output;
-  try {
-    output = await readFile(claudeOutputFile, "utf-8");
-  } catch {
-    console.error(`Could not read Claude output file: ${claudeOutputFile}`);
-    return;
-  }
-
-  const tasks = await supaFetch("milestone_tasks", {
-    query: `milestone_id=eq.${milestoneId}&select=*&order=id.asc`,
-  });
-
-  if (!tasks || tasks.length === 0) return;
-
-  const isComplete = output.includes("MILESTONE_COMPLETE");
-
-  for (const task of tasks) {
-    let shouldMarkDone = false;
-
-    if (isComplete) {
-      shouldMarkDone = true;
-    } else {
-      const escapedDesc = task.description.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const pattern = new RegExp(`\\[x\\]\\s*${escapedDesc.substring(0, 60)}`, "i");
-      if (pattern.test(output)) {
-        shouldMarkDone = true;
-      }
-    }
-
-    if (shouldMarkDone && !task.done) {
-      await supaFetch("milestone_tasks", {
-        method: "PATCH",
-        query: `id=eq.${task.id}`,
-        body: { done: true },
-      });
-    }
-  }
 }
 
 /**
