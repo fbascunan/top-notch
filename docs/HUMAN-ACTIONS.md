@@ -56,7 +56,7 @@ Carried over from completed milestones (M8, M10, M14).
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Apply migration** — Run `supabase db push` to apply `00008_human_actions.sql` | BLOCKER |
+| [x] | **Apply migration** — Run `supabase db push` to apply `00008_human_actions.sql` — ✅ verified applied (db up to date) | BLOCKER |
 | [ ] | **Sync existing actions** — After migration, call `POST /api/human-actions/sync` with this file's content to populate Supabase | post-deploy |
 
 ---
@@ -65,10 +65,10 @@ Carried over from completed milestones (M8, M10, M14).
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Apply migration** — Run `supabase db push` to apply `00009_run_history_routines.sql` | BLOCKER |
-| [ ] | **Create routine** — Go to [claude.ai/code/routines](https://claude.ai/code/routines), click "New routine". Name: "TopNotch Milestone Runner". Prompt: see `docs/ROUTINE-PROMPT.md` below. Repository: `fbascunan/top-notch`. Enable "Allow unrestricted branch pushes" so the routine can push to `main`. Select appropriate cloud environment. | BLOCKER |
-| [ ] | **Add API trigger** — Edit the routine, scroll to "Select a trigger", click "Add another trigger", choose "API". Copy the trigger URL (contains the trigger ID like `trig_01XXXXX`). Click "Generate token" and save the bearer token securely — it is shown only once. | BLOCKER |
-| [ ] | **Set Netlify env vars** — Go to Netlify dashboard → Site settings → Environment variables. Add: `ROUTINE_TRIGGER_ID` (the `trig_01XXXXX` part from the URL) and `ROUTINE_BEARER_TOKEN` (the `sk-ant-oat01-xxxxx` token). These replace the old `GITHUB_TOKEN`. | BLOCKER |
+| [x] | **Apply migration** — Run `supabase db push` to apply `00009_run_history_routines.sql` — ✅ verified applied (db up to date) | BLOCKER |
+| [x] | **Create routine** — ✅ already created during M26 via RemoteTrigger API. Trigger ID: `trig_0163UmuiPJAJ6uaaLLbsWVUC`. Manage at [claude.ai/code/routines](https://claude.ai/code/routines). Consider updating the prompt to the unified version in [`docs/ROUTINE-PROMPT.md`](ROUTINE-PROMPT.md) (handles both scheduled + manual triggers). | BLOCKER |
+| [x] | **Add API trigger** — ✅ API trigger added to existing routine. Trigger ID: `trig_0163UmuiPJAJ6uaaLLbsWVUC` (same as scheduled). Bearer token generated. | BLOCKER |
+| [x] | **Set Netlify env vars** — ✅ `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` set via `netlify env:set` on 2026-04-15 | BLOCKER |
 | [ ] | **Configure cloud environment** — In the routine's cloud environment settings, add env vars needed by the routine (e.g., `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` if the routine needs DB access). Set network access to "Trusted" or "Full". | post-deploy |
 | [ ] | **Test fire** — After setting env vars, trigger a test run from the website "Run Milestone" button or from the routine detail page "Run now" button. Verify the routine starts and appears in your sessions at claude.ai/code. | post-deploy |
 
@@ -88,8 +88,8 @@ Carried over from completed milestones (M8, M10, M14).
 
 | Status | Item | Blocker? |
 |--------|------|----------|
-| [ ] | **Remove `ANTHROPIC_API_KEY` from GitHub Secrets** — Go to GitHub repo Settings → Secrets → Actions → delete `ANTHROPIC_API_KEY` (no longer used — routines run under Claude Max subscription) | post-deploy |
-| [ ] | **Complete M24 routine setup** — Create routine at claude.ai/code/routines, generate bearer token, set `ROUTINE_TRIGGER_ID` and `ROUTINE_BEARER_TOKEN` in Netlify env vars (see M24 section above) | BLOCKER |
+| [x] | **Remove `ANTHROPIC_API_KEY` from GitHub Secrets** — ✅ deleted via `gh secret delete` on 2026-04-15 | post-deploy |
+| [x] | **Complete M24 routine setup** — ✅ Routine exists (M26), API trigger added, bearer token generated, Netlify env vars set on 2026-04-15 | BLOCKER |
 | [ ] | **Verify manual trigger end-to-end** — After routine setup, click "Run Milestone" on the website → verify routine fires, commits with `[run:<id>]` tag, webhook updates Supabase, UI shows result | BLOCKER |
 | [ ] | **Verify scheduled trigger end-to-end** — Wait for next cron fire (13:03 UTC daily), verify routine picks correct milestone, commits with `[run:scheduled-<timestamp>]`, webhook updates Supabase | post-deploy |
 

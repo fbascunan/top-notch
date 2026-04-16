@@ -236,3 +236,8 @@
 **Blocked:** end-to-end verification (manual + scheduled triggers) requires human to complete M24 routine setup (create routine, generate bearer token, set Netlify env vars). These items are documented in HUMAN-ACTIONS.md M24 + M27 sections.
 **Next:** human completes M24 routine setup, then verifies manual trigger (website button → routine → commit → webhook → Supabase → UI) and scheduled trigger (cron → routine → commit → webhook → Supabase → UI). After verification, delete `ANTHROPIC_API_KEY` from GitHub Secrets.
 **Decision:** `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` GitHub Secrets are NOT removed — `routine-webhook.yml` still needs them. Only `ANTHROPIC_API_KEY` is truly dead. Removed `supabase-runner.mjs` entirely (not just the `callback` command) because all its commands were exclusive to the deleted workflow.
+
+### 2026-04-15 — agent + human — Human Actions cleanup
+**Did:** verified and cleaned up human actions. All Supabase migrations (00001–00009) confirmed applied (`supabase db push --dry-run` → "up to date"). Deleted `ANTHROPIC_API_KEY` from GitHub Secrets via `gh secret delete`. No dead references to `workflow_dispatch`, `ANTHROPIC_API_KEY`, or `GITHUB_TOKEN` in source code. Old `.github/workflows/run-milestone.yml` already removed. Updated HUMAN-ACTIONS.md (marked migrations + secret removal as done).
+**Blocked:** Human still needs to: (1) create routine at claude.ai/code/routines, (2) generate API trigger + bearer token, (3) set `ROUTINE_TRIGGER_ID` + `ROUTINE_BEARER_TOKEN` in Netlify env vars, (4) verify manual + scheduled triggers. Also pending: Formspree, Umami, DNS, Google Search Console, responsive QA.
+**Next:** human completes routine setup (M24 blockers), then tests manual + scheduled triggers (M27 verification)

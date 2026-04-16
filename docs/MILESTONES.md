@@ -840,7 +840,7 @@ M24–M26 replaced the GitHub Actions runner with Claude Code Routines. The old 
 - [x] Remove `.github/workflows/run-milestone.yml` (old workflow)
 - [x] Remove `supabase-runner.mjs` entirely (all commands were only used by the old workflow; shared helpers in `supabase-helpers.mjs` are kept for the webhook)
 - [x] Remove dead `workflow_dispatch` references from API routes and components
-- [x] Remove GitHub Secrets that are no longer needed: `ANTHROPIC_API_KEY` (documented in HUMAN-ACTIONS.md for human to delete). Note: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are still needed by `routine-webhook.yml`.
+- [x] Remove GitHub Secrets that are no longer needed: `ANTHROPIC_API_KEY` ~~(documented in HUMAN-ACTIONS.md for human to delete)~~ deleted via `gh secret delete`. Note: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are still needed by `routine-webhook.yml`.
 - [x] Update `docs/HUMAN-ACTIONS.md` — mark old M20/M21/M22 items done, ensure routine-specific items are current
 - [x] Update this file (`docs/MILESTONES.md`) — mark M24–M27 status
 - [x] Write bitacora entry summarizing the migration
